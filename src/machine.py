@@ -1,17 +1,18 @@
 from __future__ import annotations
+
 import argparse
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Iterable
 
 from isa import (
-    Instruction,
     MMIO_IN_DATA,
     MMIO_IN_STATUS,
     MMIO_IRQ_ACK,
     MMIO_OUT_DATA,
     MMIO_READ_ONLY,
+    Instruction,
     Opcode,
     read_data_binary,
     read_program_binary,
@@ -51,6 +52,8 @@ class MicroState(Enum):
 
 @dataclass(frozen=True, slots=True)
 class InputEvent:
+    """Одно событие ввода."""
+
     tick: int
     char_code: int
 
@@ -64,7 +67,7 @@ class CacheLine:
 
 @dataclass(slots=True)
 class DataCache:
-    """Direct-mapped cache, одна ячейка на строку."""
+    """Прямо отображаемый кэш, одна ячейка на строку."""
 
     line_count: int = DEFAULT_CACHE_LINES
     lines: list[CacheLine] = field(init=False)
@@ -120,7 +123,7 @@ class DataCache:
 
 @dataclass(slots=True)
 class DataMemory:
-    """Память данных с MMIO и cache."""
+    """Память данных, MMIO и кэш."""
 
     words: list[int]
     cache_enabled: bool = True
@@ -145,7 +148,7 @@ class DataMemory:
         minimum_size: int = DEFAULT_DATA_MEMORY_SIZE,
         cache_enabled: bool = True,
         cache_line_count: int = DEFAULT_CACHE_LINES,
-    ) -> "DataMemory":
+    ) -> DataMemory:
         words = [to_word(value) for value in image]
         if len(words) < minimum_size:
             words.extend([0] * (minimum_size - len(words)))
@@ -289,7 +292,7 @@ class Machine:
         *,
         cache_enabled: bool = True,
         cache_line_count: int = DEFAULT_CACHE_LINES,
-    ) -> "Machine":
+    ) -> Machine:
         program = read_program_binary(program_path)
         data_image = read_data_binary(data_path)
         input_events = read_input_schedule(input_path) if input_path is not None else []
@@ -595,14 +598,7 @@ class Machine:
 
     def cache_summary(self) -> str:
         cache_mode = "on" if self.data_memory.cache is not None else "off"
-        return (
-            f"cache={cache_mode} "
-            f"hits={self.data_memory.cache_hits} "
-            f"misses={self.data_memory.cache_misses} "
-            f"uncached_reads={self.data_memory.uncached_reads} "
-            f"uncached_writes={self.data_memory.uncached_writes} "
-            f"input_overruns={self.data_memory.input_overrun_count}"
-        )
+        return f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} input_overruns={self.data_memory.input_overrun_count}"
 
     def _append_log(self, event: str) -> None:
         mode = "irq" if self.in_irq else "user"
@@ -686,7 +682,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--limit", type=int, default=DEFAULT_TICK_LIMIT, help="лимит тактов")
     parser.add_argument("--log", type=Path, default=None, help="записать журнал процессора в файл")
     parser.add_argument("--output", type=Path, default=None, help="записать вывод процессора в файл")
-    parser.add_argument("--cache", action=argparse.BooleanOptionalAction, default=True, help="включить или выключить cache данных")
+    parser.add_argument(
+        "--cache", action=argparse.BooleanOptionalAction, default=True, help="включить или выключить cache данных"
+    )
     parser.add_argument("--cache-lines", type=int, default=DEFAULT_CACHE_LINES, help="число строк cache")
     return parser
 
@@ -717,7 +715,9 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(output, end="")
 
-    print(f"summary: ticks={machine.tick_counter} instructions={machine.executed_instructions} {machine.cache_summary()}")
+    print(
+        f"summary: ticks={machine.tick_counter} instructions={machine.executed_instructions} {machine.cache_summary()}"
+    )
     return 0
 
 

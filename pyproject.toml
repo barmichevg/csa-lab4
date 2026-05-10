@@ -13,11 +13,6 @@ dev = [
     "mypy>=1.13.0",
 ]
 
-[tool.pytest.ini_options]
-enable_assertion_pass_hook = true
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-
 [tool.ruff]
 target-version = "py312"
 line-length = 120
@@ -63,7 +58,3 @@ exclude = [
     "^\\.pytest_cache/",
     "__pycache__",
 ]
-
-[[tool.mypy.overrides]]
-module = ["pytest", "pytest_golden.*"]
-ignore_missing_imports = true

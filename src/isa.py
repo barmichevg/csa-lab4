@@ -1,8 +1,10 @@
 from __future__ import annotations
+
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import IntEnum
 from pathlib import Path
-from typing import Iterable
+from typing import Literal
 
 WORD_BITS = 32
 OPCODE_BITS = 8
@@ -17,7 +19,7 @@ MIN_SIGNED_ARG = -(1 << (ARG_BITS - 1))
 MAX_SIGNED_ARG = (1 << (ARG_BITS - 1)) - 1
 MAX_UNSIGNED_ARG = ARG_MASK
 
-WORD_BYTEORDER = "big"
+WORD_BYTEORDER: Literal["big", "little"] = "big"
 WORD_SIZE_BYTES = WORD_BITS // 8
 
 # Адреса memory-mapped ввода-вывода.
@@ -132,16 +134,12 @@ def encode_arg(arg: int, *, signed: bool) -> int:
     if signed:
         if not MIN_SIGNED_ARG <= arg <= MAX_SIGNED_ARG:
             raise IsaError(
-                f"signed argument {arg} does not fit into {ARG_BITS} bits "
-                f"[{MIN_SIGNED_ARG}, {MAX_SIGNED_ARG}]"
+                f"signed argument {arg} does not fit into {ARG_BITS} bits [{MIN_SIGNED_ARG}, {MAX_SIGNED_ARG}]"
             )
         return arg & ARG_MASK
 
     if not 0 <= arg <= MAX_UNSIGNED_ARG:
-        raise IsaError(
-            f"unsigned argument {arg} does not fit into {ARG_BITS} bits "
-            f"[0, {MAX_UNSIGNED_ARG}]"
-        )
+        raise IsaError(f"unsigned argument {arg} does not fit into {ARG_BITS} bits [0, {MAX_UNSIGNED_ARG}]")
     return arg
 
 
@@ -189,9 +187,7 @@ def read_program_binary(path: str | Path) -> list[Instruction]:
     """Прочитать память команд из бинарного файла."""
     data = Path(path).read_bytes()
     if len(data) % WORD_SIZE_BYTES != 0:
-        raise IsaError(
-            f"program binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}"
-        )
+        raise IsaError(f"program binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}")
 
     instructions: list[Instruction] = []
     for offset in range(0, len(data), WORD_SIZE_BYTES):
@@ -213,16 +209,13 @@ def read_data_binary(path: str | Path) -> list[int]:
     """Прочитать память данных как 32-битные слова."""
     data = Path(path).read_bytes()
     if len(data) % WORD_SIZE_BYTES != 0:
-        raise IsaError(
-            f"data binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}"
-        )
+        raise IsaError(f"data binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}")
 
     words: list[int] = []
     for offset in range(0, len(data), WORD_SIZE_BYTES):
         chunk = data[offset : offset + WORD_SIZE_BYTES]
         words.append(int.from_bytes(chunk, byteorder=WORD_BYTEORDER, signed=False))
     return words
-
 
 
 def format_instruction_listing_line(address: int, instruction: Instruction) -> str:
@@ -242,14 +235,10 @@ def format_data_listing_line(address: int, word: int) -> str:
 def make_program_listing(instructions: Iterable[Instruction]) -> str:
     """Создать человекочитаемый листинг команд."""
     return "\n".join(
-        format_instruction_listing_line(address, instruction)
-        for address, instruction in enumerate(instructions)
+        format_instruction_listing_line(address, instruction) for address, instruction in enumerate(instructions)
     )
 
 
 def make_data_listing(words: Iterable[int]) -> str:
     """Создать человекочитаемый листинг данных."""
-    return "\n".join(
-        format_data_listing_line(address, word)
-        for address, word in enumerate(words)
-    )
+    return "\n".join(format_data_listing_line(address, word) for address, word in enumerate(words))

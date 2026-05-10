@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 import contextlib
 import io
 import sys
 import tempfile
 from pathlib import Path
+
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -13,7 +15,7 @@ sys.path.insert(0, str(SRC_DIR))
 TICK_LIMIT = 300_000
 MAX_LOG_LINES = 300
 
-from isa import (
+from isa import (  # noqa: E402
     make_data_listing,
     make_program_listing,
     read_data_binary,
@@ -21,8 +23,8 @@ from isa import (
     write_data_binary,
     write_program_binary,
 )
-from machine import Machine
-from translator import translate_source
+from machine import Machine  # noqa: E402
+from translator import translate_source  # noqa: E402
 
 
 @pytest.mark.golden_test("golden/*.yml")
@@ -59,8 +61,6 @@ def test_translator_and_machine(golden) -> None:
     assert golden.out["out_log"] == ensure_trailing_newline(log_listing)
 
 
-
-
 def adapt_log(log_lines: list[str], max_lines: int) -> str:
     if len(log_lines) <= max_lines:
         return "\n".join(log_lines)
@@ -77,7 +77,21 @@ def adapt_log(log_lines: list[str], max_lines: int) -> str:
 
 
 def is_important_log_line(line: str) -> bool:
-    return any(marker in line for marker in ("[enter irq]", "MODE: irq", "[iret", "0xFFF0", "0xFFF2", "0xFFF3", "[halt]", "cache_hit", "cache_miss", "cache_wait"))
+    return any(
+        marker in line
+        for marker in (
+            "[enter irq]",
+            "MODE: irq",
+            "[iret",
+            "0xFFF0",
+            "0xFFF2",
+            "0xFFF3",
+            "[halt]",
+            "cache_hit",
+            "cache_miss",
+            "cache_wait",
+        )
+    )
 
 
 def ensure_trailing_newline(text: str) -> str:

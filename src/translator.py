@@ -1,16 +1,17 @@
 from __future__ import annotations
+
 import argparse
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Iterable
 
 from isa import (
-    Instruction,
     MMIO_IN_DATA,
     MMIO_IN_STATUS,
     MMIO_IRQ_ACK,
     MMIO_OUT_DATA,
+    Instruction,
     Opcode,
     make_data_listing,
     make_program_listing,
@@ -78,19 +79,24 @@ MMIO_WORDS: dict[str, int] = {
     "irq-ack": MMIO_IRQ_ACK,
 }
 
-RESERVED_WORDS = set(BUILTIN_WORDS) | set(MMIO_WORDS) | {
-    ":",
-    ";",
-    ":irq",
-    "variable",
-    "buffer",
-    "if",
-    "else",
-    "then",
-    "begin",
-    "until",
-    "'",
-}
+
+RESERVED_WORDS = (
+    set(BUILTIN_WORDS)
+    | set(MMIO_WORDS)
+    | {
+        ":",
+        ";",
+        ":irq",
+        "variable",
+        "buffer",
+        "if",
+        "else",
+        "then",
+        "begin",
+        "until",
+        "'",
+    }
+)
 
 
 class Compiler:
