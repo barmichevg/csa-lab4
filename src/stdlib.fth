@@ -1,0 +1,100 @@
+variable __type-ptr
+variable __type-len
+
+buffer __input-buffer 64
+variable __input-head
+variable __input-tail
+variable __input-count
+variable __input-tmp
+
+: emit
+    out-data !
+;
+
+: cr
+    10 emit
+;
+
+: space
+    32 emit
+;
+
+: read-char
+    in-data @
+;
+
+: ack-irq
+    1 irq-ack !
+;
+
+: input-init
+    0 __input-head !
+    0 __input-tail !
+    0 __input-count !
+;
+
+: input-ready?
+    __input-count @ 0 >
+;
+
+: input-push
+    __input-count @ 64 <
+    if
+        __input-buffer __input-tail @ + !
+
+        __input-tail @
+        1 +
+        64 mod
+        __input-tail !
+
+        __input-count @
+        1 +
+        __input-count !
+    else
+        drop
+    then
+;
+
+: input-pop
+    __input-count @ 0 >
+    if
+        __input-buffer __input-head @ + @ __input-tmp !
+
+        __input-head @
+        1 +
+        64 mod
+        __input-head !
+
+        __input-count @
+        1 -
+        __input-count !
+
+        __input-tmp @
+    else
+        0
+    then
+;
+
+: type
+    dup @ __type-len !
+    1 + __type-ptr !
+
+    begin
+        __type-len @ 0 >
+        if
+            __type-ptr @ @ emit
+
+            __type-ptr @
+            1 +
+            __type-ptr !
+
+            __type-len @
+            1 -
+            __type-len !
+
+            0
+        else
+            1
+        then
+    until
+;

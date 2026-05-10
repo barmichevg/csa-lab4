@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+program.bin
+program.bin.hex
+data.bin
+data.bin.hex
+log*.txt
+*_cache.txt
+*_no_cache.txt
