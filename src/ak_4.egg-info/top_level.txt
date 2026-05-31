@@ -1,3 +1,0 @@
-isa
-machine
-translator
