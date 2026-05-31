@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: ak-4
+Version: 0.1.0
+Summary: Лабораторная работа 4: MiniForth, стековый процессор, trap I/O, pstr, cache
+Requires-Python: >=3.12

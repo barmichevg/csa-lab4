@@ -316,28 +316,30 @@ class Machine:
         return self.data_memory.output
 
     def step_tick(self) -> None:
+        state_before = self.micro_state
+
         if self.halted:
             self.micro_state = MicroState.HALTED
-            self._append_log("already halted")
+            self._append_log("already halted", state_before)
             self.tick_counter += 1
             return
 
         self._deliver_input_events_for_current_tick()
 
-        if self.micro_state == MicroState.FETCH:
+        if state_before == MicroState.FETCH:
             event = self._tick_fetch()
-        elif self.micro_state == MicroState.DECODE:
+        elif state_before == MicroState.DECODE:
             event = self._tick_decode()
-        elif self.micro_state == MicroState.EXECUTE:
+        elif state_before == MicroState.EXECUTE:
             event = self._tick_execute()
-        elif self.micro_state == MicroState.MEM_WAIT:
+        elif state_before == MicroState.MEM_WAIT:
             event = self._tick_mem_wait()
-        elif self.micro_state == MicroState.IRQ_CHECK:
+        elif state_before == MicroState.IRQ_CHECK:
             event = self._tick_irq_check()
         else:
-            raise MachineError(f"unsupported micro-state: {self.micro_state}")
+            raise MachineError(f"unsupported micro-state: {state_before}")
 
-        self._append_log(event)
+        self._append_log(event, state_before)
         self.tick_counter += 1
 
     def _tick_fetch(self) -> str:
@@ -410,7 +412,7 @@ class Machine:
                 event = "jz not taken"
         elif op == Opcode.CALL:
             self._check_program_address(arg)
-            self.return_stack.append(self.pc)
+            self.push_return_address(self.pc)
             self.pc = arg
             event = f"call 0x{arg:08X}"
         elif op == Opcode.RET:
@@ -419,7 +421,7 @@ class Machine:
         elif op == Opcode.EXECUTE:
             target = self.pop()
             self._check_program_address(target)
-            self.return_stack.append(self.pc)
+            self.push_return_address(self.pc)
             self.pc = target
             event = f"execute 0x{target:08X}"
         elif op == Opcode.EI:
@@ -496,7 +498,7 @@ class Machine:
 
     def _tick_irq_check(self) -> str:
         if self.irq_enable and self.data_memory.irq_pending and not self.in_irq:
-            self.return_stack.append(self.pc)
+            self.push_return_address(self.pc)
             self.pc = IRQ_VECTOR
             self.irq_enable = False
             self.in_irq = True
@@ -565,6 +567,12 @@ class Machine:
             raise MachineError("data stack underflow")
         return self.data_stack.pop()
 
+    def push_return_address(self, address: int) -> None:
+        if len(self.return_stack) >= self.stack_limit:
+            raise MachineError("return stack overflow")
+        self._check_program_address(address)
+        self.return_stack.append(address)
+
     def _pop_return_address(self) -> int:
         if not self.return_stack:
             raise MachineError("return stack underflow")
@@ -600,7 +608,7 @@ class Machine:
         cache_mode = "on" if self.data_memory.cache is not None else "off"
         return f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} input_overruns={self.data_memory.input_overrun_count}"
 
-    def _append_log(self, event: str) -> None:
+    def _append_log(self, event: str, state: MicroState) -> None:
         mode = "irq" if self.in_irq else "user"
         instr = self._ir_text()
         stack = "[" + ",".join(str(value) for value in self.data_stack[-6:]) + "]"
@@ -609,7 +617,7 @@ class Machine:
             f"DEBUG   machine:simulation    "
             f"TICK: {self.tick_counter:5} "
             f"PC: {self.pc:5} "
-            f"STATE: {self.micro_state.value:<9} "
+            f"STATE: {state.value:<9} "
             f"MODE: {mode:<4} "
             f"DS: {stack:<16} "
             f"RS: {rstack:<16} "

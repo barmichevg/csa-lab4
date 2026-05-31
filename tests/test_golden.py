@@ -66,32 +66,11 @@ def adapt_log(log_lines: list[str], max_lines: int) -> str:
         return "\n".join(log_lines)
 
     head_count = max_lines // 2
-    tail_count = max_lines // 4
-    important_count = max_lines - head_count - tail_count - 1
+    tail_count = max_lines - head_count - 1
     head = log_lines[:head_count]
     tail = log_lines[-tail_count:]
-    middle = log_lines[head_count:-tail_count]
-    important = [line for line in middle if is_important_log_line(line)][:important_count]
-    omitted = len(log_lines) - len(head) - len(important) - len(tail)
-    return "\n".join([*head, *important, f"... omitted {omitted} lines ...", *tail])
-
-
-def is_important_log_line(line: str) -> bool:
-    return any(
-        marker in line
-        for marker in (
-            "[enter irq]",
-            "MODE: irq",
-            "[iret",
-            "0xFFF0",
-            "0xFFF2",
-            "0xFFF3",
-            "[halt]",
-            "cache_hit",
-            "cache_miss",
-            "cache_wait",
-        )
-    )
+    omitted = len(log_lines) - len(head) - len(tail)
+    return "\n".join([*head, f"... omitted {omitted} lines ...", *tail])
 
 
 def ensure_trailing_newline(text: str) -> str:

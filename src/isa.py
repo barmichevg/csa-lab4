@@ -171,6 +171,9 @@ def decode_instruction(word: int) -> Instruction:
     except ValueError as exc:
         raise IsaError(f"unknown opcode in machine word 0x{word:08X}: 0x{opcode_value:02X}") from exc
 
+    if opcode not in ARGUMENT_OPCODES and raw_arg != 0:
+        raise IsaError(f"instruction {opcode.name} must not have an argument")
+
     arg = sign_extend_arg(raw_arg) if opcode in SIGNED_ARGUMENT_OPCODES else raw_arg
     return Instruction(opcode=opcode, arg=arg)
 

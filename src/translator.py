@@ -79,7 +79,6 @@ MMIO_WORDS: dict[str, int] = {
     "irq-ack": MMIO_IRQ_ACK,
 }
 
-
 RESERVED_WORDS = (
     set(BUILTIN_WORDS)
     | set(MMIO_WORDS)
@@ -95,6 +94,9 @@ RESERVED_WORDS = (
         "begin",
         "until",
         "'",
+        "main",
+        "__irq_handler",
+        "__default_irq_handler",
     }
 )
 
@@ -145,6 +147,7 @@ class Compiler:
 
     def parse(self, tokens: list[Token]) -> tuple[list[tuple[str, list[Token], bool]], list[Token]]:
         procedures: list[tuple[str, list[Token], bool]] = []
+        procedure_names: set[str] = set()
         main_tokens: list[Token] = []
 
         index = 0
@@ -154,6 +157,8 @@ class Compiler:
             if is_word(token, "variable"):
                 name_token = require_token(tokens, index + 1, "expected variable name after 'variable'")
                 name = require_word_name(name_token)
+                if name in procedure_names:
+                    raise error_at(name_token, f"name already used as procedure: {name}")
                 self._declare_variable(name, name_token)
                 index += 2
                 continue
@@ -162,6 +167,8 @@ class Compiler:
                 name_token = require_token(tokens, index + 1, "expected buffer name after 'buffer'")
                 size_token = require_token(tokens, index + 2, "expected buffer size after buffer name")
                 name = require_word_name(name_token)
+                if name in procedure_names:
+                    raise error_at(name_token, f"name already used as procedure: {name}")
                 if size_token.kind != TokenKind.NUMBER:
                     raise error_at(size_token, "buffer size must be an integer literal")
                 self._declare_buffer(name, int(size_token.value), name_token)
@@ -173,6 +180,9 @@ class Compiler:
                 name = require_word_name(name_token)
                 body, next_index = collect_until_semicolon(tokens, index + 2)
                 self._check_user_word_name(name, name_token)
+                if name in procedure_names:
+                    raise error_at(name_token, f"procedure already declared: {name}")
+                procedure_names.add(name)
                 procedures.append((name, body, False))
                 index = next_index
                 continue
