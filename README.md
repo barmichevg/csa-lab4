@@ -299,7 +299,7 @@ DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NO
 
 ### DataPath
 
-![DataPath](fig/datapath.png)
+![[datapath.drawio.png]]
 
 Основные блоки DataPath:
 
@@ -317,7 +317,7 @@ DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NO
 
 ### ControlUnit
 
-![ControlUnit](fig/control_unit.png)
+![[fig/control_unti.drawio.png]]
 
 Основные блоки Control Unit:
 
