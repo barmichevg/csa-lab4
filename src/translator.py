@@ -31,6 +31,7 @@ class TokenKind(Enum):
     WORD = "word"
     NUMBER = "number"
     PSTRING = "pstring"
+    PRINT_STRING = "print_string"
 
 
 @dataclass(frozen=True, slots=True)
@@ -276,6 +277,13 @@ class Compiler:
                 index += 1
                 continue
 
+            if token.kind == TokenKind.PRINT_STRING:
+                address = self.allocate_pstring(str(token.value))
+                self.emit(Opcode.LIT, address)
+                self.emit_fixup(Opcode.CALL, "type", token)
+                index += 1
+                continue
+
             if token.kind != TokenKind.WORD:
                 raise error_at(token, f"unsupported token kind: {token.kind}")
 
@@ -379,6 +387,12 @@ def tokenize(source: str) -> list[Token]:
             start_line, start_column = line, column
             text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
             tokens.append(Token(TokenKind.PSTRING, text, start_line, start_column))
+            continue
+
+        if source.startswith('."', index):
+            start_line, start_column = line, column
+            text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
+            tokens.append(Token(TokenKind.PRINT_STRING, text, start_line, start_column))
             continue
 
         start_index = index

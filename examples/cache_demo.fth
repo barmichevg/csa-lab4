@@ -14,7 +14,7 @@ begin
     10 =
 until
 
-p"CACHE " type
+."CACHE "
 sum @ print-int
 cr
 

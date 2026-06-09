@@ -12,7 +12,7 @@ variable username-ptr
 username 1 + username-ptr !
 input-init ei
 
-p"What is your name?\n" type
+."What is your name?\n"
 
 begin
     wait-char
@@ -29,5 +29,5 @@ begin
 until
 
 username-len @ username !
-p"Hello, " type username type p"!\n" type
+."Hello, " username type ."!\n"
 halt

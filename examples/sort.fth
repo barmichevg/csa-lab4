@@ -18,7 +18,7 @@ read-number n !
 
 n @ 1 < n @ 16 > + 0 >
 if
-    p"SORT TOO BIG\n" type
+    ."SORT TOO BIG\n"
     halt
 then
 

@@ -1,33 +1,90 @@
-\ prob1: сумма кратных 3 или 5 ниже введённого limit
+\ prob1: Project Euler problem 4 for input bounds low high
 
-variable limit
-variable last
-variable m3
-variable m5
-variable m15
+variable low
+variable high
+variable prefix
+variable factor
+variable factor-start
+variable palindrome
+variable quotient
 variable result
+
+variable __rev-x
+variable __rev-r
 
 :irq
     read-char ack-irq input-push iret
 ;
 
+: reverse-number
+    __rev-x !
+    0 __rev-r !
+    begin
+        __rev-x @ 0 >
+        if
+            __rev-r @ 10 * __rev-x @ 10 mod + __rev-r !
+            __rev-x @ 10 / __rev-x !
+            0
+        else
+            1
+        then
+    until
+    __rev-r @
+;
+
+: make-palindrome
+    dup 1000 * swap reverse-number +
+;
+
 input-init ei
 
-read-number limit !
-limit @ 1 - last !
+read-number low !
+read-number high !
+0 result !
+high @ high @ 11 mod - factor-start !
+high @ prefix !
 
-last @ 3 / m3 !
-last @ 5 / m5 !
-last @ 15 / m15 !
+begin
+    prefix @ make-palindrome palindrome !
+    factor-start @ factor !
 
-3 m3 @ * m3 @ 1 + * 2 /
-5 m5 @ * m5 @ 1 + * 2 /
-+
-15 m15 @ * m15 @ 1 + * 2 /
--
-result !
+    begin
+        factor @ high @ * palindrome @ <
+        if
+            1
+        else
+            palindrome @ factor @ mod 0 =
+            if
+                palindrome @ factor @ / quotient !
 
-p"PROB1 " type
+                quotient @ low @ 1 - >
+                quotient @ high @ 1 + <
+                *
+                if
+                    palindrome @ result !
+                then
+            then
+
+            result @ 0 >
+            if
+                1
+            else
+                factor @ 11 - factor !
+                factor @ low @ <
+            then
+        then
+    until
+
+    result @ 0 >
+    if
+        1
+    else
+        prefix @ 1 - prefix !
+        prefix @ low @ <
+    then
+until
+
+."PROB1 "
 result @ print-int
 cr
 

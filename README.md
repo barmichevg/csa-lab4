@@ -51,9 +51,11 @@ word           = integer
                | "=" | "<" | ">"
                | "@" | "!"
                | "ei" | "di" | "iret" | "halt"
-               | pstring ;
+               | pstring
+               | print-string ;
 
 pstring        = "p\"" , { string-char } , "\"" ;
+print-string   = ".\"" , { string-char } , "\"" ;
 name           = letter , { letter | digit | "-" | "_" | "?" | "!" } ;
 integer        = [ "-" ] , digit , { digit } ;
 comment        = "\\" , { any-char-except-newline } , newline ;
@@ -85,7 +87,7 @@ addr + 1 : 72   ('H')
 addr + 2 : 105  ('i')
 ```
 
-Слово `p"..."` размещает строку в памяти данных и кладёт её адрес на стек. Для вывода строки используется библиотечная процедура `type`.
+Слово `p"..."` размещает строку в памяти данных и кладёт её адрес на стек. Для вывода строки используется библиотечная процедура `type`. Слово `."..."` является синтаксическим сокращением: оно размещает Pascal-строку в памяти данных и сразу генерирует вызов `type`.
 
 #### Комментарии
 
@@ -267,6 +269,7 @@ data.bin.hex     человекочитаемый листинг данных
 - `if/else/then` компилируются через `jz` и `jmp`;
 - `begin/until` компилируется как метка начала цикла и условный переход назад;
 - `p"..."` размещает Pascal-строку в памяти данных и кладёт её адрес на стек;
+- `."..."` размещает Pascal-строку и сразу генерирует вызов `type`;
 - `type` печатает Pascal-строку, адрес которой лежит на вершине стека.
 
 ## Модель процессора
@@ -356,8 +359,8 @@ tag   = address // line_count
 Сравнение на `examples/cache_demo.fth`:
 
 ```text
-cache on : ticks=2283 instructions=526 hits=122 misses=20
-cache off: ticks=3381 instructions=526 uncached_reads=91 uncached_writes=51
+cache on : ticks=2299 instructions=530 hits=122 misses=20
+cache off: ticks=3397 instructions=530 uncached_reads=91 uncached_writes=51
 ```
 
 Количество исполненных инструкций одинаковое, но при включённом кэше требуется меньше тактов.
@@ -397,16 +400,16 @@ CI выполняет те же проверки в GitHub Actions.
 
 | Тест              | Назначение                                   | Ссылка                                                                                 |
 | ----------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `hello`           | печать Hello world через `pstr` и `type`     | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/hello.yml`           |
-| `cat`             | печать входных символов через trap-ввод      | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/cat.yml`             |
-| `hello_user_name` | ввод имени и приветствие                     | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/hello_user_name.yml` |
-| `sort`            | length-prefixed сортировка знаковых чисел    | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/sort.yml`            |
-| `wide`            | 64-битное сложение через 4 limb по 16 бит    | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/wide.yml`            |
-| `prob1`           | алгоритм варианта, limit приходит через ввод | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/prob1.yml`           |
-| `cache_demo`      | демонстрация кэша                            | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/cache_demo.yml`      |
-| `irq_echo`        | демонстрация trap-прерывания                 | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/irq_echo.yml`        |
-| `xt_demo`         | демонстрация execution token                 | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/xt_demo.yml`         |
-| `arithmetic`      | базовая арифметика                           | `https://github.com/<USER>/<REPO>/blob/<COMMIT_HASH>/tests/golden/arithmetic.yml`      |
+| `hello`           | печать Hello world через `pstr` и `type`     | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/hello.yml`           |
+| `cat`             | печать входных символов через trap-ввод      | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/cat.yml`             |
+| `hello_user_name` | ввод имени и приветствие                     | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/hello_user_name.yml` |
+| `sort`            | length-prefixed сортировка знаковых чисел    | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/sort.yml`            |
+| `wide`            | 64-битное сложение через 4 limb по 16 бит    | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/wide.yml`            |
+| `prob1`           | Project Euler Problem 4                      | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/prob1.yml`           |
+| `cache_demo`      | демонстрация кэша                            | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/cache_demo.yml`      |
+| `irq_echo`        | демонстрация trap-прерывания                 | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/irq_echo.yml`        |
+| `xt_demo`         | демонстрация execution token                 | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/xt_demo.yml`         |
+| `arithmetic`      | базовая арифметика                           | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/arithmetic.yml`      |
 
 ## Примеры работы
 
@@ -415,7 +418,7 @@ CI выполняет те же проверки в GitHub Actions.
 Исходная программа `examples/hello.fth`:
 
 ```forth
-p"Hello, world!\n" type
+."Hello, world!\n"
 halt
 ```
 
@@ -432,9 +435,9 @@ halt
 В памяти команд вывод строки представлен как загрузка адреса строки и вызов `type`:
 
 ```text
-0000007D - 01000046 - lit <addr_pstr>
-0000007E - 4200005B - call <addr_type>
-0000007F - FF000000 - halt
+00000104 - 01000056 - lit 86
+00000105 - 420000E2 - call 226
+00000106 - FF000000 - halt
 ```
 
 Запуск:
@@ -467,13 +470,13 @@ DEBUG machine:simulation TICK: 2 PC: 264 STATE: execute MODE: user TOS: - NOS: -
 
 | Алгоритм | LoC | code instr | code bytes | data cells | exec instr | ticks |
 |---|---:|---:|---:|---:|---:|---:|
-| `arithmetic` | 10 | 282 | 1128 | 108 | 274 | 1221 |
-| `cache_demo` | 21 | 299 | 1196 | 96 | 526 | 2283 |
-| `cat` | 15 | 283 | 1132 | 86 | 1551 | 6383 |
-| `hello` | 4 | 269 | 1076 | 101 | 398 | 1780 |
-| `hello_user_name` | 33 | 317 | 1268 | 151 | 4139 | 17329 |
-| `irq_echo` | 17 | 284 | 1136 | 87 | 221 | 892 |
-| `prob1` | 34 | 342 | 1368 | 99 | 1863 | 7937 |
-| `sort` | 68 | 413 | 1652 | 122 | 5809 | 24801 |
-| `wide` | 63 | 374 | 1496 | 120 | 401 | 1882 |
-| `xt_demo` | 14 | 281 | 1124 | 102 | 192 | 866 |
+| `arithmetic` | 10 | 278 | 1112 | 108 | 274 | 1221 |
+| `cache_demo` | 21 | 295 | 1180 | 96 | 530 | 2299 |
+| `cat` | 15 | 279 | 1116 | 86 | 1551 | 6383 |
+| `hello` | 4 | 265 | 1060 | 101 | 398 | 1780 |
+| `hello_user_name` | 33 | 313 | 1252 | 151 | 4139 | 17329 |
+| `irq_echo` | 17 | 280 | 1120 | 87 | 221 | 892 |
+| `prob1` | 34 | 338 | 1352 | 99 | 1867 | 7953 |
+| `sort` | 68 | 409 | 1636 | 122 | 5795 | 24745 |
+| `wide` | 64 | 370 | 1480 | 120 | 401 | 1882 |
+| `xt_demo` | 14 | 277 | 1108 | 102 | 192 | 866 |

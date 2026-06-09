@@ -1,4 +1,4 @@
-\ double precision: пара high:low, база low = 65536 (2^16)
+\ wide: 64-битное сложение, 4 limb по 16 бит, база 65536
 
 variable a0
 variable a1
@@ -57,9 +57,9 @@ r2 @ 0 =
 r3 @ 2 =
 *
 if
-    p"WIDE OK\n" type
+    ."WIDE OK\n"
 else
-    p"WIDE FAIL\n" type
+    ."WIDE FAIL\n"
 then
 
 halt

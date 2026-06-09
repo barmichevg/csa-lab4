@@ -1,4 +1,4 @@
 \ hello: pstr + type
 
-p"Hello, world!\n" type
+."Hello, world!\n"
 halt

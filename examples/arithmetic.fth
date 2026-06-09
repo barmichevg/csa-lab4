@@ -2,9 +2,9 @@
 
 2 3 + 4 * 5 - 15 =
 if
-    p"ARITH OK\n" type
+    ."ARITH OK\n"
 else
-    p"ARITH FAIL\n" type
+    ."ARITH FAIL\n"
 then
 
 halt

@@ -16,8 +16,7 @@ in_source: |-
   until
 
   halt
-in_stdin: |-
-  10 Z
+in_stdin: 10 Z
 out_code: |
   00000000 - 40000108 - jmp 264
   00000001 - 40000104 - jmp 260
