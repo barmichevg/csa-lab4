@@ -1,38 +1,65 @@
-\ double precision: пара high:low, база low = 10000
+\ double precision: пара high:low, база low = 65536 (2^16)
 
-variable ahi
-variable alo
-variable bhi
-variable blo
-variable rhi
-variable rlo
+variable a0
+variable a1
+variable a2
+variable a3
+
+variable b0
+variable b1
+variable b2
+variable b3
+
+variable r0
+variable r1
+variable r2
+variable r3
+
 variable carry
+variable tmp
 
-1234 ahi !
-9999 alo !
-8765 bhi !
-1 blo !
+: add-limb
+    + carry @ + tmp !
 
-alo @ blo @ + rlo !
+    tmp @ 65535 >
+    if
+        tmp @ 65536 - tmp !
+        1 carry !
+    else
+        0 carry !
+    then
 
-rlo @ 9999 >
-if
-    rlo @ 10000 - rlo !
-    1 carry !
-else
-    0 carry !
-then
+    tmp @
+;
 
-ahi @ bhi @ + carry @ + rhi !
+65535 a0 !
+65535 a1 !
+65535 a2 !
+1 a3 !
 
-rhi @ 10000 =
-rlo @ 0 =
+1 b0 !
+0 b1 !
+0 b2 !
+0 b3 !
+
+0 carry !
+
+a0 @ b0 @ add-limb r0 !
+a1 @ b1 @ add-limb r1 !
+a2 @ b2 @ add-limb r2 !
+a3 @ b3 @ add-limb r3 !
+
+r0 @ 0 =
+r1 @ 0 =
 *
-
+r2 @ 0 =
+*
+r3 @ 2 =
+*
 if
-    ."WIDE 10000:0\n"
+    p"WIDE OK\n" type
 else
-    ."WIDE FAIL\n"
+    p"WIDE FAIL\n" type
 then
 
 halt

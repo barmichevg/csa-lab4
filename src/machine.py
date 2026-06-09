@@ -80,7 +80,6 @@ class DataCache:
         self.lines = [CacheLine() for _ in range(self.line_count)]
 
     def read(self, address: int, backing_words: list[int]) -> tuple[int, bool]:
-        self._check_regular_address(address, backing_words)
         index = address % self.line_count
         tag = address // self.line_count
         line = self.lines[index]
@@ -97,7 +96,6 @@ class DataCache:
         return to_signed32(value), False
 
     def write(self, address: int, value: int, backing_words: list[int]) -> bool:
-        self._check_regular_address(address, backing_words)
         raw_value = to_word(value)
         index = address % self.line_count
         tag = address // self.line_count
@@ -114,11 +112,6 @@ class DataCache:
         line.value = raw_value
         backing_words[address] = raw_value
         return hit
-
-    @staticmethod
-    def _check_regular_address(address: int, backing_words: list[int]) -> None:
-        if not 0 <= address < len(backing_words):
-            raise MachineError(f"data memory address out of range: 0x{address:X}")
 
 
 @dataclass(slots=True)
@@ -611,6 +604,8 @@ class Machine:
     def _append_log(self, event: str, state: MicroState) -> None:
         mode = "irq" if self.in_irq else "user"
         instr = self._ir_text()
+        tos = str(self.data_stack[-1]) if self.data_stack else "-"
+        nos = str(self.data_stack[-2]) if len(self.data_stack) > 1 else "-"
         stack = "[" + ",".join(str(value) for value in self.data_stack[-6:]) + "]"
         rstack = "[" + ",".join(f"0x{value:08X}" for value in self.return_stack[-6:]) + "]"
         self.log_lines.append(
@@ -619,6 +614,10 @@ class Machine:
             f"PC: {self.pc:5} "
             f"STATE: {state.value:<9} "
             f"MODE: {mode:<4} "
+            f"TOS:{tos:>8} "
+            f"NOS:{nos:>8} "
+            f"DS_DEPTH:{len(self.data_stack):3} "
+            f"RS_DEPTH:{len(self.return_stack):3} "
             f"DS: {stack:<16} "
             f"RS: {rstack:<16} "
             f"IE:{int(self.irq_enable)} "

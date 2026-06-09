@@ -4,11 +4,6 @@ buffer username 32
 variable username-len
 variable username-ptr
 
-: wait-char
-    begin input-ready? until
-    input-pop
-;
-
 :irq
     read-char ack-irq input-push iret
 ;
@@ -17,7 +12,7 @@ variable username-ptr
 username 1 + username-ptr !
 input-init ei
 
-."What is your name?\n"
+p"What is your name?\n" type
 
 begin
     wait-char
@@ -34,5 +29,5 @@ begin
 until
 
 username-len @ username !
-."Hello, " username type ."!\n"
+p"Hello, " type username type p"!\n" type
 halt

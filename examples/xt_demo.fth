@@ -6,9 +6,9 @@
 
 10 ' inc execute 11 =
 if
-    ."XT OK\n"
+    p"XT OK\n" type
 else
-    ."XT FAIL\n"
+    p"XT FAIL\n" type
 then
 
 halt

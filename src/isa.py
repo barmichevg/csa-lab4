@@ -28,7 +28,6 @@ MMIO_IN_STATUS = 0xFFF1
 MMIO_OUT_DATA = 0xFFF2
 MMIO_IRQ_ACK = 0xFFF3
 MMIO_READ_ONLY = {MMIO_IN_DATA, MMIO_IN_STATUS}
-MMIO_ADDRESSES = {MMIO_IN_DATA, MMIO_IN_STATUS, MMIO_OUT_DATA, MMIO_IRQ_ACK}
 
 
 class Opcode(IntEnum):
@@ -41,29 +40,35 @@ class Opcode(IntEnum):
     DROP = 0x03
     SWAP = 0x04
     OVER = 0x05
+
     # Арифметика
     ADD = 0x10
     SUB = 0x11
     MUL = 0x12
     DIV = 0x13
     MOD = 0x14
+
     # Сравнения
     EQ = 0x20
     LT = 0x21
     GT = 0x22
+
     # Память данных
     LOAD = 0x30
     STORE = 0x31
+
     # Управление потоком
     JMP = 0x40
     JZ = 0x41
     CALL = 0x42
     RET = 0x43
     EXECUTE = 0x44
+
     # Прерывания
     EI = 0x50
     DI = 0x51
     IRET = 0x52
+
     # Останов
     HALT = 0xFF
 

@@ -1,10 +1,5 @@
 \ cat: печать ввода до '\n'
 
-: wait-char
-    begin input-ready? until
-    input-pop
-;
-
 :irq
     read-char ack-irq input-push iret
 ;

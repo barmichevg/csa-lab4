@@ -31,7 +31,6 @@ class TokenKind(Enum):
     WORD = "word"
     NUMBER = "number"
     PSTRING = "pstring"
-    PRINT_STRING = "print_string"
 
 
 @dataclass(frozen=True, slots=True)
@@ -206,13 +205,9 @@ class Compiler:
         self.instructions.append(Instruction(opcode, arg))
         return index
 
-    def emit_call_fixup(self, label: str, token: Token) -> None:
-        index = self.emit(Opcode.CALL, 0)
-        self.fixups.append(Fixup(index, label, token, Opcode.CALL))
-
-    def emit_lit_label_fixup(self, label: str, token: Token) -> None:
-        index = self.emit(Opcode.LIT, 0)
-        self.fixups.append(Fixup(index, label, token, Opcode.LIT))
+    def emit_fixup(self, opcode: Opcode, label: str, token: Token) -> None:
+        index = self.emit(opcode, 0)
+        self.fixups.append(Fixup(index, label, token, opcode))
 
     def patch_instruction_arg(self, instruction_index: int, arg: int) -> None:
         old = self.instructions[instruction_index]
@@ -281,13 +276,6 @@ class Compiler:
                 index += 1
                 continue
 
-            if token.kind == TokenKind.PRINT_STRING:
-                address = self.allocate_pstring(str(token.value))
-                self.emit(Opcode.LIT, address)
-                self.emit_call_fixup("type", token)
-                index += 1
-                continue
-
             if token.kind != TokenKind.WORD:
                 raise error_at(token, f"unsupported token kind: {token.kind}")
 
@@ -296,7 +284,7 @@ class Compiler:
             if word == "'":
                 name_token = require_token(tokens, index + 1, "expected word name after execution-token quote")
                 name = require_word_name(name_token)
-                self.emit_lit_label_fixup(name, name_token)
+                self.emit_fixup(Opcode.LIT, name, name_token)
                 index += 2
                 continue
 
@@ -352,7 +340,7 @@ class Compiler:
                 index += 1
                 continue
 
-            self.emit_call_fixup(word, token)
+            self.emit_fixup(Opcode.CALL, word, token)
             index += 1
 
         if if_stack:
@@ -391,12 +379,6 @@ def tokenize(source: str) -> list[Token]:
             start_line, start_column = line, column
             text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
             tokens.append(Token(TokenKind.PSTRING, text, start_line, start_column))
-            continue
-
-        if source.startswith('."', index):
-            start_line, start_column = line, column
-            text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
-            tokens.append(Token(TokenKind.PRINT_STRING, text, start_line, start_column))
             continue
 
         start_index = index

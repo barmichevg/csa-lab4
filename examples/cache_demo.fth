@@ -14,11 +14,8 @@ begin
     10 =
 until
 
-sum @ 420 =
-if
-    ."CACHE 420\n"
-else
-    ."CACHE FAIL\n"
-then
+p"CACHE " type
+sum @ print-int
+cr
 
 halt

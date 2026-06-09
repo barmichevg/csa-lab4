@@ -1,4 +1,4 @@
-\ hello: печать Hello, world!
+\ hello: pstr + type
 
-."Hello, world!\n"
+p"Hello, world!\n" type
 halt

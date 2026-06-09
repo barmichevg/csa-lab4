@@ -1,11 +1,6 @@
 in_source: |-
   \ cat: печать ввода до '\n'
 
-  : wait-char
-      begin input-ready? until
-      input-pop
-  ;
-
   :irq
       read-char ack-irq input-push iret
   ;
@@ -27,8 +22,8 @@ in_stdin: |-
   5000 o
   6000 \n
 out_code: |
-  00000000 - 40000085 - jmp 133
-  00000001 - 40000081 - jmp 129
+  00000000 - 40000108 - jmp 264
+  00000001 - 40000104 - jmp 260
   00000002 - 0100FFF2 - lit 65522
   00000003 - 31000000 - store
   00000004 - 43000000 - ret
@@ -118,63 +113,194 @@ out_code: |
   00000058 - 4000005A - jmp 90
   00000059 - 01000000 - lit 0
   0000005A - 43000000 - ret
-  0000005B - 02000000 - dup
-  0000005C - 30000000 - load
-  0000005D - 01000001 - lit 1
-  0000005E - 31000000 - store
-  0000005F - 01000001 - lit 1
-  00000060 - 10000000 - add
-  00000061 - 01000000 - lit 0
-  00000062 - 31000000 - store
-  00000063 - 01000001 - lit 1
-  00000064 - 30000000 - load
-  00000065 - 01000000 - lit 0
-  00000066 - 22000000 - gt
-  00000067 - 4100007A - jz 122
-  00000068 - 01000000 - lit 0
-  00000069 - 30000000 - load
-  0000006A - 30000000 - load
-  0000006B - 42000002 - call 2
-  0000006C - 01000000 - lit 0
-  0000006D - 30000000 - load
-  0000006E - 01000001 - lit 1
-  0000006F - 10000000 - add
-  00000070 - 01000000 - lit 0
-  00000071 - 31000000 - store
-  00000072 - 01000001 - lit 1
-  00000073 - 30000000 - load
-  00000074 - 01000001 - lit 1
-  00000075 - 11000000 - sub
-  00000076 - 01000001 - lit 1
-  00000077 - 31000000 - store
-  00000078 - 01000000 - lit 0
-  00000079 - 4000007B - jmp 123
-  0000007A - 01000001 - lit 1
-  0000007B - 41000063 - jz 99
-  0000007C - 43000000 - ret
-  0000007D - 4200001C - call 28
-  0000007E - 4100007D - jz 125
-  0000007F - 4200003C - call 60
-  00000080 - 43000000 - ret
-  00000081 - 4200000B - call 11
-  00000082 - 4200000E - call 14
-  00000083 - 42000021 - call 33
-  00000084 - 52000000 - iret
-  00000085 - 42000012 - call 18
-  00000086 - 50000000 - ei
-  00000087 - 4200007D - call 125
-  00000088 - 02000000 - dup
-  00000089 - 0100000A - lit 10
-  0000008A - 20000000 - eq
-  0000008B - 4100008F - jz 143
-  0000008C - 42000002 - call 2
-  0000008D - 01000001 - lit 1
-  0000008E - 40000091 - jmp 145
-  0000008F - 42000002 - call 2
-  00000090 - 01000000 - lit 0
-  00000091 - 41000087 - jz 135
-  00000092 - FF000000 - halt
-  00000093 - FF000000 - halt
+  0000005B - 4200001C - call 28
+  0000005C - 4100005B - jz 91
+  0000005D - 4200003C - call 60
+  0000005E - 43000000 - ret
+  0000005F - 02000000 - dup
+  00000060 - 0100002F - lit 47
+  00000061 - 22000000 - gt
+  00000062 - 04000000 - swap
+  00000063 - 0100003A - lit 58
+  00000064 - 21000000 - lt
+  00000065 - 12000000 - mul
+  00000066 - 43000000 - ret
+  00000067 - 01000000 - lit 0
+  00000068 - 01000046 - lit 70
+  00000069 - 31000000 - store
+  0000006A - 01000000 - lit 0
+  0000006B - 01000047 - lit 71
+  0000006C - 31000000 - store
+  0000006D - 01000001 - lit 1
+  0000006E - 01000048 - lit 72
+  0000006F - 31000000 - store
+  00000070 - 4200005B - call 91
+  00000071 - 01000049 - lit 73
+  00000072 - 31000000 - store
+  00000073 - 01000049 - lit 73
+  00000074 - 30000000 - load
+  00000075 - 0100002D - lit 45
+  00000076 - 20000000 - eq
+  00000077 - 01000047 - lit 71
+  00000078 - 30000000 - load
+  00000079 - 01000000 - lit 0
+  0000007A - 20000000 - eq
+  0000007B - 12000000 - mul
+  0000007C - 41000082 - jz 130
+  0000007D - 01FFFFFF - lit -1
+  0000007E - 01000048 - lit 72
+  0000007F - 31000000 - store
+  00000080 - 01000000 - lit 0
+  00000081 - 40000098 - jmp 152
+  00000082 - 01000049 - lit 73
+  00000083 - 30000000 - load
+  00000084 - 4200005F - call 95
+  00000085 - 41000096 - jz 150
+  00000086 - 01000046 - lit 70
+  00000087 - 30000000 - load
+  00000088 - 0100000A - lit 10
+  00000089 - 12000000 - mul
+  0000008A - 01000049 - lit 73
+  0000008B - 30000000 - load
+  0000008C - 01000030 - lit 48
+  0000008D - 11000000 - sub
+  0000008E - 10000000 - add
+  0000008F - 01000046 - lit 70
+  00000090 - 31000000 - store
+  00000091 - 01000001 - lit 1
+  00000092 - 01000047 - lit 71
+  00000093 - 31000000 - store
+  00000094 - 01000000 - lit 0
+  00000095 - 40000098 - jmp 152
+  00000096 - 01000047 - lit 71
+  00000097 - 30000000 - load
+  00000098 - 41000070 - jz 112
+  00000099 - 01000046 - lit 70
+  0000009A - 30000000 - load
+  0000009B - 01000048 - lit 72
+  0000009C - 30000000 - load
+  0000009D - 12000000 - mul
+  0000009E - 43000000 - ret
+  0000009F - 02000000 - dup
+  000000A0 - 01000000 - lit 0
+  000000A1 - 21000000 - lt
+  000000A2 - 410000A7 - jz 167
+  000000A3 - 0100002D - lit 45
+  000000A4 - 42000002 - call 2
+  000000A5 - 01FFFFFF - lit -1
+  000000A6 - 12000000 - mul
+  000000A7 - 01000054 - lit 84
+  000000A8 - 31000000 - store
+  000000A9 - 01000054 - lit 84
+  000000AA - 30000000 - load
+  000000AB - 01000000 - lit 0
+  000000AC - 20000000 - eq
+  000000AD - 410000B1 - jz 177
+  000000AE - 01000030 - lit 48
+  000000AF - 42000002 - call 2
+  000000B0 - 400000E1 - jmp 225
+  000000B1 - 01000000 - lit 0
+  000000B2 - 01000055 - lit 85
+  000000B3 - 31000000 - store
+  000000B4 - 01000054 - lit 84
+  000000B5 - 30000000 - load
+  000000B6 - 0100000A - lit 10
+  000000B7 - 14000000 - mod
+  000000B8 - 01000030 - lit 48
+  000000B9 - 10000000 - add
+  000000BA - 0100004A - lit 74
+  000000BB - 01000055 - lit 85
+  000000BC - 30000000 - load
+  000000BD - 10000000 - add
+  000000BE - 31000000 - store
+  000000BF - 01000055 - lit 85
+  000000C0 - 30000000 - load
+  000000C1 - 01000001 - lit 1
+  000000C2 - 10000000 - add
+  000000C3 - 01000055 - lit 85
+  000000C4 - 31000000 - store
+  000000C5 - 01000054 - lit 84
+  000000C6 - 30000000 - load
+  000000C7 - 0100000A - lit 10
+  000000C8 - 13000000 - div
+  000000C9 - 01000054 - lit 84
+  000000CA - 31000000 - store
+  000000CB - 01000054 - lit 84
+  000000CC - 30000000 - load
+  000000CD - 01000000 - lit 0
+  000000CE - 20000000 - eq
+  000000CF - 410000B4 - jz 180
+  000000D0 - 01000055 - lit 85
+  000000D1 - 30000000 - load
+  000000D2 - 01000001 - lit 1
+  000000D3 - 11000000 - sub
+  000000D4 - 01000055 - lit 85
+  000000D5 - 31000000 - store
+  000000D6 - 0100004A - lit 74
+  000000D7 - 01000055 - lit 85
+  000000D8 - 30000000 - load
+  000000D9 - 10000000 - add
+  000000DA - 30000000 - load
+  000000DB - 42000002 - call 2
+  000000DC - 01000055 - lit 85
+  000000DD - 30000000 - load
+  000000DE - 01000000 - lit 0
+  000000DF - 20000000 - eq
+  000000E0 - 410000D0 - jz 208
+  000000E1 - 43000000 - ret
+  000000E2 - 02000000 - dup
+  000000E3 - 30000000 - load
+  000000E4 - 01000001 - lit 1
+  000000E5 - 31000000 - store
+  000000E6 - 01000001 - lit 1
+  000000E7 - 10000000 - add
+  000000E8 - 01000000 - lit 0
+  000000E9 - 31000000 - store
+  000000EA - 01000001 - lit 1
+  000000EB - 30000000 - load
+  000000EC - 01000000 - lit 0
+  000000ED - 22000000 - gt
+  000000EE - 41000101 - jz 257
+  000000EF - 01000000 - lit 0
+  000000F0 - 30000000 - load
+  000000F1 - 30000000 - load
+  000000F2 - 42000002 - call 2
+  000000F3 - 01000000 - lit 0
+  000000F4 - 30000000 - load
+  000000F5 - 01000001 - lit 1
+  000000F6 - 10000000 - add
+  000000F7 - 01000000 - lit 0
+  000000F8 - 31000000 - store
+  000000F9 - 01000001 - lit 1
+  000000FA - 30000000 - load
+  000000FB - 01000001 - lit 1
+  000000FC - 11000000 - sub
+  000000FD - 01000001 - lit 1
+  000000FE - 31000000 - store
+  000000FF - 01000000 - lit 0
+  00000100 - 40000102 - jmp 258
+  00000101 - 01000001 - lit 1
+  00000102 - 410000EA - jz 234
+  00000103 - 43000000 - ret
+  00000104 - 4200000B - call 11
+  00000105 - 4200000E - call 14
+  00000106 - 42000021 - call 33
+  00000107 - 52000000 - iret
+  00000108 - 42000012 - call 18
+  00000109 - 50000000 - ei
+  0000010A - 4200005B - call 91
+  0000010B - 02000000 - dup
+  0000010C - 0100000A - lit 10
+  0000010D - 20000000 - eq
+  0000010E - 41000112 - jz 274
+  0000010F - 42000002 - call 2
+  00000110 - 01000001 - lit 1
+  00000111 - 40000114 - jmp 276
+  00000112 - 42000002 - call 2
+  00000113 - 01000000 - lit 0
+  00000114 - 4100010A - jz 266
+  00000115 - FF000000 - halt
+  00000116 - FF000000 - halt
 out_data: |
   00000000 - 00000000 - 0
   00000001 - 00000000 - 0
@@ -246,310 +372,326 @@ out_data: |
   00000043 - 00000000 - 0
   00000044 - 00000000 - 0
   00000045 - 00000000 - 0
+  00000046 - 00000000 - 0
+  00000047 - 00000000 - 0
+  00000048 - 00000000 - 0
+  00000049 - 00000000 - 0
+  0000004A - 00000000 - 0
+  0000004B - 00000000 - 0
+  0000004C - 00000000 - 0
+  0000004D - 00000000 - 0
+  0000004E - 00000000 - 0
+  0000004F - 00000000 - 0
+  00000050 - 00000000 - 0
+  00000051 - 00000000 - 0
+  00000052 - 00000000 - 0
+  00000053 - 00000000 - 0
+  00000054 - 00000000 - 0
+  00000055 - 00000000 - 0
 out_stdout: |
-  program: program.bin (148 instructions)
-  data:    data.bin (70 cells)
+  program: program.bin (279 instructions)
+  data:    data.bin (86 cells)
   ============================================================
   Hello
   ticks: 6383
 out_log: |
-  DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 133 [fetch @00000000]
-  DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 133 [decode jmp 133]
-  DEBUG   machine:simulation    TICK:     2 PC:   133 STATE: execute   MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 133 [jmp 0x00000085]
-  DEBUG   machine:simulation    TICK:     3 PC:   133 STATE: irq_check MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 133 [no irq]
-  DEBUG   machine:simulation    TICK:     4 PC:   134 STATE: fetch     MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	call 18 [fetch @00000085]
-  DEBUG   machine:simulation    TICK:     5 PC:   134 STATE: decode    MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/0	call 18 [decode call 18]
-  DEBUG   machine:simulation    TICK:     6 PC:    18 STATE: execute   MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	call 18 [call 0x00000012]
-  DEBUG   machine:simulation    TICK:     7 PC:    18 STATE: irq_check MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	call 18 [no irq]
-  DEBUG   machine:simulation    TICK:     8 PC:    19 STATE: fetch     MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 0 [fetch @00000012]
-  DEBUG   machine:simulation    TICK:     9 PC:    19 STATE: decode    MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 0 [decode lit 0]
-  DEBUG   machine:simulation    TICK:    10 PC:    19 STATE: execute   MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 0 [push 0]
-  DEBUG   machine:simulation    TICK:    11 PC:    19 STATE: irq_check MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 0 [no irq]
-  DEBUG   machine:simulation    TICK:    12 PC:    20 STATE: fetch     MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 66 [fetch @00000013]
-  DEBUG   machine:simulation    TICK:    13 PC:    20 STATE: decode    MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 66 [decode lit 66]
-  DEBUG   machine:simulation    TICK:    14 PC:    20 STATE: execute   MODE: user DS: [0,66]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 66 [push 66]
-  DEBUG   machine:simulation    TICK:    15 PC:    20 STATE: irq_check MODE: user DS: [0,66]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	lit 66 [no irq]
-  DEBUG   machine:simulation    TICK:    16 PC:    21 STATE: fetch     MODE: user DS: [0,66]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	store [fetch @00000014]
-  DEBUG   machine:simulation    TICK:    17 PC:    21 STATE: decode    MODE: user DS: [0,66]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/0	store [decode store]
-  DEBUG   machine:simulation    TICK:    18 PC:    21 STATE: execute   MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_miss write 0 -> [0x0042]; wait=9]
-  DEBUG   machine:simulation    TICK:    19 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    20 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    21 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    22 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    23 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    24 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    25 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    26 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=1]
-  DEBUG   machine:simulation    TICK:    27 PC:    21 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [cache_fill_done write 0 -> [0x0042]]
-  DEBUG   machine:simulation    TICK:    28 PC:    21 STATE: irq_check MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [no irq]
-  DEBUG   machine:simulation    TICK:    29 PC:    22 STATE: fetch     MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 0 [fetch @00000015]
-  DEBUG   machine:simulation    TICK:    30 PC:    22 STATE: decode    MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 0 [decode lit 0]
-  DEBUG   machine:simulation    TICK:    31 PC:    22 STATE: execute   MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 0 [push 0]
-  DEBUG   machine:simulation    TICK:    32 PC:    22 STATE: irq_check MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 0 [no irq]
-  DEBUG   machine:simulation    TICK:    33 PC:    23 STATE: fetch     MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 67 [fetch @00000016]
-  DEBUG   machine:simulation    TICK:    34 PC:    23 STATE: decode    MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 67 [decode lit 67]
-  DEBUG   machine:simulation    TICK:    35 PC:    23 STATE: execute   MODE: user DS: [0,67]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 67 [push 67]
-  DEBUG   machine:simulation    TICK:    36 PC:    23 STATE: irq_check MODE: user DS: [0,67]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	lit 67 [no irq]
-  DEBUG   machine:simulation    TICK:    37 PC:    24 STATE: fetch     MODE: user DS: [0,67]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [fetch @00000017]
-  DEBUG   machine:simulation    TICK:    38 PC:    24 STATE: decode    MODE: user DS: [0,67]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/1	store [decode store]
-  DEBUG   machine:simulation    TICK:    39 PC:    24 STATE: execute   MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_miss write 0 -> [0x0043]; wait=9]
-  DEBUG   machine:simulation    TICK:    40 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    41 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    42 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    43 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    44 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    45 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    46 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    47 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=1]
-  DEBUG   machine:simulation    TICK:    48 PC:    24 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [cache_fill_done write 0 -> [0x0043]]
-  DEBUG   machine:simulation    TICK:    49 PC:    24 STATE: irq_check MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [no irq]
-  DEBUG   machine:simulation    TICK:    50 PC:    25 STATE: fetch     MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 0 [fetch @00000018]
-  DEBUG   machine:simulation    TICK:    51 PC:    25 STATE: decode    MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 0 [decode lit 0]
-  DEBUG   machine:simulation    TICK:    52 PC:    25 STATE: execute   MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 0 [push 0]
-  DEBUG   machine:simulation    TICK:    53 PC:    25 STATE: irq_check MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 0 [no irq]
-  DEBUG   machine:simulation    TICK:    54 PC:    26 STATE: fetch     MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 68 [fetch @00000019]
-  DEBUG   machine:simulation    TICK:    55 PC:    26 STATE: decode    MODE: user DS: [0]              RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:    56 PC:    26 STATE: execute   MODE: user DS: [0,68]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:    57 PC:    26 STATE: irq_check MODE: user DS: [0,68]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:    58 PC:    27 STATE: fetch     MODE: user DS: [0,68]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [fetch @0000001A]
-  DEBUG   machine:simulation    TICK:    59 PC:    27 STATE: decode    MODE: user DS: [0,68]           RS: [0x00000086]     IE:0 IP:0 CACHE:0/2	store [decode store]
-  DEBUG   machine:simulation    TICK:    60 PC:    27 STATE: execute   MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_miss write 0 -> [0x0044]; wait=9]
-  DEBUG   machine:simulation    TICK:    61 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    62 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    63 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    64 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    65 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    66 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    67 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    68 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=1]
-  DEBUG   machine:simulation    TICK:    69 PC:    27 STATE: mem_wait  MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [cache_fill_done write 0 -> [0x0044]]
-  DEBUG   machine:simulation    TICK:    70 PC:    27 STATE: irq_check MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	store [no irq]
-  DEBUG   machine:simulation    TICK:    71 PC:    28 STATE: fetch     MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	ret [fetch @0000001B]
-  DEBUG   machine:simulation    TICK:    72 PC:    28 STATE: decode    MODE: user DS: []               RS: [0x00000086]     IE:0 IP:0 CACHE:0/3	ret [decode ret]
-  DEBUG   machine:simulation    TICK:    73 PC:   134 STATE: execute   MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ret [ret 0x00000086]
-  DEBUG   machine:simulation    TICK:    74 PC:   134 STATE: irq_check MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ret [no irq]
-  DEBUG   machine:simulation    TICK:    75 PC:   135 STATE: fetch     MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ei [fetch @00000086]
-  DEBUG   machine:simulation    TICK:    76 PC:   135 STATE: decode    MODE: user DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ei [decode ei]
-  DEBUG   machine:simulation    TICK:    77 PC:   135 STATE: execute   MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:0/3	ei [ei]
-  DEBUG   machine:simulation    TICK:    78 PC:   135 STATE: irq_check MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:0/3	ei [no irq]
-  DEBUG   machine:simulation    TICK:    79 PC:   136 STATE: fetch     MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:0/3	call 125 [fetch @00000087]
-  DEBUG   machine:simulation    TICK:    80 PC:   136 STATE: decode    MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:0/3	call 125 [decode call 125]
-  DEBUG   machine:simulation    TICK:    81 PC:   125 STATE: execute   MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:0/3	call 125 [call 0x0000007D]
-  DEBUG   machine:simulation    TICK:    82 PC:   125 STATE: irq_check MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:0/3	call 125 [no irq]
-  DEBUG   machine:simulation    TICK:    83 PC:   126 STATE: fetch     MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:0/3	call 28 [fetch @0000007D]
-  DEBUG   machine:simulation    TICK:    84 PC:   126 STATE: decode    MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:0/3	call 28 [decode call 28]
-  DEBUG   machine:simulation    TICK:    85 PC:    28 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	call 28 [call 0x0000001C]
-  DEBUG   machine:simulation    TICK:    86 PC:    28 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	call 28 [no irq]
-  DEBUG   machine:simulation    TICK:    87 PC:    29 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	lit 68 [fetch @0000001C]
-  DEBUG   machine:simulation    TICK:    88 PC:    29 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:    89 PC:    29 STATE: execute   MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:    90 PC:    29 STATE: irq_check MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:    91 PC:    30 STATE: fetch     MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	load [fetch @0000001D]
-  DEBUG   machine:simulation    TICK:    92 PC:    30 STATE: decode    MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:0/3	load [decode load]
-  DEBUG   machine:simulation    TICK:    93 PC:    30 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	load [cache_hit read [0x0044] -> 0]
-  DEBUG   machine:simulation    TICK:    94 PC:    30 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	load [no irq]
-  DEBUG   machine:simulation    TICK:    95 PC:    31 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 0 [fetch @0000001E]
-  DEBUG   machine:simulation    TICK:    96 PC:    31 STATE: decode    MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 0 [decode lit 0]
-  DEBUG   machine:simulation    TICK:    97 PC:    31 STATE: execute   MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 0 [push 0]
-  DEBUG   machine:simulation    TICK:    98 PC:    31 STATE: irq_check MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 0 [no irq]
-  DEBUG   machine:simulation    TICK:    99 PC:    32 STATE: fetch     MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	gt [fetch @0000001F]
-  DEBUG   machine:simulation    TICK:   100 PC:    32 STATE: decode    MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	gt [decode gt]
-  DEBUG   machine:simulation    TICK:   101 PC:    32 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	gt [gt 0 0 -> 0]
-  DEBUG   machine:simulation    TICK:   102 PC:    32 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	gt [no irq]
-  DEBUG   machine:simulation    TICK:   103 PC:    33 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	ret [fetch @00000020]
-  DEBUG   machine:simulation    TICK:   104 PC:    33 STATE: decode    MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	ret [decode ret]
-  DEBUG   machine:simulation    TICK:   105 PC:   126 STATE: execute   MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	ret [ret 0x0000007E]
-  DEBUG   machine:simulation    TICK:   106 PC:   126 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	ret [no irq]
-  DEBUG   machine:simulation    TICK:   107 PC:   127 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	jz 125 [fetch @0000007E]
-  DEBUG   machine:simulation    TICK:   108 PC:   127 STATE: decode    MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	jz 125 [decode jz 125]
-  DEBUG   machine:simulation    TICK:   109 PC:   125 STATE: execute   MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	jz 125 [jz taken 0x0000007D]
-  DEBUG   machine:simulation    TICK:   110 PC:   125 STATE: irq_check MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	jz 125 [no irq]
-  DEBUG   machine:simulation    TICK:   111 PC:   126 STATE: fetch     MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	call 28 [fetch @0000007D]
-  DEBUG   machine:simulation    TICK:   112 PC:   126 STATE: decode    MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:1/3	call 28 [decode call 28]
-  DEBUG   machine:simulation    TICK:   113 PC:    28 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	call 28 [call 0x0000001C]
-  DEBUG   machine:simulation    TICK:   114 PC:    28 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	call 28 [no irq]
-  DEBUG   machine:simulation    TICK:   115 PC:    29 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 68 [fetch @0000001C]
-  DEBUG   machine:simulation    TICK:   116 PC:    29 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:   117 PC:    29 STATE: execute   MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:   118 PC:    29 STATE: irq_check MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:   119 PC:    30 STATE: fetch     MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	load [fetch @0000001D]
-  DEBUG   machine:simulation    TICK:   120 PC:    30 STATE: decode    MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:1/3	load [decode load]
-  DEBUG   machine:simulation    TICK:   121 PC:    30 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	load [cache_hit read [0x0044] -> 0]
-  DEBUG   machine:simulation    TICK:   122 PC:    30 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	load [no irq]
-  DEBUG   machine:simulation    TICK:   123 PC:    31 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 0 [fetch @0000001E]
-  DEBUG   machine:simulation    TICK:   124 PC:    31 STATE: decode    MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 0 [decode lit 0]
-  DEBUG   machine:simulation    TICK:   125 PC:    31 STATE: execute   MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 0 [push 0]
-  DEBUG   machine:simulation    TICK:   126 PC:    31 STATE: irq_check MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 0 [no irq]
-  DEBUG   machine:simulation    TICK:   127 PC:    32 STATE: fetch     MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	gt [fetch @0000001F]
-  DEBUG   machine:simulation    TICK:   128 PC:    32 STATE: decode    MODE: user DS: [0,0]            RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	gt [decode gt]
-  DEBUG   machine:simulation    TICK:   129 PC:    32 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	gt [gt 0 0 -> 0]
-  DEBUG   machine:simulation    TICK:   130 PC:    32 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	gt [no irq]
-  DEBUG   machine:simulation    TICK:   131 PC:    33 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	ret [fetch @00000020]
-  DEBUG   machine:simulation    TICK:   132 PC:    33 STATE: decode    MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	ret [decode ret]
-  DEBUG   machine:simulation    TICK:   133 PC:   126 STATE: execute   MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	ret [ret 0x0000007E]
-  DEBUG   machine:simulation    TICK:   134 PC:   126 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	ret [no irq]
-  DEBUG   machine:simulation    TICK:   135 PC:   127 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	jz 125 [fetch @0000007E]
-  DEBUG   machine:simulation    TICK:   136 PC:   127 STATE: decode    MODE: user DS: [0]              RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	jz 125 [decode jz 125]
-  DEBUG   machine:simulation    TICK:   137 PC:   125 STATE: execute   MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	jz 125 [jz taken 0x0000007D]
-  DEBUG   machine:simulation    TICK:   138 PC:   125 STATE: irq_check MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	jz 125 [no irq]
-  DEBUG   machine:simulation    TICK:   139 PC:   126 STATE: fetch     MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	call 28 [fetch @0000007D]
-  DEBUG   machine:simulation    TICK:   140 PC:   126 STATE: decode    MODE: user DS: []               RS: [0x00000088]     IE:1 IP:0 CACHE:2/3	call 28 [decode call 28]
-  DEBUG   machine:simulation    TICK:   141 PC:    28 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	call 28 [call 0x0000001C]
-  DEBUG   machine:simulation    TICK:   142 PC:    28 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	call 28 [no irq]
-  DEBUG   machine:simulation    TICK:   143 PC:    29 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 68 [fetch @0000001C]
-  DEBUG   machine:simulation    TICK:   144 PC:    29 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:   145 PC:    29 STATE: execute   MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:   146 PC:    29 STATE: irq_check MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:   147 PC:    30 STATE: fetch     MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	load [fetch @0000001D]
-  DEBUG   machine:simulation    TICK:   148 PC:    30 STATE: decode    MODE: user DS: [68]             RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:2/3	load [decode load]
-  DEBUG   machine:simulation    TICK:   149 PC:    30 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x0000007E] IE:1 IP:0 CACHE:3/3	load [cache_hit read [0x0044] -> 0]
+  DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 264 [fetch @00000000]
+  DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 264 [decode jmp 264]
+  DEBUG   machine:simulation    TICK:     2 PC:   264 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 264 [jmp 0x00000108]
+  DEBUG   machine:simulation    TICK:     3 PC:   264 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 264 [no irq]
+  DEBUG   machine:simulation    TICK:     4 PC:   265 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	call 18 [fetch @00000108]
+  DEBUG   machine:simulation    TICK:     5 PC:   265 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	call 18 [decode call 18]
+  DEBUG   machine:simulation    TICK:     6 PC:    18 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	call 18 [call 0x00000012]
+  DEBUG   machine:simulation    TICK:     7 PC:    18 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	call 18 [no irq]
+  DEBUG   machine:simulation    TICK:     8 PC:    19 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 0 [fetch @00000012]
+  DEBUG   machine:simulation    TICK:     9 PC:    19 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 0 [decode lit 0]
+  DEBUG   machine:simulation    TICK:    10 PC:    19 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 0 [push 0]
+  DEBUG   machine:simulation    TICK:    11 PC:    19 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 0 [no irq]
+  DEBUG   machine:simulation    TICK:    12 PC:    20 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 66 [fetch @00000013]
+  DEBUG   machine:simulation    TICK:    13 PC:    20 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 66 [decode lit 66]
+  DEBUG   machine:simulation    TICK:    14 PC:    20 STATE: execute   MODE: user TOS:      66 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,66]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 66 [push 66]
+  DEBUG   machine:simulation    TICK:    15 PC:    20 STATE: irq_check MODE: user TOS:      66 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,66]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	lit 66 [no irq]
+  DEBUG   machine:simulation    TICK:    16 PC:    21 STATE: fetch     MODE: user TOS:      66 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,66]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	store [fetch @00000014]
+  DEBUG   machine:simulation    TICK:    17 PC:    21 STATE: decode    MODE: user TOS:      66 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,66]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/0	store [decode store]
+  DEBUG   machine:simulation    TICK:    18 PC:    21 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_miss write 0 -> [0x0042]; wait=9]
+  DEBUG   machine:simulation    TICK:    19 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    20 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    21 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    22 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    23 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    24 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    25 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    26 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    27 PC:    21 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [cache_fill_done write 0 -> [0x0042]]
+  DEBUG   machine:simulation    TICK:    28 PC:    21 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [no irq]
+  DEBUG   machine:simulation    TICK:    29 PC:    22 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 0 [fetch @00000015]
+  DEBUG   machine:simulation    TICK:    30 PC:    22 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 0 [decode lit 0]
+  DEBUG   machine:simulation    TICK:    31 PC:    22 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 0 [push 0]
+  DEBUG   machine:simulation    TICK:    32 PC:    22 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 0 [no irq]
+  DEBUG   machine:simulation    TICK:    33 PC:    23 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 67 [fetch @00000016]
+  DEBUG   machine:simulation    TICK:    34 PC:    23 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 67 [decode lit 67]
+  DEBUG   machine:simulation    TICK:    35 PC:    23 STATE: execute   MODE: user TOS:      67 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,67]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 67 [push 67]
+  DEBUG   machine:simulation    TICK:    36 PC:    23 STATE: irq_check MODE: user TOS:      67 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,67]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	lit 67 [no irq]
+  DEBUG   machine:simulation    TICK:    37 PC:    24 STATE: fetch     MODE: user TOS:      67 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,67]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [fetch @00000017]
+  DEBUG   machine:simulation    TICK:    38 PC:    24 STATE: decode    MODE: user TOS:      67 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,67]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/1	store [decode store]
+  DEBUG   machine:simulation    TICK:    39 PC:    24 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_miss write 0 -> [0x0043]; wait=9]
+  DEBUG   machine:simulation    TICK:    40 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    41 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    42 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    43 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    44 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    45 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    46 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    47 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    48 PC:    24 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [cache_fill_done write 0 -> [0x0043]]
+  DEBUG   machine:simulation    TICK:    49 PC:    24 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [no irq]
+  DEBUG   machine:simulation    TICK:    50 PC:    25 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 0 [fetch @00000018]
+  DEBUG   machine:simulation    TICK:    51 PC:    25 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 0 [decode lit 0]
+  DEBUG   machine:simulation    TICK:    52 PC:    25 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 0 [push 0]
+  DEBUG   machine:simulation    TICK:    53 PC:    25 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 0 [no irq]
+  DEBUG   machine:simulation    TICK:    54 PC:    26 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 68 [fetch @00000019]
+  DEBUG   machine:simulation    TICK:    55 PC:    26 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:    56 PC:    26 STATE: execute   MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,68]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:    57 PC:    26 STATE: irq_check MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,68]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:    58 PC:    27 STATE: fetch     MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,68]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [fetch @0000001A]
+  DEBUG   machine:simulation    TICK:    59 PC:    27 STATE: decode    MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  1 DS: [0,68]           RS: [0x00000109]     IE:0 IP:0 CACHE:0/2	store [decode store]
+  DEBUG   machine:simulation    TICK:    60 PC:    27 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_miss write 0 -> [0x0044]; wait=9]
+  DEBUG   machine:simulation    TICK:    61 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    62 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    63 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    64 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    65 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    66 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    67 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    68 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    69 PC:    27 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [cache_fill_done write 0 -> [0x0044]]
+  DEBUG   machine:simulation    TICK:    70 PC:    27 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	store [no irq]
+  DEBUG   machine:simulation    TICK:    71 PC:    28 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	ret [fetch @0000001B]
+  DEBUG   machine:simulation    TICK:    72 PC:    28 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000109]     IE:0 IP:0 CACHE:0/3	ret [decode ret]
+  DEBUG   machine:simulation    TICK:    73 PC:   265 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ret [ret 0x00000109]
+  DEBUG   machine:simulation    TICK:    74 PC:   265 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ret [no irq]
+  DEBUG   machine:simulation    TICK:    75 PC:   266 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ei [fetch @00000109]
+  DEBUG   machine:simulation    TICK:    76 PC:   266 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	ei [decode ei]
+  DEBUG   machine:simulation    TICK:    77 PC:   266 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:0/3	ei [ei]
+  DEBUG   machine:simulation    TICK:    78 PC:   266 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:0/3	ei [no irq]
+  DEBUG   machine:simulation    TICK:    79 PC:   267 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:0/3	call 91 [fetch @0000010A]
+  DEBUG   machine:simulation    TICK:    80 PC:   267 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:0/3	call 91 [decode call 91]
+  DEBUG   machine:simulation    TICK:    81 PC:    91 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:0/3	call 91 [call 0x0000005B]
+  DEBUG   machine:simulation    TICK:    82 PC:    91 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:0/3	call 91 [no irq]
+  DEBUG   machine:simulation    TICK:    83 PC:    92 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:0/3	call 28 [fetch @0000005B]
+  DEBUG   machine:simulation    TICK:    84 PC:    92 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:0/3	call 28 [decode call 28]
+  DEBUG   machine:simulation    TICK:    85 PC:    28 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	call 28 [call 0x0000001C]
+  DEBUG   machine:simulation    TICK:    86 PC:    28 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	call 28 [no irq]
+  DEBUG   machine:simulation    TICK:    87 PC:    29 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	lit 68 [fetch @0000001C]
+  DEBUG   machine:simulation    TICK:    88 PC:    29 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:    89 PC:    29 STATE: execute   MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:    90 PC:    29 STATE: irq_check MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:    91 PC:    30 STATE: fetch     MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	load [fetch @0000001D]
+  DEBUG   machine:simulation    TICK:    92 PC:    30 STATE: decode    MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:0/3	load [decode load]
+  DEBUG   machine:simulation    TICK:    93 PC:    30 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	load [cache_hit read [0x0044] -> 0]
+  DEBUG   machine:simulation    TICK:    94 PC:    30 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	load [no irq]
+  DEBUG   machine:simulation    TICK:    95 PC:    31 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 0 [fetch @0000001E]
+  DEBUG   machine:simulation    TICK:    96 PC:    31 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 0 [decode lit 0]
+  DEBUG   machine:simulation    TICK:    97 PC:    31 STATE: execute   MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 0 [push 0]
+  DEBUG   machine:simulation    TICK:    98 PC:    31 STATE: irq_check MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 0 [no irq]
+  DEBUG   machine:simulation    TICK:    99 PC:    32 STATE: fetch     MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	gt [fetch @0000001F]
+  DEBUG   machine:simulation    TICK:   100 PC:    32 STATE: decode    MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	gt [decode gt]
+  DEBUG   machine:simulation    TICK:   101 PC:    32 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	gt [gt 0 0 -> 0]
+  DEBUG   machine:simulation    TICK:   102 PC:    32 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	gt [no irq]
+  DEBUG   machine:simulation    TICK:   103 PC:    33 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	ret [fetch @00000020]
+  DEBUG   machine:simulation    TICK:   104 PC:    33 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	ret [decode ret]
+  DEBUG   machine:simulation    TICK:   105 PC:    92 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	ret [ret 0x0000005C]
+  DEBUG   machine:simulation    TICK:   106 PC:    92 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	ret [no irq]
+  DEBUG   machine:simulation    TICK:   107 PC:    93 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	jz 91 [fetch @0000005C]
+  DEBUG   machine:simulation    TICK:   108 PC:    93 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	jz 91 [decode jz 91]
+  DEBUG   machine:simulation    TICK:   109 PC:    91 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	jz 91 [jz taken 0x0000005B]
+  DEBUG   machine:simulation    TICK:   110 PC:    91 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	jz 91 [no irq]
+  DEBUG   machine:simulation    TICK:   111 PC:    92 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	call 28 [fetch @0000005B]
+  DEBUG   machine:simulation    TICK:   112 PC:    92 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:1/3	call 28 [decode call 28]
+  DEBUG   machine:simulation    TICK:   113 PC:    28 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	call 28 [call 0x0000001C]
+  DEBUG   machine:simulation    TICK:   114 PC:    28 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	call 28 [no irq]
+  DEBUG   machine:simulation    TICK:   115 PC:    29 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 68 [fetch @0000001C]
+  DEBUG   machine:simulation    TICK:   116 PC:    29 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:   117 PC:    29 STATE: execute   MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:   118 PC:    29 STATE: irq_check MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:   119 PC:    30 STATE: fetch     MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	load [fetch @0000001D]
+  DEBUG   machine:simulation    TICK:   120 PC:    30 STATE: decode    MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:1/3	load [decode load]
+  DEBUG   machine:simulation    TICK:   121 PC:    30 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	load [cache_hit read [0x0044] -> 0]
+  DEBUG   machine:simulation    TICK:   122 PC:    30 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	load [no irq]
+  DEBUG   machine:simulation    TICK:   123 PC:    31 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 0 [fetch @0000001E]
+  DEBUG   machine:simulation    TICK:   124 PC:    31 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 0 [decode lit 0]
+  DEBUG   machine:simulation    TICK:   125 PC:    31 STATE: execute   MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 0 [push 0]
+  DEBUG   machine:simulation    TICK:   126 PC:    31 STATE: irq_check MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 0 [no irq]
+  DEBUG   machine:simulation    TICK:   127 PC:    32 STATE: fetch     MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	gt [fetch @0000001F]
+  DEBUG   machine:simulation    TICK:   128 PC:    32 STATE: decode    MODE: user TOS:       0 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,0]            RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	gt [decode gt]
+  DEBUG   machine:simulation    TICK:   129 PC:    32 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	gt [gt 0 0 -> 0]
+  DEBUG   machine:simulation    TICK:   130 PC:    32 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	gt [no irq]
+  DEBUG   machine:simulation    TICK:   131 PC:    33 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	ret [fetch @00000020]
+  DEBUG   machine:simulation    TICK:   132 PC:    33 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	ret [decode ret]
+  DEBUG   machine:simulation    TICK:   133 PC:    92 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	ret [ret 0x0000005C]
+  DEBUG   machine:simulation    TICK:   134 PC:    92 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	ret [no irq]
+  DEBUG   machine:simulation    TICK:   135 PC:    93 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	jz 91 [fetch @0000005C]
+  DEBUG   machine:simulation    TICK:   136 PC:    93 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [0]              RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	jz 91 [decode jz 91]
+  DEBUG   machine:simulation    TICK:   137 PC:    91 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	jz 91 [jz taken 0x0000005B]
+  DEBUG   machine:simulation    TICK:   138 PC:    91 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	jz 91 [no irq]
+  DEBUG   machine:simulation    TICK:   139 PC:    92 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	call 28 [fetch @0000005B]
+  DEBUG   machine:simulation    TICK:   140 PC:    92 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x0000010B]     IE:1 IP:0 CACHE:2/3	call 28 [decode call 28]
+  DEBUG   machine:simulation    TICK:   141 PC:    28 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	call 28 [call 0x0000001C]
+  DEBUG   machine:simulation    TICK:   142 PC:    28 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	call 28 [no irq]
+  DEBUG   machine:simulation    TICK:   143 PC:    29 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 68 [fetch @0000001C]
+  DEBUG   machine:simulation    TICK:   144 PC:    29 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:   145 PC:    29 STATE: execute   MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:   146 PC:    29 STATE: irq_check MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:   147 PC:    30 STATE: fetch     MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	load [fetch @0000001D]
+  DEBUG   machine:simulation    TICK:   148 PC:    30 STATE: decode    MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:2/3	load [decode load]
+  DEBUG   machine:simulation    TICK:   149 PC:    30 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005C] IE:1 IP:0 CACHE:3/3	load [cache_hit read [0x0044] -> 0]
   ... omitted 6084 lines ...
-  DEBUG   machine:simulation    TICK:  6234 PC:    66 STATE: execute   MODE: user DS: [2]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 2 [push 2]
-  DEBUG   machine:simulation    TICK:  6235 PC:    66 STATE: irq_check MODE: user DS: [2]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 2 [no irq]
-  DEBUG   machine:simulation    TICK:  6236 PC:    67 STATE: fetch     MODE: user DS: [2]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 66 [fetch @00000042]
-  DEBUG   machine:simulation    TICK:  6237 PC:    67 STATE: decode    MODE: user DS: [2]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 66 [decode lit 66]
-  DEBUG   machine:simulation    TICK:  6238 PC:    67 STATE: execute   MODE: user DS: [2,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 66 [push 66]
-  DEBUG   machine:simulation    TICK:  6239 PC:    67 STATE: irq_check MODE: user DS: [2,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	lit 66 [no irq]
-  DEBUG   machine:simulation    TICK:  6240 PC:    68 STATE: fetch     MODE: user DS: [2,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	load [fetch @00000043]
-  DEBUG   machine:simulation    TICK:  6241 PC:    68 STATE: decode    MODE: user DS: [2,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:221/20	load [decode load]
-  DEBUG   machine:simulation    TICK:  6242 PC:    68 STATE: execute   MODE: user DS: [2,5]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	load [cache_hit read [0x0042] -> 5]
-  DEBUG   machine:simulation    TICK:  6243 PC:    68 STATE: irq_check MODE: user DS: [2,5]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	load [no irq]
-  DEBUG   machine:simulation    TICK:  6244 PC:    69 STATE: fetch     MODE: user DS: [2,5]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	add [fetch @00000044]
-  DEBUG   machine:simulation    TICK:  6245 PC:    69 STATE: decode    MODE: user DS: [2,5]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	add [decode add]
-  DEBUG   machine:simulation    TICK:  6246 PC:    69 STATE: execute   MODE: user DS: [7]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	add [add 2 5 -> 7]
-  DEBUG   machine:simulation    TICK:  6247 PC:    69 STATE: irq_check MODE: user DS: [7]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	add [no irq]
-  DEBUG   machine:simulation    TICK:  6248 PC:    70 STATE: fetch     MODE: user DS: [7]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	load [fetch @00000045]
-  DEBUG   machine:simulation    TICK:  6249 PC:    70 STATE: decode    MODE: user DS: [7]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:222/20	load [decode load]
-  DEBUG   machine:simulation    TICK:  6250 PC:    70 STATE: execute   MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	load [cache_hit read [0x0007] -> 10]
-  DEBUG   machine:simulation    TICK:  6251 PC:    70 STATE: irq_check MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	load [no irq]
-  DEBUG   machine:simulation    TICK:  6252 PC:    71 STATE: fetch     MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	lit 69 [fetch @00000046]
-  DEBUG   machine:simulation    TICK:  6253 PC:    71 STATE: decode    MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	lit 69 [decode lit 69]
-  DEBUG   machine:simulation    TICK:  6254 PC:    71 STATE: execute   MODE: user DS: [10,69]          RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	lit 69 [push 69]
-  DEBUG   machine:simulation    TICK:  6255 PC:    71 STATE: irq_check MODE: user DS: [10,69]          RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	lit 69 [no irq]
-  DEBUG   machine:simulation    TICK:  6256 PC:    72 STATE: fetch     MODE: user DS: [10,69]          RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	store [fetch @00000047]
-  DEBUG   machine:simulation    TICK:  6257 PC:    72 STATE: decode    MODE: user DS: [10,69]          RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:223/20	store [decode store]
-  DEBUG   machine:simulation    TICK:  6258 PC:    72 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	store [cache_hit write 10 -> [0x0045]]
-  DEBUG   machine:simulation    TICK:  6259 PC:    72 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	store [no irq]
-  DEBUG   machine:simulation    TICK:  6260 PC:    73 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	lit 66 [fetch @00000048]
-  DEBUG   machine:simulation    TICK:  6261 PC:    73 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	lit 66 [decode lit 66]
-  DEBUG   machine:simulation    TICK:  6262 PC:    73 STATE: execute   MODE: user DS: [66]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	lit 66 [push 66]
-  DEBUG   machine:simulation    TICK:  6263 PC:    73 STATE: irq_check MODE: user DS: [66]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	lit 66 [no irq]
-  DEBUG   machine:simulation    TICK:  6264 PC:    74 STATE: fetch     MODE: user DS: [66]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	load [fetch @00000049]
-  DEBUG   machine:simulation    TICK:  6265 PC:    74 STATE: decode    MODE: user DS: [66]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:224/20	load [decode load]
-  DEBUG   machine:simulation    TICK:  6266 PC:    74 STATE: execute   MODE: user DS: [5]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	load [cache_hit read [0x0042] -> 5]
-  DEBUG   machine:simulation    TICK:  6267 PC:    74 STATE: irq_check MODE: user DS: [5]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	load [no irq]
-  DEBUG   machine:simulation    TICK:  6268 PC:    75 STATE: fetch     MODE: user DS: [5]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 1 [fetch @0000004A]
-  DEBUG   machine:simulation    TICK:  6269 PC:    75 STATE: decode    MODE: user DS: [5]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 1 [decode lit 1]
-  DEBUG   machine:simulation    TICK:  6270 PC:    75 STATE: execute   MODE: user DS: [5,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 1 [push 1]
-  DEBUG   machine:simulation    TICK:  6271 PC:    75 STATE: irq_check MODE: user DS: [5,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 1 [no irq]
-  DEBUG   machine:simulation    TICK:  6272 PC:    76 STATE: fetch     MODE: user DS: [5,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	add [fetch @0000004B]
-  DEBUG   machine:simulation    TICK:  6273 PC:    76 STATE: decode    MODE: user DS: [5,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	add [decode add]
-  DEBUG   machine:simulation    TICK:  6274 PC:    76 STATE: execute   MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	add [add 5 1 -> 6]
-  DEBUG   machine:simulation    TICK:  6275 PC:    76 STATE: irq_check MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	add [no irq]
-  DEBUG   machine:simulation    TICK:  6276 PC:    77 STATE: fetch     MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 64 [fetch @0000004C]
-  DEBUG   machine:simulation    TICK:  6277 PC:    77 STATE: decode    MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 64 [decode lit 64]
-  DEBUG   machine:simulation    TICK:  6278 PC:    77 STATE: execute   MODE: user DS: [6,64]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 64 [push 64]
-  DEBUG   machine:simulation    TICK:  6279 PC:    77 STATE: irq_check MODE: user DS: [6,64]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 64 [no irq]
-  DEBUG   machine:simulation    TICK:  6280 PC:    78 STATE: fetch     MODE: user DS: [6,64]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	mod [fetch @0000004D]
-  DEBUG   machine:simulation    TICK:  6281 PC:    78 STATE: decode    MODE: user DS: [6,64]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	mod [decode mod]
-  DEBUG   machine:simulation    TICK:  6282 PC:    78 STATE: execute   MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	mod [mod 6 64 -> 6]
-  DEBUG   machine:simulation    TICK:  6283 PC:    78 STATE: irq_check MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	mod [no irq]
-  DEBUG   machine:simulation    TICK:  6284 PC:    79 STATE: fetch     MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 66 [fetch @0000004E]
-  DEBUG   machine:simulation    TICK:  6285 PC:    79 STATE: decode    MODE: user DS: [6]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 66 [decode lit 66]
-  DEBUG   machine:simulation    TICK:  6286 PC:    79 STATE: execute   MODE: user DS: [6,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 66 [push 66]
-  DEBUG   machine:simulation    TICK:  6287 PC:    79 STATE: irq_check MODE: user DS: [6,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	lit 66 [no irq]
-  DEBUG   machine:simulation    TICK:  6288 PC:    80 STATE: fetch     MODE: user DS: [6,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	store [fetch @0000004F]
-  DEBUG   machine:simulation    TICK:  6289 PC:    80 STATE: decode    MODE: user DS: [6,66]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:225/20	store [decode store]
-  DEBUG   machine:simulation    TICK:  6290 PC:    80 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	store [cache_hit write 6 -> [0x0042]]
-  DEBUG   machine:simulation    TICK:  6291 PC:    80 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	store [no irq]
-  DEBUG   machine:simulation    TICK:  6292 PC:    81 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	lit 68 [fetch @00000050]
-  DEBUG   machine:simulation    TICK:  6293 PC:    81 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:  6294 PC:    81 STATE: execute   MODE: user DS: [68]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:  6295 PC:    81 STATE: irq_check MODE: user DS: [68]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:  6296 PC:    82 STATE: fetch     MODE: user DS: [68]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	load [fetch @00000051]
-  DEBUG   machine:simulation    TICK:  6297 PC:    82 STATE: decode    MODE: user DS: [68]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:226/20	load [decode load]
-  DEBUG   machine:simulation    TICK:  6298 PC:    82 STATE: execute   MODE: user DS: [1]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	load [cache_hit read [0x0044] -> 1]
-  DEBUG   machine:simulation    TICK:  6299 PC:    82 STATE: irq_check MODE: user DS: [1]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	load [no irq]
-  DEBUG   machine:simulation    TICK:  6300 PC:    83 STATE: fetch     MODE: user DS: [1]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 1 [fetch @00000052]
-  DEBUG   machine:simulation    TICK:  6301 PC:    83 STATE: decode    MODE: user DS: [1]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 1 [decode lit 1]
-  DEBUG   machine:simulation    TICK:  6302 PC:    83 STATE: execute   MODE: user DS: [1,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 1 [push 1]
-  DEBUG   machine:simulation    TICK:  6303 PC:    83 STATE: irq_check MODE: user DS: [1,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 1 [no irq]
-  DEBUG   machine:simulation    TICK:  6304 PC:    84 STATE: fetch     MODE: user DS: [1,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	sub [fetch @00000053]
-  DEBUG   machine:simulation    TICK:  6305 PC:    84 STATE: decode    MODE: user DS: [1,1]            RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	sub [decode sub]
-  DEBUG   machine:simulation    TICK:  6306 PC:    84 STATE: execute   MODE: user DS: [0]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	sub [sub 1 1 -> 0]
-  DEBUG   machine:simulation    TICK:  6307 PC:    84 STATE: irq_check MODE: user DS: [0]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	sub [no irq]
-  DEBUG   machine:simulation    TICK:  6308 PC:    85 STATE: fetch     MODE: user DS: [0]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 68 [fetch @00000054]
-  DEBUG   machine:simulation    TICK:  6309 PC:    85 STATE: decode    MODE: user DS: [0]              RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 68 [decode lit 68]
-  DEBUG   machine:simulation    TICK:  6310 PC:    85 STATE: execute   MODE: user DS: [0,68]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 68 [push 68]
-  DEBUG   machine:simulation    TICK:  6311 PC:    85 STATE: irq_check MODE: user DS: [0,68]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	lit 68 [no irq]
-  DEBUG   machine:simulation    TICK:  6312 PC:    86 STATE: fetch     MODE: user DS: [0,68]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	store [fetch @00000055]
-  DEBUG   machine:simulation    TICK:  6313 PC:    86 STATE: decode    MODE: user DS: [0,68]           RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:227/20	store [decode store]
-  DEBUG   machine:simulation    TICK:  6314 PC:    86 STATE: execute   MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	store [cache_hit write 0 -> [0x0044]]
-  DEBUG   machine:simulation    TICK:  6315 PC:    86 STATE: irq_check MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	store [no irq]
-  DEBUG   machine:simulation    TICK:  6316 PC:    87 STATE: fetch     MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	lit 69 [fetch @00000056]
-  DEBUG   machine:simulation    TICK:  6317 PC:    87 STATE: decode    MODE: user DS: []               RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	lit 69 [decode lit 69]
-  DEBUG   machine:simulation    TICK:  6318 PC:    87 STATE: execute   MODE: user DS: [69]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	lit 69 [push 69]
-  DEBUG   machine:simulation    TICK:  6319 PC:    87 STATE: irq_check MODE: user DS: [69]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	lit 69 [no irq]
-  DEBUG   machine:simulation    TICK:  6320 PC:    88 STATE: fetch     MODE: user DS: [69]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	load [fetch @00000057]
-  DEBUG   machine:simulation    TICK:  6321 PC:    88 STATE: decode    MODE: user DS: [69]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:228/20	load [decode load]
-  DEBUG   machine:simulation    TICK:  6322 PC:    88 STATE: execute   MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	load [cache_hit read [0x0045] -> 10]
-  DEBUG   machine:simulation    TICK:  6323 PC:    88 STATE: irq_check MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	load [no irq]
-  DEBUG   machine:simulation    TICK:  6324 PC:    89 STATE: fetch     MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	jmp 90 [fetch @00000058]
-  DEBUG   machine:simulation    TICK:  6325 PC:    89 STATE: decode    MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	jmp 90 [decode jmp 90]
-  DEBUG   machine:simulation    TICK:  6326 PC:    90 STATE: execute   MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	jmp 90 [jmp 0x0000005A]
-  DEBUG   machine:simulation    TICK:  6327 PC:    90 STATE: irq_check MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	jmp 90 [no irq]
-  DEBUG   machine:simulation    TICK:  6328 PC:    91 STATE: fetch     MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	ret [fetch @0000005A]
-  DEBUG   machine:simulation    TICK:  6329 PC:    91 STATE: decode    MODE: user DS: [10]             RS: [0x00000088,0x00000080] IE:1 IP:0 CACHE:229/20	ret [decode ret]
-  DEBUG   machine:simulation    TICK:  6330 PC:   128 STATE: execute   MODE: user DS: [10]             RS: [0x00000088]     IE:1 IP:0 CACHE:229/20	ret [ret 0x00000080]
-  DEBUG   machine:simulation    TICK:  6331 PC:   128 STATE: irq_check MODE: user DS: [10]             RS: [0x00000088]     IE:1 IP:0 CACHE:229/20	ret [no irq]
-  DEBUG   machine:simulation    TICK:  6332 PC:   129 STATE: fetch     MODE: user DS: [10]             RS: [0x00000088]     IE:1 IP:0 CACHE:229/20	ret [fetch @00000080]
-  DEBUG   machine:simulation    TICK:  6333 PC:   129 STATE: decode    MODE: user DS: [10]             RS: [0x00000088]     IE:1 IP:0 CACHE:229/20	ret [decode ret]
-  DEBUG   machine:simulation    TICK:  6334 PC:   136 STATE: execute   MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	ret [ret 0x00000088]
-  DEBUG   machine:simulation    TICK:  6335 PC:   136 STATE: irq_check MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	ret [no irq]
-  DEBUG   machine:simulation    TICK:  6336 PC:   137 STATE: fetch     MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	dup [fetch @00000088]
-  DEBUG   machine:simulation    TICK:  6337 PC:   137 STATE: decode    MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	dup [decode dup]
-  DEBUG   machine:simulation    TICK:  6338 PC:   137 STATE: execute   MODE: user DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	dup [dup]
-  DEBUG   machine:simulation    TICK:  6339 PC:   137 STATE: irq_check MODE: user DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	dup [no irq]
-  DEBUG   machine:simulation    TICK:  6340 PC:   138 STATE: fetch     MODE: user DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [fetch @00000089]
-  DEBUG   machine:simulation    TICK:  6341 PC:   138 STATE: decode    MODE: user DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [decode lit 10]
-  DEBUG   machine:simulation    TICK:  6342 PC:   138 STATE: execute   MODE: user DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [push 10]
-  DEBUG   machine:simulation    TICK:  6343 PC:   138 STATE: irq_check MODE: user DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [no irq]
-  DEBUG   machine:simulation    TICK:  6344 PC:   139 STATE: fetch     MODE: user DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	eq [fetch @0000008A]
-  DEBUG   machine:simulation    TICK:  6345 PC:   139 STATE: decode    MODE: user DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	eq [decode eq]
-  DEBUG   machine:simulation    TICK:  6346 PC:   139 STATE: execute   MODE: user DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	eq [eq 10 10 -> 1]
-  DEBUG   machine:simulation    TICK:  6347 PC:   139 STATE: irq_check MODE: user DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	eq [no irq]
-  DEBUG   machine:simulation    TICK:  6348 PC:   140 STATE: fetch     MODE: user DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	jz 143 [fetch @0000008B]
-  DEBUG   machine:simulation    TICK:  6349 PC:   140 STATE: decode    MODE: user DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	jz 143 [decode jz 143]
-  DEBUG   machine:simulation    TICK:  6350 PC:   140 STATE: execute   MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	jz 143 [jz not taken]
-  DEBUG   machine:simulation    TICK:  6351 PC:   140 STATE: irq_check MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	jz 143 [no irq]
-  DEBUG   machine:simulation    TICK:  6352 PC:   141 STATE: fetch     MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	call 2 [fetch @0000008C]
-  DEBUG   machine:simulation    TICK:  6353 PC:   141 STATE: decode    MODE: user DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	call 2 [decode call 2]
-  DEBUG   machine:simulation    TICK:  6354 PC:     2 STATE: execute   MODE: user DS: [10]             RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	call 2 [call 0x00000002]
-  DEBUG   machine:simulation    TICK:  6355 PC:     2 STATE: irq_check MODE: user DS: [10]             RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	call 2 [no irq]
-  DEBUG   machine:simulation    TICK:  6356 PC:     3 STATE: fetch     MODE: user DS: [10]             RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	lit 65522 [fetch @00000002]
-  DEBUG   machine:simulation    TICK:  6357 PC:     3 STATE: decode    MODE: user DS: [10]             RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	lit 65522 [decode lit 65522]
-  DEBUG   machine:simulation    TICK:  6358 PC:     3 STATE: execute   MODE: user DS: [10,65522]       RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	lit 65522 [push 65522]
-  DEBUG   machine:simulation    TICK:  6359 PC:     3 STATE: irq_check MODE: user DS: [10,65522]       RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	lit 65522 [no irq]
-  DEBUG   machine:simulation    TICK:  6360 PC:     4 STATE: fetch     MODE: user DS: [10,65522]       RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	store [fetch @00000003]
-  DEBUG   machine:simulation    TICK:  6361 PC:     4 STATE: decode    MODE: user DS: [10,65522]       RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	store [decode store]
-  DEBUG   machine:simulation    TICK:  6362 PC:     4 STATE: execute   MODE: user DS: []               RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	store [mmio_write 10 -> [0xFFF2]]
-  DEBUG   machine:simulation    TICK:  6363 PC:     4 STATE: irq_check MODE: user DS: []               RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	store [no irq]
-  DEBUG   machine:simulation    TICK:  6364 PC:     5 STATE: fetch     MODE: user DS: []               RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	ret [fetch @00000004]
-  DEBUG   machine:simulation    TICK:  6365 PC:     5 STATE: decode    MODE: user DS: []               RS: [0x0000008D]     IE:1 IP:0 CACHE:229/20	ret [decode ret]
-  DEBUG   machine:simulation    TICK:  6366 PC:   141 STATE: execute   MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	ret [ret 0x0000008D]
-  DEBUG   machine:simulation    TICK:  6367 PC:   141 STATE: irq_check MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	ret [no irq]
-  DEBUG   machine:simulation    TICK:  6368 PC:   142 STATE: fetch     MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [fetch @0000008D]
-  DEBUG   machine:simulation    TICK:  6369 PC:   142 STATE: decode    MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [decode lit 1]
-  DEBUG   machine:simulation    TICK:  6370 PC:   142 STATE: execute   MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [push 1]
-  DEBUG   machine:simulation    TICK:  6371 PC:   142 STATE: irq_check MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [no irq]
-  DEBUG   machine:simulation    TICK:  6372 PC:   143 STATE: fetch     MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 145 [fetch @0000008E]
-  DEBUG   machine:simulation    TICK:  6373 PC:   143 STATE: decode    MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 145 [decode jmp 145]
-  DEBUG   machine:simulation    TICK:  6374 PC:   145 STATE: execute   MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 145 [jmp 0x00000091]
-  DEBUG   machine:simulation    TICK:  6375 PC:   145 STATE: irq_check MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 145 [no irq]
-  DEBUG   machine:simulation    TICK:  6376 PC:   146 STATE: fetch     MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jz 135 [fetch @00000091]
-  DEBUG   machine:simulation    TICK:  6377 PC:   146 STATE: decode    MODE: user DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jz 135 [decode jz 135]
-  DEBUG   machine:simulation    TICK:  6378 PC:   146 STATE: execute   MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	jz 135 [jz not taken]
-  DEBUG   machine:simulation    TICK:  6379 PC:   146 STATE: irq_check MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	jz 135 [no irq]
-  DEBUG   machine:simulation    TICK:  6380 PC:   147 STATE: fetch     MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [fetch @00000092]
-  DEBUG   machine:simulation    TICK:  6381 PC:   147 STATE: decode    MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [decode halt]
-  DEBUG   machine:simulation    TICK:  6382 PC:   147 STATE: execute   MODE: user DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [halt]
+  DEBUG   machine:simulation    TICK:  6234 PC:    66 STATE: execute   MODE: user TOS:       2 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [2]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 2 [push 2]
+  DEBUG   machine:simulation    TICK:  6235 PC:    66 STATE: irq_check MODE: user TOS:       2 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [2]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 2 [no irq]
+  DEBUG   machine:simulation    TICK:  6236 PC:    67 STATE: fetch     MODE: user TOS:       2 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [2]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 66 [fetch @00000042]
+  DEBUG   machine:simulation    TICK:  6237 PC:    67 STATE: decode    MODE: user TOS:       2 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [2]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 66 [decode lit 66]
+  DEBUG   machine:simulation    TICK:  6238 PC:    67 STATE: execute   MODE: user TOS:      66 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 66 [push 66]
+  DEBUG   machine:simulation    TICK:  6239 PC:    67 STATE: irq_check MODE: user TOS:      66 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	lit 66 [no irq]
+  DEBUG   machine:simulation    TICK:  6240 PC:    68 STATE: fetch     MODE: user TOS:      66 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	load [fetch @00000043]
+  DEBUG   machine:simulation    TICK:  6241 PC:    68 STATE: decode    MODE: user TOS:      66 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:221/20	load [decode load]
+  DEBUG   machine:simulation    TICK:  6242 PC:    68 STATE: execute   MODE: user TOS:       5 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,5]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	load [cache_hit read [0x0042] -> 5]
+  DEBUG   machine:simulation    TICK:  6243 PC:    68 STATE: irq_check MODE: user TOS:       5 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,5]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	load [no irq]
+  DEBUG   machine:simulation    TICK:  6244 PC:    69 STATE: fetch     MODE: user TOS:       5 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,5]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	add [fetch @00000044]
+  DEBUG   machine:simulation    TICK:  6245 PC:    69 STATE: decode    MODE: user TOS:       5 NOS:       2 DS_DEPTH:  2 RS_DEPTH:  2 DS: [2,5]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	add [decode add]
+  DEBUG   machine:simulation    TICK:  6246 PC:    69 STATE: execute   MODE: user TOS:       7 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [7]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	add [add 2 5 -> 7]
+  DEBUG   machine:simulation    TICK:  6247 PC:    69 STATE: irq_check MODE: user TOS:       7 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [7]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	add [no irq]
+  DEBUG   machine:simulation    TICK:  6248 PC:    70 STATE: fetch     MODE: user TOS:       7 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [7]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	load [fetch @00000045]
+  DEBUG   machine:simulation    TICK:  6249 PC:    70 STATE: decode    MODE: user TOS:       7 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [7]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:222/20	load [decode load]
+  DEBUG   machine:simulation    TICK:  6250 PC:    70 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	load [cache_hit read [0x0007] -> 10]
+  DEBUG   machine:simulation    TICK:  6251 PC:    70 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	load [no irq]
+  DEBUG   machine:simulation    TICK:  6252 PC:    71 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	lit 69 [fetch @00000046]
+  DEBUG   machine:simulation    TICK:  6253 PC:    71 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	lit 69 [decode lit 69]
+  DEBUG   machine:simulation    TICK:  6254 PC:    71 STATE: execute   MODE: user TOS:      69 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  2 DS: [10,69]          RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	lit 69 [push 69]
+  DEBUG   machine:simulation    TICK:  6255 PC:    71 STATE: irq_check MODE: user TOS:      69 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  2 DS: [10,69]          RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	lit 69 [no irq]
+  DEBUG   machine:simulation    TICK:  6256 PC:    72 STATE: fetch     MODE: user TOS:      69 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  2 DS: [10,69]          RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	store [fetch @00000047]
+  DEBUG   machine:simulation    TICK:  6257 PC:    72 STATE: decode    MODE: user TOS:      69 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  2 DS: [10,69]          RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:223/20	store [decode store]
+  DEBUG   machine:simulation    TICK:  6258 PC:    72 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	store [cache_hit write 10 -> [0x0045]]
+  DEBUG   machine:simulation    TICK:  6259 PC:    72 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	store [no irq]
+  DEBUG   machine:simulation    TICK:  6260 PC:    73 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	lit 66 [fetch @00000048]
+  DEBUG   machine:simulation    TICK:  6261 PC:    73 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	lit 66 [decode lit 66]
+  DEBUG   machine:simulation    TICK:  6262 PC:    73 STATE: execute   MODE: user TOS:      66 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [66]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	lit 66 [push 66]
+  DEBUG   machine:simulation    TICK:  6263 PC:    73 STATE: irq_check MODE: user TOS:      66 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [66]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	lit 66 [no irq]
+  DEBUG   machine:simulation    TICK:  6264 PC:    74 STATE: fetch     MODE: user TOS:      66 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [66]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	load [fetch @00000049]
+  DEBUG   machine:simulation    TICK:  6265 PC:    74 STATE: decode    MODE: user TOS:      66 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [66]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:224/20	load [decode load]
+  DEBUG   machine:simulation    TICK:  6266 PC:    74 STATE: execute   MODE: user TOS:       5 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [5]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	load [cache_hit read [0x0042] -> 5]
+  DEBUG   machine:simulation    TICK:  6267 PC:    74 STATE: irq_check MODE: user TOS:       5 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [5]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	load [no irq]
+  DEBUG   machine:simulation    TICK:  6268 PC:    75 STATE: fetch     MODE: user TOS:       5 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [5]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 1 [fetch @0000004A]
+  DEBUG   machine:simulation    TICK:  6269 PC:    75 STATE: decode    MODE: user TOS:       5 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [5]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 1 [decode lit 1]
+  DEBUG   machine:simulation    TICK:  6270 PC:    75 STATE: execute   MODE: user TOS:       1 NOS:       5 DS_DEPTH:  2 RS_DEPTH:  2 DS: [5,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 1 [push 1]
+  DEBUG   machine:simulation    TICK:  6271 PC:    75 STATE: irq_check MODE: user TOS:       1 NOS:       5 DS_DEPTH:  2 RS_DEPTH:  2 DS: [5,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 1 [no irq]
+  DEBUG   machine:simulation    TICK:  6272 PC:    76 STATE: fetch     MODE: user TOS:       1 NOS:       5 DS_DEPTH:  2 RS_DEPTH:  2 DS: [5,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	add [fetch @0000004B]
+  DEBUG   machine:simulation    TICK:  6273 PC:    76 STATE: decode    MODE: user TOS:       1 NOS:       5 DS_DEPTH:  2 RS_DEPTH:  2 DS: [5,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	add [decode add]
+  DEBUG   machine:simulation    TICK:  6274 PC:    76 STATE: execute   MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	add [add 5 1 -> 6]
+  DEBUG   machine:simulation    TICK:  6275 PC:    76 STATE: irq_check MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	add [no irq]
+  DEBUG   machine:simulation    TICK:  6276 PC:    77 STATE: fetch     MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 64 [fetch @0000004C]
+  DEBUG   machine:simulation    TICK:  6277 PC:    77 STATE: decode    MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 64 [decode lit 64]
+  DEBUG   machine:simulation    TICK:  6278 PC:    77 STATE: execute   MODE: user TOS:      64 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,64]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 64 [push 64]
+  DEBUG   machine:simulation    TICK:  6279 PC:    77 STATE: irq_check MODE: user TOS:      64 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,64]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 64 [no irq]
+  DEBUG   machine:simulation    TICK:  6280 PC:    78 STATE: fetch     MODE: user TOS:      64 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,64]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	mod [fetch @0000004D]
+  DEBUG   machine:simulation    TICK:  6281 PC:    78 STATE: decode    MODE: user TOS:      64 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,64]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	mod [decode mod]
+  DEBUG   machine:simulation    TICK:  6282 PC:    78 STATE: execute   MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	mod [mod 6 64 -> 6]
+  DEBUG   machine:simulation    TICK:  6283 PC:    78 STATE: irq_check MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	mod [no irq]
+  DEBUG   machine:simulation    TICK:  6284 PC:    79 STATE: fetch     MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 66 [fetch @0000004E]
+  DEBUG   machine:simulation    TICK:  6285 PC:    79 STATE: decode    MODE: user TOS:       6 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [6]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 66 [decode lit 66]
+  DEBUG   machine:simulation    TICK:  6286 PC:    79 STATE: execute   MODE: user TOS:      66 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 66 [push 66]
+  DEBUG   machine:simulation    TICK:  6287 PC:    79 STATE: irq_check MODE: user TOS:      66 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	lit 66 [no irq]
+  DEBUG   machine:simulation    TICK:  6288 PC:    80 STATE: fetch     MODE: user TOS:      66 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	store [fetch @0000004F]
+  DEBUG   machine:simulation    TICK:  6289 PC:    80 STATE: decode    MODE: user TOS:      66 NOS:       6 DS_DEPTH:  2 RS_DEPTH:  2 DS: [6,66]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:225/20	store [decode store]
+  DEBUG   machine:simulation    TICK:  6290 PC:    80 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	store [cache_hit write 6 -> [0x0042]]
+  DEBUG   machine:simulation    TICK:  6291 PC:    80 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	store [no irq]
+  DEBUG   machine:simulation    TICK:  6292 PC:    81 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	lit 68 [fetch @00000050]
+  DEBUG   machine:simulation    TICK:  6293 PC:    81 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:  6294 PC:    81 STATE: execute   MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:  6295 PC:    81 STATE: irq_check MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:  6296 PC:    82 STATE: fetch     MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	load [fetch @00000051]
+  DEBUG   machine:simulation    TICK:  6297 PC:    82 STATE: decode    MODE: user TOS:      68 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [68]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:226/20	load [decode load]
+  DEBUG   machine:simulation    TICK:  6298 PC:    82 STATE: execute   MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [1]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	load [cache_hit read [0x0044] -> 1]
+  DEBUG   machine:simulation    TICK:  6299 PC:    82 STATE: irq_check MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [1]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	load [no irq]
+  DEBUG   machine:simulation    TICK:  6300 PC:    83 STATE: fetch     MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [1]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 1 [fetch @00000052]
+  DEBUG   machine:simulation    TICK:  6301 PC:    83 STATE: decode    MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [1]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 1 [decode lit 1]
+  DEBUG   machine:simulation    TICK:  6302 PC:    83 STATE: execute   MODE: user TOS:       1 NOS:       1 DS_DEPTH:  2 RS_DEPTH:  2 DS: [1,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 1 [push 1]
+  DEBUG   machine:simulation    TICK:  6303 PC:    83 STATE: irq_check MODE: user TOS:       1 NOS:       1 DS_DEPTH:  2 RS_DEPTH:  2 DS: [1,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 1 [no irq]
+  DEBUG   machine:simulation    TICK:  6304 PC:    84 STATE: fetch     MODE: user TOS:       1 NOS:       1 DS_DEPTH:  2 RS_DEPTH:  2 DS: [1,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	sub [fetch @00000053]
+  DEBUG   machine:simulation    TICK:  6305 PC:    84 STATE: decode    MODE: user TOS:       1 NOS:       1 DS_DEPTH:  2 RS_DEPTH:  2 DS: [1,1]            RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	sub [decode sub]
+  DEBUG   machine:simulation    TICK:  6306 PC:    84 STATE: execute   MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	sub [sub 1 1 -> 0]
+  DEBUG   machine:simulation    TICK:  6307 PC:    84 STATE: irq_check MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	sub [no irq]
+  DEBUG   machine:simulation    TICK:  6308 PC:    85 STATE: fetch     MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 68 [fetch @00000054]
+  DEBUG   machine:simulation    TICK:  6309 PC:    85 STATE: decode    MODE: user TOS:       0 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [0]              RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 68 [decode lit 68]
+  DEBUG   machine:simulation    TICK:  6310 PC:    85 STATE: execute   MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,68]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 68 [push 68]
+  DEBUG   machine:simulation    TICK:  6311 PC:    85 STATE: irq_check MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,68]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	lit 68 [no irq]
+  DEBUG   machine:simulation    TICK:  6312 PC:    86 STATE: fetch     MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,68]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	store [fetch @00000055]
+  DEBUG   machine:simulation    TICK:  6313 PC:    86 STATE: decode    MODE: user TOS:      68 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  2 DS: [0,68]           RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:227/20	store [decode store]
+  DEBUG   machine:simulation    TICK:  6314 PC:    86 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	store [cache_hit write 0 -> [0x0044]]
+  DEBUG   machine:simulation    TICK:  6315 PC:    86 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	store [no irq]
+  DEBUG   machine:simulation    TICK:  6316 PC:    87 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	lit 69 [fetch @00000056]
+  DEBUG   machine:simulation    TICK:  6317 PC:    87 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  2 DS: []               RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	lit 69 [decode lit 69]
+  DEBUG   machine:simulation    TICK:  6318 PC:    87 STATE: execute   MODE: user TOS:      69 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [69]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	lit 69 [push 69]
+  DEBUG   machine:simulation    TICK:  6319 PC:    87 STATE: irq_check MODE: user TOS:      69 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [69]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	lit 69 [no irq]
+  DEBUG   machine:simulation    TICK:  6320 PC:    88 STATE: fetch     MODE: user TOS:      69 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [69]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	load [fetch @00000057]
+  DEBUG   machine:simulation    TICK:  6321 PC:    88 STATE: decode    MODE: user TOS:      69 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [69]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:228/20	load [decode load]
+  DEBUG   machine:simulation    TICK:  6322 PC:    88 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	load [cache_hit read [0x0045] -> 10]
+  DEBUG   machine:simulation    TICK:  6323 PC:    88 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	load [no irq]
+  DEBUG   machine:simulation    TICK:  6324 PC:    89 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	jmp 90 [fetch @00000058]
+  DEBUG   machine:simulation    TICK:  6325 PC:    89 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	jmp 90 [decode jmp 90]
+  DEBUG   machine:simulation    TICK:  6326 PC:    90 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	jmp 90 [jmp 0x0000005A]
+  DEBUG   machine:simulation    TICK:  6327 PC:    90 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	jmp 90 [no irq]
+  DEBUG   machine:simulation    TICK:  6328 PC:    91 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	ret [fetch @0000005A]
+  DEBUG   machine:simulation    TICK:  6329 PC:    91 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  2 DS: [10]             RS: [0x0000010B,0x0000005E] IE:1 IP:0 CACHE:229/20	ret [decode ret]
+  DEBUG   machine:simulation    TICK:  6330 PC:    94 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x0000010B]     IE:1 IP:0 CACHE:229/20	ret [ret 0x0000005E]
+  DEBUG   machine:simulation    TICK:  6331 PC:    94 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x0000010B]     IE:1 IP:0 CACHE:229/20	ret [no irq]
+  DEBUG   machine:simulation    TICK:  6332 PC:    95 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x0000010B]     IE:1 IP:0 CACHE:229/20	ret [fetch @0000005E]
+  DEBUG   machine:simulation    TICK:  6333 PC:    95 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x0000010B]     IE:1 IP:0 CACHE:229/20	ret [decode ret]
+  DEBUG   machine:simulation    TICK:  6334 PC:   267 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	ret [ret 0x0000010B]
+  DEBUG   machine:simulation    TICK:  6335 PC:   267 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	ret [no irq]
+  DEBUG   machine:simulation    TICK:  6336 PC:   268 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	dup [fetch @0000010B]
+  DEBUG   machine:simulation    TICK:  6337 PC:   268 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	dup [decode dup]
+  DEBUG   machine:simulation    TICK:  6338 PC:   268 STATE: execute   MODE: user TOS:      10 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	dup [dup]
+  DEBUG   machine:simulation    TICK:  6339 PC:   268 STATE: irq_check MODE: user TOS:      10 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	dup [no irq]
+  DEBUG   machine:simulation    TICK:  6340 PC:   269 STATE: fetch     MODE: user TOS:      10 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [fetch @0000010C]
+  DEBUG   machine:simulation    TICK:  6341 PC:   269 STATE: decode    MODE: user TOS:      10 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,10]          RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [decode lit 10]
+  DEBUG   machine:simulation    TICK:  6342 PC:   269 STATE: execute   MODE: user TOS:      10 NOS:      10 DS_DEPTH:  3 RS_DEPTH:  0 DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [push 10]
+  DEBUG   machine:simulation    TICK:  6343 PC:   269 STATE: irq_check MODE: user TOS:      10 NOS:      10 DS_DEPTH:  3 RS_DEPTH:  0 DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	lit 10 [no irq]
+  DEBUG   machine:simulation    TICK:  6344 PC:   270 STATE: fetch     MODE: user TOS:      10 NOS:      10 DS_DEPTH:  3 RS_DEPTH:  0 DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	eq [fetch @0000010D]
+  DEBUG   machine:simulation    TICK:  6345 PC:   270 STATE: decode    MODE: user TOS:      10 NOS:      10 DS_DEPTH:  3 RS_DEPTH:  0 DS: [10,10,10]       RS: []               IE:1 IP:0 CACHE:229/20	eq [decode eq]
+  DEBUG   machine:simulation    TICK:  6346 PC:   270 STATE: execute   MODE: user TOS:       1 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	eq [eq 10 10 -> 1]
+  DEBUG   machine:simulation    TICK:  6347 PC:   270 STATE: irq_check MODE: user TOS:       1 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	eq [no irq]
+  DEBUG   machine:simulation    TICK:  6348 PC:   271 STATE: fetch     MODE: user TOS:       1 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	jz 274 [fetch @0000010E]
+  DEBUG   machine:simulation    TICK:  6349 PC:   271 STATE: decode    MODE: user TOS:       1 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  0 DS: [10,1]           RS: []               IE:1 IP:0 CACHE:229/20	jz 274 [decode jz 274]
+  DEBUG   machine:simulation    TICK:  6350 PC:   271 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	jz 274 [jz not taken]
+  DEBUG   machine:simulation    TICK:  6351 PC:   271 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	jz 274 [no irq]
+  DEBUG   machine:simulation    TICK:  6352 PC:   272 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	call 2 [fetch @0000010F]
+  DEBUG   machine:simulation    TICK:  6353 PC:   272 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [10]             RS: []               IE:1 IP:0 CACHE:229/20	call 2 [decode call 2]
+  DEBUG   machine:simulation    TICK:  6354 PC:     2 STATE: execute   MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	call 2 [call 0x00000002]
+  DEBUG   machine:simulation    TICK:  6355 PC:     2 STATE: irq_check MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	call 2 [no irq]
+  DEBUG   machine:simulation    TICK:  6356 PC:     3 STATE: fetch     MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	lit 65522 [fetch @00000002]
+  DEBUG   machine:simulation    TICK:  6357 PC:     3 STATE: decode    MODE: user TOS:      10 NOS:       - DS_DEPTH:  1 RS_DEPTH:  1 DS: [10]             RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	lit 65522 [decode lit 65522]
+  DEBUG   machine:simulation    TICK:  6358 PC:     3 STATE: execute   MODE: user TOS:   65522 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  1 DS: [10,65522]       RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	lit 65522 [push 65522]
+  DEBUG   machine:simulation    TICK:  6359 PC:     3 STATE: irq_check MODE: user TOS:   65522 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  1 DS: [10,65522]       RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	lit 65522 [no irq]
+  DEBUG   machine:simulation    TICK:  6360 PC:     4 STATE: fetch     MODE: user TOS:   65522 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  1 DS: [10,65522]       RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	store [fetch @00000003]
+  DEBUG   machine:simulation    TICK:  6361 PC:     4 STATE: decode    MODE: user TOS:   65522 NOS:      10 DS_DEPTH:  2 RS_DEPTH:  1 DS: [10,65522]       RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	store [decode store]
+  DEBUG   machine:simulation    TICK:  6362 PC:     4 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	store [mmio_write 10 -> [0xFFF2]]
+  DEBUG   machine:simulation    TICK:  6363 PC:     4 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	store [no irq]
+  DEBUG   machine:simulation    TICK:  6364 PC:     5 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	ret [fetch @00000004]
+  DEBUG   machine:simulation    TICK:  6365 PC:     5 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  1 DS: []               RS: [0x00000110]     IE:1 IP:0 CACHE:229/20	ret [decode ret]
+  DEBUG   machine:simulation    TICK:  6366 PC:   272 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	ret [ret 0x00000110]
+  DEBUG   machine:simulation    TICK:  6367 PC:   272 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	ret [no irq]
+  DEBUG   machine:simulation    TICK:  6368 PC:   273 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [fetch @00000110]
+  DEBUG   machine:simulation    TICK:  6369 PC:   273 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [decode lit 1]
+  DEBUG   machine:simulation    TICK:  6370 PC:   273 STATE: execute   MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [push 1]
+  DEBUG   machine:simulation    TICK:  6371 PC:   273 STATE: irq_check MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	lit 1 [no irq]
+  DEBUG   machine:simulation    TICK:  6372 PC:   274 STATE: fetch     MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 276 [fetch @00000111]
+  DEBUG   machine:simulation    TICK:  6373 PC:   274 STATE: decode    MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 276 [decode jmp 276]
+  DEBUG   machine:simulation    TICK:  6374 PC:   276 STATE: execute   MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 276 [jmp 0x00000114]
+  DEBUG   machine:simulation    TICK:  6375 PC:   276 STATE: irq_check MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jmp 276 [no irq]
+  DEBUG   machine:simulation    TICK:  6376 PC:   277 STATE: fetch     MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jz 266 [fetch @00000114]
+  DEBUG   machine:simulation    TICK:  6377 PC:   277 STATE: decode    MODE: user TOS:       1 NOS:       - DS_DEPTH:  1 RS_DEPTH:  0 DS: [1]              RS: []               IE:1 IP:0 CACHE:229/20	jz 266 [decode jz 266]
+  DEBUG   machine:simulation    TICK:  6378 PC:   277 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	jz 266 [jz not taken]
+  DEBUG   machine:simulation    TICK:  6379 PC:   277 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	jz 266 [no irq]
+  DEBUG   machine:simulation    TICK:  6380 PC:   278 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [fetch @00000115]
+  DEBUG   machine:simulation    TICK:  6381 PC:   278 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [decode halt]
+  DEBUG   machine:simulation    TICK:  6382 PC:   278 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:1 IP:0 CACHE:229/20	halt [halt]

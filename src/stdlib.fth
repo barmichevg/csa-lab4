@@ -7,6 +7,15 @@ variable __input-tail
 variable __input-count
 variable __input-tmp
 
+variable __read-acc
+variable __read-started
+variable __read-sign
+variable __read-ch
+
+buffer __print-digits 10
+variable __print-value
+variable __print-count
+
 : emit
     out-data !
 ;
@@ -72,6 +81,72 @@ variable __input-tmp
         __input-tmp @
     else
         0
+    then
+;
+
+: wait-char
+    begin input-ready? until
+    input-pop
+;
+
+: digit?
+    dup 47 > swap 58 < *
+;
+
+: read-number
+    0 __read-acc !
+    0 __read-started !
+    1 __read-sign !
+
+    begin
+        wait-char __read-ch !
+
+        __read-ch @ 45 = __read-started @ 0 = *
+        if
+            -1 __read-sign !
+            0
+        else
+            __read-ch @ digit?
+            if
+                __read-acc @ 10 * __read-ch @ 48 - + __read-acc !
+                1 __read-started !
+                0
+            else
+                __read-started @
+            then
+        then
+    until
+
+    __read-acc @ __read-sign @ *
+;
+
+: print-int
+    dup 0 <
+    if
+        45 emit
+        -1 *
+    then
+
+    __print-value !
+
+    __print-value @ 0 =
+    if
+        48 emit
+    else
+        0 __print-count !
+
+        begin
+            __print-value @ 10 mod 48 + __print-digits __print-count @ + !
+            __print-count @ 1 + __print-count !
+            __print-value @ 10 / __print-value !
+            __print-value @ 0 =
+        until
+
+        begin
+            __print-count @ 1 - __print-count !
+            __print-digits __print-count @ + @ emit
+            __print-count @ 0 =
+        until
     then
 ;
 
