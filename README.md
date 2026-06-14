@@ -162,6 +162,8 @@ Data memory
 +-------------+----------------------------+
 ```
 
+В бинарных файлах `program.bin` и `data.bin` каждое машинное слово записывается как 4 байта в порядке **big-endian**. Внутри модели адресация остаётся пословной: адрес указывает на номер 32-битного слова. В `.hex`-листингах то же слово отображается как 8 шестнадцатеричных цифр.
+
 ### Набор инструкций
 
 | Opcode | Мнемоника | Аргумент     | Эффект стека        | Описание                           |
@@ -211,7 +213,7 @@ FETCH -> DECODE -> EXECUTE -> IRQ_CHECK
 
 ### Стандартная библиотека
 
-Файл `src/stdlib.fth` автоматически подключается транслятором перед пользовательской программой и компилируется как обычный код MiniForth.
+Файл `src/stdlib.fth` автоматически подключается транслятором перед пользовательской программой и компилируется как обычный код.
 
 | Слово          | Назначение                                      |
 | -------------- | ----------------------------------------------- |
@@ -265,6 +267,7 @@ data.bin.hex     человекочитаемый листинг данных
 - вызов пользовательского слова компилируется в `call address`;
 - определение `: name ... ;` размещает тело процедуры в памяти команд и завершает его `ret`;
 - `' name` компилируется как `lit address(name)`;
+- для встроенных примитивов, которые обычно не имеют собственного адреса в памяти команд, транслятор создаёт скрытое trampoline-слово вида `primitive; ret`, поэтому их тоже можно использовать как `execution token`;
 - `execute` выполняет косвенный вызов по адресу с вершины стека;
 - `if/else/then` компилируются через `jz` и `jmp`;
 - `begin/until` компилируется как метка начала цикла и условный переход назад;
@@ -298,37 +301,46 @@ python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--
 DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NOS: ... DS_DEPTH: ... RS_DEPTH: ... DS: ... RS: ... IE:... IP:... CACHE:...    instr [event]
 ```
 
-Поля `TOS` и `NOS` являются удобным отображением вершины и подверхушки `Data Stack`. `DS_DEPTH` и `RS_DEPTH` показывают текущую глубину стеков.
-
 ### DataPath
 
 ![DataPath](fig/datapath.png)
+
+Глобальные линии `clk/reset` на схеме DataPath не показаны, чтобы не перегружать рисунок; обновление регистров задаётся управляющими сигналами `pc_latch`, `ir_latch`, `stack_op`, `rs_op`, `mem_rd/mem_wr` и другими.
 
 Основные блоки DataPath:
 
 - `Program Memory` -- память инструкций;
 - `PC` -- счётчик команд;
-- `IR` -- текущая инструкция;
-- `Data Stack` -- стек операндов, архитектурно видны `TOS`, `NOS`, `SP`;
+- `IR` -- текущая инструкции;
+- `Data Stack` -- стек операндов;
 - `Return Stack` -- стек адресов возврата;
 - `ALU` -- арифметика и сравнения;
-- `Address Decoder` -- выбор между обычной памятью и MMIO;
-- `Data Cache` -- кэш памяти данных;
+- `Data Cache` -- кэш обычной памяти данных;
 - `Data Memory` -- память данных;
-- `MMIO` -- регистры ввода-вывода;
-- `Interrupt Controller` -- состояние входного прерывания.
+- `Address Decoder` -- выбор между обычной памятью и MMIO;
+- `MMIO` -- memory-mapped регистры ввода-вывода;
+- `Input IRQ Controller` -- внешнее устройство ввода: получает события из `input schedule`, выставляет `input_char`, `input_status`, `irq_pending` и фиксирует `overrun`;
+- `Next PC MUX` -- выбирает следующий адрес команды: `pc + 1`, `target_addr` из `IR`, `ret_addr` из `Return Stack`, `xt_addr` из `Data Stack` или `irq_vector_addr`;
+- `WriteBack MUX` -- выбирает источник значения, записываемого обратно в `Data Stack`: результат ALU, `lit`-значение или значение из памяти/MMIO;
+- `Read Data MUX` -- выбирает источник результата чтения: `Data Cache` или `MMIO`;
+
+Обычные адреса памяти данных проходят через `Data Cache`. MMIO-адреса распознаются `Address Decoder` и обходят кэш. Подтверждение входного прерывания выполняется не сигналом процессора, а  записью обработчика в регистр `MMIO_IRQ_ACK`; эта запись приходит из `MMIO` в `Input IRQ Controller` как `irq_ack write`.
 
 ### ControlUnit
 
 ![Control Unit](fig/control_unit.png)
 
-Основные блоки Control Unit:
+Control Unit реализован как hardwired FSM, вместе с минимальным внешним контекстом DataPath. Пунктирная рамка отделяет внутреннюю логику ControlUnit от внешних фрагментов DataPath.
+
+Основные блоки ControlUnit:
 
 - `Decode / dispatch` получает `opcode, arg` из `IR` и формирует класс операции `op_class`;
-- `Sequencer / next-state` по `current_state`, `op_class` и `cache_status` выбирает следующее микросостояние;
-- `Datapath control` по `current_state`, `op_class`, `zero?`, `cache_status` и `irq_enter` формирует управляющие сигналы для DataPath: `pc_sel`, `pc_latch`, `ir_latch`, `stack_op`, `rs_op`, `alu_op`, `wb_sel`, `mem_rd`, `mem_wr`;
-- `IRQ control` учитывает `irq_pending`, `IE`, `IN_IRQ` и формирует `irq_enter` и `irq_ctrl`;
-- `State Register` хранит текущее микросостояние: `FETCH`, `DECODE`, `EXECUTE`, `MEM_WAIT`, `IRQ_CHECK`, `HALTED`.
+- `Sequencer / next-state` является комбинационной логикой переходов FSM и по `current_state`, `op_class` и `cache_status` выбирает следующий state;
+- `State Register` хранит текущее состояние FSM: `FETCH`, `DECODE`, `EXECUTE`, `MEM_WAIT`, `IRQ_CHECK`, `HALTED`;
+- `Datapath control` по `current_state`, `op_class`, `zero?`, `cache_status` и `irq_enter` формирует управляющие сигналы для DataPath;
+- `IRQ control` хранит внутренние флаги `IE` и `IN_IRQ`, получает `irq_pending` от `Input IRQ Controller`, учитывает `op_class` и `current_state`, обновляет флаги на `ei`, `di`, `iret` и формирует внутренний сигнал `irq_enter`.
+
+Сигналы `tick/clk` и `reset` являются внешними входами FSM. `tick/clk` фиксирует переход `State Register` из `current_state` в `next_state`. `reset` переводит автомат в начальное состояние `FETCH`; также при сбросе инициализируются начальные значения процессора, включая `PC <- 0`, `IE <- 0`, `IN_IRQ <- 0`.
 
 ## Ввод-вывод MMIO и прерывания
 
@@ -363,7 +375,20 @@ cache on : ticks=2299 instructions=530 hits=122 misses=20
 cache off: ticks=3397 instructions=530 uncached_reads=91 uncached_writes=51
 ```
 
-Количество исполненных инструкций одинаковое, но при включённом кэше требуется меньше тактов.
+Количество исполненных инструкций одинаковое, но при включённом кэше требуется меньше тактов. Ниже приведено сравнение запусков всех примеров с включённым и выключенным кэшем.
+
+| Алгоритм          | ticks cache on | ticks cache off | hits/misses | uncached R/W | Ускорение по тактам |
+| ----------------- | -------------: | --------------: | ----------: | -----------: | ------------------: |
+| `arithmetic`      |           1221 |            1698 |       53/14 |        47/20 |               1.39x |
+| `cache_demo`      |           2299 |            3397 |      122/20 |        91/51 |               1.48x |
+| `cat`             |           6355 |            6518 |      273/20 |       186/33 |               1.03x |
+| `hello`           |           1780 |            2509 |       81/21 |        72/30 |               1.41x |
+| `hello_user_name` |          17314 |           18239 |      771/87 |      539/125 |               1.05x |
+| `irq_echo`        |            892 |            1252 |        40/1 |        20/21 |               1.40x |
+| `prob1`           |         113358 |          171892 |    6862/439 |    5693/1504 |               1.52x |
+| `sort`            |          24746 |           27732 |    1124/175 |      779/290 |               1.12x |
+| `wide`            |           1882 |            2602 |       80/31 |        69/42 |               1.38x |
+| `xt_demo`         |            902 |            1217 |       35/11 |        32/14 |               1.35x |
 
 ## Тестирование
 
@@ -398,18 +423,18 @@ CI выполняет те же проверки в GitHub Actions.
 
 ### Golden tests
 
-| Тест              | Назначение                                   | Ссылка                                                                                 |
-| ----------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `hello`           | печать Hello world через `pstr` и `type`     | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/hello.yml`           |
-| `cat`             | печать входных символов через trap-ввод      | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/cat.yml`             |
-| `hello_user_name` | ввод имени и приветствие                     | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/hello_user_name.yml` |
-| `sort`            | length-prefixed сортировка знаковых чисел    | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/sort.yml`            |
-| `wide`            | 64-битное сложение через 4 limb по 16 бит    | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/wide.yml`            |
-| `prob1`           | Project Euler Problem 4                      | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/prob1.yml`           |
-| `cache_demo`      | демонстрация кэша                            | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/cache_demo.yml`      |
-| `irq_echo`        | демонстрация trap-прерывания                 | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/irq_echo.yml`        |
-| `xt_demo`         | демонстрация execution token                 | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/xt_demo.yml`         |
-| `arithmetic`      | базовая арифметика                           | `https://github.com/barmichevg/csa-lab4/blob/main/tests/golden/arithmetic.yml`      |
+| Тест              | Назначение                                   | Ссылка                             |
+| ----------------- | -------------------------------------------- | ---------------------------------- |
+| `hello`           | печать Hello world через `pstr` и `type`     | `tests/golden/hello.yml`           |
+| `cat`             | печать входных символов через trap-ввод      | `tests/golden/cat.yml`             |
+| `hello_user_name` | ввод имени и приветствие                     | `tests/golden/hello_user_name.yml` |
+| `sort`            | length-prefixed сортировка знаковых чисел    | `tests/golden/sort.yml`            |
+| `wide`            | 64-битное сложение через 4 limb по 16 бит    | `tests/golden/wide.yml`            |
+| `prob1`           | Project Euler Problem 4                      | `tests/golden/prob1.yml`           |
+| `cache_demo`      | демонстрация кэша                            | `tests/golden/cache_demo.yml`      |
+| `irq_echo`        | демонстрация trap-прерывания                 | `tests/golden/irq_echo.yml`        |
+| `xt_demo`         | демонстрация execution token                 | `tests/golden/xt_demo.yml`         |
+| `arithmetic`      | базовая арифметика                           | `tests/golden/arithmetic.yml`      |
 
 ## Примеры работы
 
@@ -435,9 +460,9 @@ halt
 В памяти команд вывод строки представлен как загрузка адреса строки и вызов `type`:
 
 ```text
-00000104 - 01000056 - lit 86
-00000105 - 420000E2 - call 226
-00000106 - FF000000 - halt
+000000FF - 01000056 - lit 86
+00000100 - 420000DD - call 221
+00000101 - FF000000 - halt
 ```
 
 Запуск:
@@ -457,11 +482,11 @@ summary: ticks=1780 instructions=398 cache=on hits=81 misses=21 uncached_reads=0
 Фрагмент журнала:
 
 ```text
-DEBUG machine:simulation TICK: 0 PC: 1 STATE: fetch MODE: user TOS: - NOS: - DS_DEPTH: 0 RS_DEPTH: 0 DS: [] RS: [] IE:0 IP:0 CACHE:0/0 jmp 264 [fetch @00000000]
+DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [fetch @00000000]
 
-DEBUG machine:simulation TICK: 1 PC: 1 STATE: decode MODE: user TOS: - NOS: - DS_DEPTH: 0 RS_DEPTH: 0 DS: [] RS: [] IE:0 IP:0 CACHE:0/0 jmp 264 [decode jmp 264]
+DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [decode jmp 255]
 
-DEBUG machine:simulation TICK: 2 PC: 264 STATE: execute MODE: user TOS: - NOS: - DS_DEPTH: 0 RS_DEPTH: 0 DS: [] RS: [] IE:0 IP:0 CACHE:0/0 jmp 264 [jmp 0x00000108]
+DEBUG   machine:simulation    TICK:     2 PC:   255 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [jmp 0x000000FF]
 ```
 
 ## Статистика
@@ -470,13 +495,13 @@ DEBUG machine:simulation TICK: 2 PC: 264 STATE: execute MODE: user TOS: - NOS: -
 
 | Алгоритм | LoC | code instr | code bytes | data cells | exec instr | ticks |
 |---|---:|---:|---:|---:|---:|---:|
-| `arithmetic` | 10 | 278 | 1112 | 108 | 274 | 1221 |
-| `cache_demo` | 21 | 295 | 1180 | 96 | 530 | 2299 |
-| `cat` | 15 | 279 | 1116 | 86 | 1551 | 6383 |
-| `hello` | 4 | 265 | 1060 | 101 | 398 | 1780 |
-| `hello_user_name` | 33 | 313 | 1252 | 151 | 4139 | 17329 |
-| `irq_echo` | 17 | 280 | 1120 | 87 | 221 | 892 |
-| `prob1` | 34 | 338 | 1352 | 99 | 1867 | 7953 |
-| `sort` | 68 | 409 | 1636 | 122 | 5795 | 24745 |
-| `wide` | 64 | 370 | 1480 | 120 | 401 | 1882 |
-| `xt_demo` | 14 | 277 | 1108 | 102 | 192 | 866 |
+| `arithmetic` | 10 | 272 | 1088 | 108 | 274 | 1221 |
+| `cache_demo` | 21 | 289 | 1156 | 96 | 530 | 2299 |
+| `cat` | 15 | 273 | 1092 | 86 | 1544 | 6355 |
+| `hello` | 4 | 259 | 1036 | 101 | 398 | 1780 |
+| `hello_user_name` | 33 | 307 | 1228 | 151 | 4133 | 17314 |
+| `irq_echo` | 17 | 274 | 1096 | 87 | 221 | 892 |
+| `prob1` | 91 | 424 | 1696 | 103 | 27352 | 113358 |
+| `sort` | 68 | 403 | 1612 | 122 | 5793 | 24746 |
+| `wide` | 65 | 364 | 1456 | 120 | 401 | 1882 |
+| `xt_demo` | 16 | 280 | 1120 | 102 | 201 | 902 |

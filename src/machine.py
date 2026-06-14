@@ -58,6 +58,19 @@ class InputEvent:
     char_code: int
 
 
+@dataclass(frozen=True, slots=True)
+class MemoryAccess:
+    """Запрос к памяти, который может завершиться сразу или после MEM_WAIT."""
+
+    kind: str
+    wait_ticks: int
+    event: str
+    value: int | None = None
+    completion: str | None = None
+    address: int | None = None
+    write_value: int | None = None
+
+
 @dataclass(slots=True)
 class CacheLine:
     valid: bool = False
@@ -79,7 +92,7 @@ class DataCache:
             raise MachineError("cache line count must be positive")
         self.lines = [CacheLine() for _ in range(self.line_count)]
 
-    def read(self, address: int, backing_words: list[int]) -> tuple[int, bool]:
+    def read(self, address: int, backing_words: list[int]) -> tuple[int | None, bool]:
         index = address % self.line_count
         tag = address // self.line_count
         line = self.lines[index]
@@ -89,11 +102,17 @@ class DataCache:
             return to_signed32(line.value), True
 
         self.misses += 1
+        return None, False
+
+    def complete_read_miss(self, address: int, backing_words: list[int]) -> int:
+        index = address % self.line_count
+        tag = address // self.line_count
+        line = self.lines[index]
         value = backing_words[address]
         line.valid = True
         line.tag = tag
         line.value = value
-        return to_signed32(value), False
+        return to_signed32(value)
 
     def write(self, address: int, value: int, backing_words: list[int]) -> bool:
         raw_value = to_word(value)
@@ -104,14 +123,22 @@ class DataCache:
         hit = line.valid and line.tag == tag
         if hit:
             self.hits += 1
-        else:
-            self.misses += 1
-            line.valid = True
-            line.tag = tag
+            line.value = raw_value
+            backing_words[address] = raw_value
+            return True
 
+        self.misses += 1
+        return False
+
+    def complete_write_miss(self, address: int, value: int, backing_words: list[int]) -> None:
+        raw_value = to_word(value)
+        index = address % self.line_count
+        tag = address // self.line_count
+        line = self.lines[index]
+        line.valid = True
+        line.tag = tag
         line.value = raw_value
         backing_words[address] = raw_value
-        return hit
 
 
 @dataclass(slots=True)
@@ -147,51 +174,79 @@ class DataMemory:
             words.extend([0] * (minimum_size - len(words)))
         return cls(words=words, cache_enabled=cache_enabled, cache_line_count=cache_line_count)
 
-    def read(self, address: int) -> tuple[int | None, int, str, str]:
+    def read(self, address: int) -> MemoryAccess:
         if address == MMIO_IN_DATA:
             value = to_signed32(self.input_data)
-            return value, 0, f"mmio_read [0x{address:04X}] -> {value}", f"load [0x{address:04X}] -> {value}"
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=0,
+                event=f"mmio_read [0x{address:04X}] -> {value}",
+                value=value,
+            )
         if address == MMIO_IN_STATUS:
             value = self.input_status
-            return value, 0, f"mmio_read [0x{address:04X}] -> {value}", f"load [0x{address:04X}] -> {value}"
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=0,
+                event=f"mmio_read [0x{address:04X}] -> {value}",
+                value=value,
+            )
         if address == MMIO_OUT_DATA:
-            return 0, 0, f"mmio_read [0x{address:04X}] -> 0", f"load [0x{address:04X}] -> 0"
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=0,
+                event=f"mmio_read [0x{address:04X}] -> 0",
+                value=0,
+            )
         if address == MMIO_IRQ_ACK:
-            return 0, 0, f"mmio_read [0x{address:04X}] -> 0", f"load [0x{address:04X}] -> 0"
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=0,
+                event=f"mmio_read [0x{address:04X}] -> 0",
+                value=0,
+            )
 
         self._check_regular_address(address)
 
         if self.cache is None:
             self.uncached_reads += 1
-            value = to_signed32(self.words[address])
-            return (
-                value,
-                MEMORY_WAIT_TICKS,
-                f"memory_read [0x{address:04X}] -> {value}; wait={MEMORY_WAIT_TICKS}",
-                f"memory_read_done [0x{address:04X}] -> {value}",
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=MEMORY_WAIT_TICKS,
+                event=f"memory_read [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+                completion="memory_read",
+                address=address,
             )
 
-        value, hit = self.cache.read(address, self.words)
+        cache_value, hit = self.cache.read(address, self.words)
         if hit:
-            return value, 0, f"cache_hit read [0x{address:04X}] -> {value}", f"load [0x{address:04X}] -> {value}"
+            if cache_value is None:
+                raise MachineError("cache hit did not return a value")
+            return MemoryAccess(
+                kind="load",
+                wait_ticks=0,
+                event=f"cache_hit read [0x{address:04X}] -> {cache_value}",
+                value=cache_value,
+            )
 
-        return (
-            value,
-            MEMORY_WAIT_TICKS,
-            f"cache_miss read [0x{address:04X}] -> {value}; wait={MEMORY_WAIT_TICKS}",
-            f"cache_fill_done read [0x{address:04X}] -> {value}",
+        return MemoryAccess(
+            kind="load",
+            wait_ticks=MEMORY_WAIT_TICKS,
+            event=f"cache_miss read [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+            completion="cache_read_miss",
+            address=address,
         )
 
-    def write(self, address: int, value: int) -> tuple[int | None, int, str, str]:
+    def write(self, address: int, value: int) -> MemoryAccess:
         if address == MMIO_OUT_DATA:
             self.output_buffer.append(chr(value & 0xFF))
-            return None, 0, f"mmio_write {value} -> [0x{address:04X}]", f"store {value} -> [0x{address:04X}]"
+            return MemoryAccess(kind="store", wait_ticks=0, event=f"mmio_write {value} -> [0x{address:04X}]")
 
         if address == MMIO_IRQ_ACK:
             if value != 0:
                 self.input_status = 0
                 self.irq_pending = False
-            return None, 0, f"mmio_write {value} -> [0x{address:04X}]", f"store {value} -> [0x{address:04X}]"
+            return MemoryAccess(kind="store", wait_ticks=0, event=f"mmio_write {value} -> [0x{address:04X}]")
 
         if address in MMIO_READ_ONLY:
             raise MachineError(f"attempt to write read-only MMIO register 0x{address:04X}")
@@ -200,34 +255,75 @@ class DataMemory:
 
         if self.cache is None:
             self.uncached_writes += 1
-            self.words[address] = to_word(value)
-            return (
-                None,
-                MEMORY_WAIT_TICKS,
-                f"memory_write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
-                f"memory_write_done {value} -> [0x{address:04X}]",
+            return MemoryAccess(
+                kind="store",
+                wait_ticks=MEMORY_WAIT_TICKS,
+                event=f"memory_write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+                completion="memory_write",
+                address=address,
+                write_value=value,
             )
 
         hit = self.cache.write(address, value, self.words)
         if hit:
-            return None, 0, f"cache_hit write {value} -> [0x{address:04X}]", f"store {value} -> [0x{address:04X}]"
+            return MemoryAccess(
+                kind="store",
+                wait_ticks=0,
+                event=f"cache_hit write {value} -> [0x{address:04X}]",
+            )
 
-        return (
-            None,
-            MEMORY_WAIT_TICKS,
-            f"cache_miss write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
-            f"cache_fill_done write {value} -> [0x{address:04X}]",
+        return MemoryAccess(
+            kind="store",
+            wait_ticks=MEMORY_WAIT_TICKS,
+            event=f"cache_miss write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+            completion="cache_write_miss",
+            address=address,
+            write_value=value,
         )
 
-    def push_input_char(self, char_code: int) -> None:
+    def complete_access(self, access: MemoryAccess) -> tuple[int | None, str]:
+        if access.completion is None:
+            return access.value, access.event
+        if access.address is None:
+            raise MachineError("pending memory access has no address")
+
+        address = access.address
+        if access.completion == "memory_read":
+            value = to_signed32(self.words[address])
+            return value, f"memory_read_done [0x{address:04X}] -> {value}"
+
+        if access.completion == "memory_write":
+            if access.write_value is None:
+                raise MachineError("pending memory write has no value")
+            self.words[address] = to_word(access.write_value)
+            return None, f"memory_write_done {access.write_value} -> [0x{address:04X}]"
+
+        if access.completion == "cache_read_miss":
+            if self.cache is None:
+                raise MachineError("cache read miss without cache")
+            value = self.cache.complete_read_miss(address, self.words)
+            return value, f"cache_fill_done read [0x{address:04X}] -> {value}"
+
+        if access.completion == "cache_write_miss":
+            if self.cache is None:
+                raise MachineError("cache write miss without cache")
+            if access.write_value is None:
+                raise MachineError("pending cache write has no value")
+            self.cache.complete_write_miss(address, access.write_value, self.words)
+            return None, f"cache_fill_done write {access.write_value} -> [0x{address:04X}]"
+
+        raise MachineError(f"unsupported memory completion: {access.completion}")
+
+    def push_input_char(self, char_code: int) -> bool:
         """Передать байт во входной регистр устройства."""
         if self.input_status != 0:
             self.input_overrun_count += 1
-            return
+            return False
 
         self.input_data = char_code & 0xFF
         self.input_status = 1
         self.irq_pending = True
+        return True
 
     @property
     def output(self) -> str:
@@ -248,7 +344,7 @@ class DataMemory:
 
 @dataclass(slots=True)
 class Machine:
-    """Модель процессора MiniForth."""
+    """Модель процессора."""
 
     program_memory: list[Instruction]
     data_memory: DataMemory
@@ -268,9 +364,7 @@ class Machine:
     halted: bool = False
 
     memory_wait_ticks: int = 0
-    pending_memory_kind: str | None = None
-    pending_memory_value: int | None = None
-    pending_memory_final_event: str = ""
+    pending_memory_access: MemoryAccess | None = None
 
     executed_instructions: int = 0
     log_lines: list[str] = field(default_factory=list)
@@ -440,31 +534,26 @@ class Machine:
         self.micro_state = MicroState.IRQ_CHECK
         return event
 
-    def _handle_memory_access(
-        self,
-        access: tuple[int | None, int, str, str],
-        *,
-        kind: str,
-    ) -> str:
-        value, wait_ticks, event, final_event = access
+    def _handle_memory_access(self, access: MemoryAccess, *, kind: str) -> str:
+        if access.kind != kind:
+            raise MachineError(f"unexpected memory access kind: {access.kind}, expected {kind}")
 
-        if wait_ticks == 0:
+        if access.wait_ticks == 0:
             if kind == "load":
-                if value is None:
+                if access.value is None:
                     raise MachineError("LOAD memory access did not return a value")
-                self.push(value)
+                self.push(access.value)
             self.micro_state = MicroState.IRQ_CHECK
-            return event
+            return access.event
 
-        self.pending_memory_kind = kind
-        self.pending_memory_value = value
-        self.pending_memory_final_event = final_event
-        self.memory_wait_ticks = wait_ticks
+        self.pending_memory_access = access
+        self.memory_wait_ticks = access.wait_ticks
         self.micro_state = MicroState.MEM_WAIT
-        return event
+        return access.event
 
     def _tick_mem_wait(self) -> str:
-        if self.pending_memory_kind is None:
+        access = self.pending_memory_access
+        if access is None:
             raise MachineError("MEM_WAIT without pending memory access")
         if self.memory_wait_ticks <= 0:
             raise MachineError("invalid memory wait counter")
@@ -473,15 +562,10 @@ class Machine:
         if self.memory_wait_ticks > 0:
             return f"cache_wait remaining={self.memory_wait_ticks}"
 
-        kind = self.pending_memory_kind
-        value = self.pending_memory_value
-        final_event = self.pending_memory_final_event
+        value, final_event = self.data_memory.complete_access(access)
+        self.pending_memory_access = None
 
-        self.pending_memory_kind = None
-        self.pending_memory_value = None
-        self.pending_memory_final_event = ""
-
-        if kind == "load":
+        if access.kind == "load":
             if value is None:
                 raise MachineError("pending LOAD has no value")
             self.push(value)
@@ -576,9 +660,20 @@ class Machine:
     def _deliver_input_events_for_current_tick(self) -> None:
         while self._next_input_event_index < len(self.input_events):
             event = self.input_events[self._next_input_event_index]
-            if event.tick != self.tick_counter:
+            if event.tick > self.tick_counter:
                 break
-            self.data_memory.push_input_char(event.char_code)
+
+            accepted = self.data_memory.push_input_char(event.char_code)
+            char_text = format_input_char(event.char_code)
+            result = "accepted, IRQ pending set" if accepted else "OVERRUN, IN_STATUS already set"
+
+            self.log_lines.append(
+                f"DEBUG   machine:input_event   "
+                f"TICK: {self.tick_counter:5} "
+                f"scheduled:{event.tick:5} "
+                f"char:{char_text:<4} "
+                f"code:{event.char_code:3} -> {result}"
+            )
             self._next_input_event_index += 1
 
     def _require_ir(self) -> Instruction:
@@ -642,6 +737,18 @@ def to_signed32(value: int) -> int:
 
 
 # Расписание входных событий
+def format_input_char(char_code: int) -> str:
+    """Представить входной символ в журнале."""
+    char = chr(char_code & 0xFF)
+    escapes = {"\n": "\\n", "\r": "\\r", "\t": "\\t", "\0": "\\0", " ": "space"}
+    text = escapes.get(char, char)
+    if char == "'":
+        text = "\\'"
+    elif char == "\\":
+        text = "\\\\"
+    return f"'{text}'"
+
+
 def parse_char_token(token: str) -> int:
     """Разобрать символ из файла входных событий."""
     escapes = {"\\n": "\n", "\\r": "\r", "\\t": "\t", "\\0": "\0", "space": " "}
@@ -682,7 +789,7 @@ def read_input_schedule(path: str | Path | None) -> list[InputEvent]:
 
 # Консольный интерфейс
 def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Запустить модель процессора MiniForth")
+    parser = argparse.ArgumentParser(description="Запустить модель процессора")
     parser.add_argument("program", type=Path, help="program.bin от транслятора")
     parser.add_argument("data", type=Path, help="data.bin от транслятора")
     parser.add_argument("input", type=Path, nargs="?", default=None, help="файл расписания trap-ввода")

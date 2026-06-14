@@ -24,7 +24,7 @@ IRQ_VECTOR = 1
 
 
 class TranslatorError(RuntimeError):
-    """Ошибка трансляции MiniForth-программы."""
+    """Ошибка трансляции программы."""
 
 
 class TokenKind(Enum):
@@ -102,7 +102,7 @@ RESERVED_WORDS = (
 
 
 class Compiler:
-    """Компилятор MiniForth."""
+    """Компилятор."""
 
     def __init__(self) -> None:
         self.instructions: list[Instruction] = [
@@ -116,6 +116,8 @@ class Compiler:
         self.fixups: list[Fixup] = []
 
         self.irq_handler_label: str | None = None
+        self.builtin_xt_labels: dict[str, str] = {}
+        self.builtin_xt_order: list[str] = []
 
     def compile(self, source: str) -> tuple[list[Instruction], list[int]]:
         full_source = load_stdlib_source() + "\n" + source
@@ -128,7 +130,9 @@ class Compiler:
         main_addr = self.current_address
         self.code_labels["main"] = main_addr
         self._compile_tokens(main_tokens, "main")
-        self.emit(Opcode.HALT)
+        self.emit_halt_if_needed()
+
+        self._emit_builtin_xt_trampolines()
 
         if self.irq_handler_label is None:
             self.irq_handler_label = "__default_irq_handler"
@@ -210,6 +214,29 @@ class Compiler:
         index = self.emit(opcode, 0)
         self.fixups.append(Fixup(index, label, token, opcode))
 
+    def emit_halt_if_needed(self) -> None:
+        if not self.instructions or self.instructions[-1].opcode != Opcode.HALT:
+            self.emit(Opcode.HALT)
+
+    def builtin_xt_label(self, name: str) -> str:
+        label = self.builtin_xt_labels.get(name)
+        if label is None:
+            label = f"__xt_builtin_{len(self.builtin_xt_order)}"
+            self.builtin_xt_labels[name] = label
+            self.builtin_xt_order.append(name)
+        return label
+
+    def _emit_builtin_xt_trampolines(self) -> None:
+        for name in self.builtin_xt_order:
+            label = self.builtin_xt_labels[name]
+            if label in self.code_labels:
+                continue
+            opcode = BUILTIN_WORDS[name]
+            self.code_labels[label] = self.current_address
+            self.emit(opcode)
+            if opcode not in {Opcode.HALT, Opcode.IRET}:
+                self.emit(Opcode.RET)
+
     def patch_instruction_arg(self, instruction_index: int, arg: int) -> None:
         old = self.instructions[instruction_index]
         self.instructions[instruction_index] = Instruction(old.opcode, arg)
@@ -238,7 +265,7 @@ class Compiler:
         self.data_labels[name] = self.allocate_data([0] * size)
 
     def _check_user_word_name(self, name: str, token: Token) -> None:
-        if name in RESERVED_WORDS:
+        if name in RESERVED_WORDS or name.startswith("__xt_builtin_"):
             raise error_at(token, f"reserved word cannot be redefined: {name}")
         if name in self.code_labels:
             raise error_at(token, f"procedure already declared: {name}")
@@ -292,7 +319,8 @@ class Compiler:
             if word == "'":
                 name_token = require_token(tokens, index + 1, "expected word name after execution-token quote")
                 name = require_word_name(name_token)
-                self.emit_fixup(Opcode.LIT, name, name_token)
+                label = self.builtin_xt_label(name) if name in BUILTIN_WORDS else name
+                self.emit_fixup(Opcode.LIT, label, name_token)
                 index += 2
                 continue
 
@@ -503,8 +531,8 @@ def translate_source(source: str) -> tuple[list[Instruction], list[int]]:
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Транслировать MiniForth в бинарный машинный код")
-    parser.add_argument("source", type=Path, help="исходный файл MiniForth")
+    parser = argparse.ArgumentParser(description="Транслировать программу в бинарный машинный код")
+    parser.add_argument("source", type=Path, help="исходный файл программы")
     parser.add_argument("program", type=Path, help="выходной program.bin")
     parser.add_argument("data", type=Path, help="выходной data.bin")
     parser.add_argument("--program-hex", type=Path, default=None, help="листинг команд")

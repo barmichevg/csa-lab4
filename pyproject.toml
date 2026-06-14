@@ -1,7 +1,7 @@
 [project]
 name = "ak-4"
 version = "0.1.0"
-description = "Лабораторная работа 4: MiniForth, стековый процессор, trap I/O, pstr, cache"
+description = "Лабораторная работа 4: forth | stack | harv | hw | tick | binary | trap | mem | pstr | prob1 | cache"
 requires-python = ">=3.12"
 dependencies = []
 

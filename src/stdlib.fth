@@ -4,7 +4,7 @@ variable __type-len
 buffer __input-buffer 64
 variable __input-head
 variable __input-tail
-variable __input-count
+variable __input-next
 variable __input-tmp
 
 variable __read-acc
@@ -39,33 +39,31 @@ variable __print-count
 : input-init
     0 __input-head !
     0 __input-tail !
-    0 __input-count !
+    0 __input-next !
 ;
 
 : input-ready?
-    __input-count @ 0 >
+    __input-head @ __input-tail @ =
+    if 0 else 1 then
 ;
 
 : input-push
-    __input-count @ 64 <
+    __input-tail @
+    1 +
+    64 mod
+    __input-next !
+
+    __input-next @ __input-head @ =
     if
-        __input-buffer __input-tail @ + !
-
-        __input-tail @
-        1 +
-        64 mod
-        __input-tail !
-
-        __input-count @
-        1 +
-        __input-count !
-    else
         drop
+    else
+        __input-buffer __input-tail @ + !
+        __input-next @ __input-tail !
     then
 ;
 
 : input-pop
-    __input-count @ 0 >
+    input-ready?
     if
         __input-buffer __input-head @ + @ __input-tmp !
 
@@ -73,10 +71,6 @@ variable __print-count
         1 +
         64 mod
         __input-head !
-
-        __input-count @
-        1 -
-        __input-count !
 
         __input-tmp @
     else
