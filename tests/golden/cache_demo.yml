@@ -310,7 +310,10 @@ out_code: |
   0000011D - 4200009A - call 154
   0000011E - 42000005 - call 5
   0000011F - FF000000 - halt
-  00000120 - 52000000 - iret
+  00000120 - 01000001 - lit 1
+  00000121 - 0100FFF3 - lit 65523
+  00000122 - 31000000 - store
+  00000123 - 52000000 - iret
 out_data: |
   00000000 - 00000000 - 0
   00000001 - 00000000 - 0
@@ -409,7 +412,7 @@ out_data: |
   0000005E - 00000045 - 69
   0000005F - 00000020 - 32
 out_stdout: |
-  program: program.bin (289 instructions)
+  program: program.bin (292 instructions)
   data:    data.bin (96 cells)
   ============================================================
   CACHE 420
@@ -430,14 +433,14 @@ out_log: |
   DEBUG   machine:simulation    TICK:    12 PC:   258 STATE: fetch     MODE: user TOS:      86 NOS:      42 DS_DEPTH:  2 RS_DEPTH:  0 DS: [42,86]          RS: []               IE:0 IP:0 CACHE:0/0	store [fetch @00000101]
   DEBUG   machine:simulation    TICK:    13 PC:   258 STATE: decode    MODE: user TOS:      86 NOS:      42 DS_DEPTH:  2 RS_DEPTH:  0 DS: [42,86]          RS: []               IE:0 IP:0 CACHE:0/0	store [decode store]
   DEBUG   machine:simulation    TICK:    14 PC:   258 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_miss write 42 -> [0x0056]; wait=9]
-  DEBUG   machine:simulation    TICK:    15 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    16 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    17 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    18 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    19 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    20 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    21 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    22 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    15 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    16 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    17 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    18 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    19 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    20 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    21 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    22 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [mem_wait remaining=1]
   DEBUG   machine:simulation    TICK:    23 PC:   258 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [cache_fill_done write 42 -> [0x0056]]
   DEBUG   machine:simulation    TICK:    24 PC:   258 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	store [no irq]
   DEBUG   machine:simulation    TICK:    25 PC:   259 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/1	lit 0 [fetch @00000102]
@@ -451,14 +454,14 @@ out_log: |
   DEBUG   machine:simulation    TICK:    33 PC:   261 STATE: fetch     MODE: user TOS:      87 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  0 DS: [0,87]           RS: []               IE:0 IP:0 CACHE:0/1	store [fetch @00000104]
   DEBUG   machine:simulation    TICK:    34 PC:   261 STATE: decode    MODE: user TOS:      87 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  0 DS: [0,87]           RS: []               IE:0 IP:0 CACHE:0/1	store [decode store]
   DEBUG   machine:simulation    TICK:    35 PC:   261 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_miss write 0 -> [0x0057]; wait=9]
-  DEBUG   machine:simulation    TICK:    36 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    37 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    38 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    39 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    40 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    41 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    42 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    43 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    36 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    37 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    38 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    39 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    40 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    41 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    42 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    43 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [mem_wait remaining=1]
   DEBUG   machine:simulation    TICK:    44 PC:   261 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [cache_fill_done write 0 -> [0x0057]]
   DEBUG   machine:simulation    TICK:    45 PC:   261 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	store [no irq]
   DEBUG   machine:simulation    TICK:    46 PC:   262 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/2	lit 0 [fetch @00000105]
@@ -472,14 +475,14 @@ out_log: |
   DEBUG   machine:simulation    TICK:    54 PC:   264 STATE: fetch     MODE: user TOS:      88 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  0 DS: [0,88]           RS: []               IE:0 IP:0 CACHE:0/2	store [fetch @00000107]
   DEBUG   machine:simulation    TICK:    55 PC:   264 STATE: decode    MODE: user TOS:      88 NOS:       0 DS_DEPTH:  2 RS_DEPTH:  0 DS: [0,88]           RS: []               IE:0 IP:0 CACHE:0/2	store [decode store]
   DEBUG   machine:simulation    TICK:    56 PC:   264 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_miss write 0 -> [0x0058]; wait=9]
-  DEBUG   machine:simulation    TICK:    57 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=8]
-  DEBUG   machine:simulation    TICK:    58 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=7]
-  DEBUG   machine:simulation    TICK:    59 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=6]
-  DEBUG   machine:simulation    TICK:    60 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=5]
-  DEBUG   machine:simulation    TICK:    61 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=4]
-  DEBUG   machine:simulation    TICK:    62 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=3]
-  DEBUG   machine:simulation    TICK:    63 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=2]
-  DEBUG   machine:simulation    TICK:    64 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_wait remaining=1]
+  DEBUG   machine:simulation    TICK:    57 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=8]
+  DEBUG   machine:simulation    TICK:    58 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=7]
+  DEBUG   machine:simulation    TICK:    59 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=6]
+  DEBUG   machine:simulation    TICK:    60 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=5]
+  DEBUG   machine:simulation    TICK:    61 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=4]
+  DEBUG   machine:simulation    TICK:    62 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=3]
+  DEBUG   machine:simulation    TICK:    63 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=2]
+  DEBUG   machine:simulation    TICK:    64 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [mem_wait remaining=1]
   DEBUG   machine:simulation    TICK:    65 PC:   264 STATE: mem_wait  MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [cache_fill_done write 0 -> [0x0058]]
   DEBUG   machine:simulation    TICK:    66 PC:   264 STATE: irq_check MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	store [no irq]
   DEBUG   machine:simulation    TICK:    67 PC:   265 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/3	lit 88 [fetch @00000108]

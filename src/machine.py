@@ -39,7 +39,7 @@ class MachineError(RuntimeError):
     """Ошибка состояния процессора или программы."""
 
 
-class MicroState(Enum):
+class ControlState(Enum):
     """Состояния Control Unit."""
 
     FETCH = "fetch"
@@ -92,7 +92,7 @@ class DataCache:
             raise MachineError("cache line count must be positive")
         self.lines = [CacheLine() for _ in range(self.line_count)]
 
-    def read(self, address: int, backing_words: list[int]) -> tuple[int | None, bool]:
+    def read(self, address: int) -> tuple[int | None, bool]:
         index = address % self.line_count
         tag = address // self.line_count
         line = self.lines[index]
@@ -218,7 +218,7 @@ class DataMemory:
                 address=address,
             )
 
-        cache_value, hit = self.cache.read(address, self.words)
+        cache_value, hit = self.cache.read(address)
         if hit:
             if cache_value is None:
                 raise MachineError("cache hit did not return a value")
@@ -353,7 +353,7 @@ class Machine:
 
     pc: int = RESET_VECTOR
     ir: Instruction | None = None
-    micro_state: MicroState = MicroState.FETCH
+    control_state: ControlState = ControlState.FETCH
     tick_counter: int = 0
 
     data_stack: list[int] = field(default_factory=list)
@@ -403,28 +403,28 @@ class Machine:
         return self.data_memory.output
 
     def step_tick(self) -> None:
-        state_before = self.micro_state
+        state_before = self.control_state
 
         if self.halted:
-            self.micro_state = MicroState.HALTED
+            self.control_state = ControlState.HALTED
             self._append_log("already halted", state_before)
             self.tick_counter += 1
             return
 
         self._deliver_input_events_for_current_tick()
 
-        if state_before == MicroState.FETCH:
+        if state_before == ControlState.FETCH:
             event = self._tick_fetch()
-        elif state_before == MicroState.DECODE:
+        elif state_before == ControlState.DECODE:
             event = self._tick_decode()
-        elif state_before == MicroState.EXECUTE:
+        elif state_before == ControlState.EXECUTE:
             event = self._tick_execute()
-        elif state_before == MicroState.MEM_WAIT:
+        elif state_before == ControlState.MEM_WAIT:
             event = self._tick_mem_wait()
-        elif state_before == MicroState.IRQ_CHECK:
+        elif state_before == ControlState.IRQ_CHECK:
             event = self._tick_irq_check()
         else:
-            raise MachineError(f"unsupported micro-state: {state_before}")
+            raise MachineError(f"unsupported control state: {state_before}")
 
         self._append_log(event, state_before)
         self.tick_counter += 1
@@ -434,12 +434,12 @@ class Machine:
         self.ir = self.program_memory[self.pc]
         old_pc = self.pc
         self.pc += 1
-        self.micro_state = MicroState.DECODE
+        self.control_state = ControlState.DECODE
         return f"fetch @{old_pc:08X}"
 
     def _tick_decode(self) -> str:
         self._require_ir()
-        self.micro_state = MicroState.EXECUTE
+        self.control_state = ControlState.EXECUTE
         return f"decode {self._ir_text()}"
 
     def _tick_execute(self) -> str:
@@ -526,12 +526,12 @@ class Machine:
             event = f"iret 0x{self.pc:08X}"
         elif op == Opcode.HALT:
             self.halted = True
-            self.micro_state = MicroState.HALTED
+            self.control_state = ControlState.HALTED
             return "halt"
         else:
             raise MachineError(f"unsupported opcode: {op}")
 
-        self.micro_state = MicroState.IRQ_CHECK
+        self.control_state = ControlState.IRQ_CHECK
         return event
 
     def _handle_memory_access(self, access: MemoryAccess, *, kind: str) -> str:
@@ -543,12 +543,12 @@ class Machine:
                 if access.value is None:
                     raise MachineError("LOAD memory access did not return a value")
                 self.push(access.value)
-            self.micro_state = MicroState.IRQ_CHECK
+            self.control_state = ControlState.IRQ_CHECK
             return access.event
 
         self.pending_memory_access = access
         self.memory_wait_ticks = access.wait_ticks
-        self.micro_state = MicroState.MEM_WAIT
+        self.control_state = ControlState.MEM_WAIT
         return access.event
 
     def _tick_mem_wait(self) -> str:
@@ -560,7 +560,7 @@ class Machine:
 
         self.memory_wait_ticks -= 1
         if self.memory_wait_ticks > 0:
-            return f"cache_wait remaining={self.memory_wait_ticks}"
+            return f"mem_wait remaining={self.memory_wait_ticks}"
 
         value, final_event = self.data_memory.complete_access(access)
         self.pending_memory_access = None
@@ -570,7 +570,7 @@ class Machine:
                 raise MachineError("pending LOAD has no value")
             self.push(value)
 
-        self.micro_state = MicroState.IRQ_CHECK
+        self.control_state = ControlState.IRQ_CHECK
         return final_event
 
     def _tick_irq_check(self) -> str:
@@ -579,10 +579,10 @@ class Machine:
             self.pc = IRQ_VECTOR
             self.irq_enable = False
             self.in_irq = True
-            self.micro_state = MicroState.FETCH
+            self.control_state = ControlState.FETCH
             return "enter irq"
 
-        self.micro_state = MicroState.FETCH
+        self.control_state = ControlState.FETCH
         return "no irq"
 
     def _execute_arithmetic(self, opcode: Opcode) -> str:
@@ -598,16 +598,10 @@ class Machine:
         elif opcode == Opcode.MUL:
             result = a * b
             name = "mul"
-        elif opcode == Opcode.DIV:
-            if b == 0:
-                raise MachineError("division by zero")
-            result = int(a / b)
-            name = "div"
-        elif opcode == Opcode.MOD:
-            if b == 0:
-                raise MachineError("modulo by zero")
-            result = a % b
-            name = "mod"
+        elif opcode in {Opcode.DIV, Opcode.MOD}:
+            quotient, remainder = trunc_divmod(a, b)
+            result = quotient if opcode == Opcode.DIV else remainder
+            name = "div" if opcode == Opcode.DIV else "mod"
         else:
             raise MachineError(f"not an arithmetic opcode: {opcode}")
 
@@ -696,7 +690,7 @@ class Machine:
         cache_mode = "on" if self.data_memory.cache is not None else "off"
         return f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} input_overruns={self.data_memory.input_overrun_count}"
 
-    def _append_log(self, event: str, state: MicroState) -> None:
+    def _append_log(self, event: str, state: ControlState) -> None:
         mode = "irq" if self.in_irq else "user"
         instr = self._ir_text()
         tos = str(self.data_stack[-1]) if self.data_stack else "-"
@@ -734,6 +728,18 @@ def to_signed32(value: int) -> int:
     if value & WORD_SIGN_BIT:
         return value - (1 << WORD_BITS)
     return value
+
+
+def trunc_divmod(dividend: int, divisor: int) -> tuple[int, int]:
+    """Деление: частное округляется к нулю, остаток согласован."""
+    if divisor == 0:
+        raise MachineError("division by zero")
+
+    quotient = abs(dividend) // abs(divisor)
+    if (dividend < 0) != (divisor < 0):
+        quotient = -quotient
+    remainder = dividend - quotient * divisor
+    return quotient, remainder
 
 
 # Расписание входных событий

@@ -137,6 +137,9 @@ class Compiler:
         if self.irq_handler_label is None:
             self.irq_handler_label = "__default_irq_handler"
             self.code_labels[self.irq_handler_label] = self.current_address
+            self.emit(Opcode.LIT, 1)
+            self.emit(Opcode.LIT, MMIO_IRQ_ACK)
+            self.emit(Opcode.STORE)
             self.emit(Opcode.IRET)
 
         self.instructions[RESET_VECTOR] = Instruction(Opcode.JMP, main_addr)
