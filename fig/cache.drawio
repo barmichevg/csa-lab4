@@ -1,0 +1,261 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Страница-1" id="6LoON6mabmbmhEtFXeCD">
+    <mxGraphModel dx="1796" dy="-72" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-39" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;div&gt;&lt;b&gt;From Address Decoder&lt;/b&gt;&lt;/div&gt;regular memory only" vertex="1">
+          <mxGeometry height="80" width="180" x="161.5" y="1310" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-40" edge="1" parent="1" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.001;entryY=0.141;entryDx=0;entryDy=0;entryPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-39" value="address">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="1320" as="sourcePoint" />
+            <mxPoint x="161.5" y="1326" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-41" edge="1" parent="1" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-39" value="write_data">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="1350" as="sourcePoint" />
+            <mxPoint x="110" y="1410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-42" edge="1" parent="1" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.003;entryY=0.858;entryDx=0;entryDy=0;entryPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-39" value="&lt;div&gt;mem_rd /&lt;/div&gt;&lt;div&gt;mem_wr&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="1379" as="sourcePoint" />
+            <mxPoint x="161.5" y="1374" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-43" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Address Split&lt;/b&gt;&lt;br&gt;word address&lt;br&gt;&lt;br&gt;index = addr % line_count&lt;br&gt;tag = addr // line_count" vertex="1">
+          <mxGeometry height="100" width="200" x="417.75" y="1390" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-44" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-39" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-43" value="address">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="467.75" y="1370" />
+            </Array>
+            <mxPoint x="307.75" y="1550" as="sourcePoint" />
+            <mxPoint x="357.75" y="1572" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-45" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Cache Line Array&lt;/b&gt;&lt;br&gt;&lt;div&gt;line[index]&lt;/div&gt;&lt;div&gt;1 word per line&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;4&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;&amp;nbsp;valid&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp; tag&amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; value&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;...&lt;/div&gt;&lt;div&gt;&lt;table border=&quot;1&quot; cellpadding=&quot;4&quot; cellspacing=&quot;0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;n&lt;/td&gt;&lt;td&gt;&amp;nbsp;valid&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp; tag&amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;td&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; value&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="160" width="260" x="777.75" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-46" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-43" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-45" value="index">
+          <mxGeometry relative="1" x="0.0179" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="567.75" y="1370" />
+            </Array>
+            <mxPoint x="1077.75" y="1470" as="sourcePoint" />
+            <mxPoint x="1147.75" y="1460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-47" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-39" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-45" value="write_data">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="817.75" y="1391" as="sourcePoint" />
+            <mxPoint x="967.75" y="1249" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-48" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-43" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=1.005;exitY=0.202;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;exitPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-45" value="tag_on_fill">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="657.75" y="1450" as="sourcePoint" />
+            <mxPoint x="1227.75" y="1607" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-49" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;To WriteBack MUX&lt;/b&gt;&lt;br&gt;read_data&lt;br&gt;→ Data Stack" vertex="1">
+          <mxGeometry height="80" width="180" x="1407.75" y="1330" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-50" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-140" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;" target="IVVpnZJj4IiTGcJY2tOR-49" value="read_data">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1722.75" y="1355" as="sourcePoint" />
+            <mxPoint x="2162.75" y="1415.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-51" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-45" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-140" value="cache_value">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1297.75" y="1355" as="sourcePoint" />
+            <mxPoint x="1492.75" y="1355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;MEM_WAIT / Pending Access&lt;/b&gt;&lt;br&gt;LOAD miss: read memory&lt;br&gt;&lt;div&gt;STORE miss: write memory + fill line&lt;/div&gt;blocking lower-memory access" vertex="1">
+          <mxGeometry height="120" width="320" x="459.75" y="1990" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-54" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-53" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-140" value="mem_value">
+          <mxGeometry relative="1" x="0.6532" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1197.75" y="2080" />
+            </Array>
+            <mxPoint x="1269.75" y="2484" as="sourcePoint" />
+            <mxPoint x="1197.75" y="2187" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-55" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;div&gt;&lt;b&gt;Hit Logic&lt;/b&gt;&lt;/div&gt;&lt;div&gt;access = mem_rd | mem_wr&lt;/div&gt;hit = access &amp;amp; valid &amp;amp; tag_match&lt;br&gt;miss = access &amp;amp; !hit&lt;br&gt;store_hit = mem_wr &amp;amp; hit&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="100" width="220" x="787.75" y="1650" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-56" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-45" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.551;entryY=-0.005;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-55" value="valid">
+          <mxGeometry relative="1" x="0.1329" y="-1" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="927.75" y="1670" as="sourcePoint" />
+            <mxPoint x="940.75" y="1795" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-57" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Control Unit&lt;/b&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="501.75" y="1830" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-58" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Tag Comparator&lt;/b&gt;&lt;br&gt;stored_tag == tag" vertex="1">
+          <mxGeometry height="80" width="200" x="417.75" y="1550" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Data Memory&lt;/b&gt;&lt;br&gt;lower memory 10-tick access" vertex="1">
+          <mxGeometry height="80" width="200" x="261.75" y="1820" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-60" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Write-through path&lt;/b&gt;&lt;br&gt;STORE hit: CPU continues&lt;br&gt;lower memory update is modeled as non-blocking" vertex="1">
+          <mxGeometry height="80" width="260" x="231.75" y="1660" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-61" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-43" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;" target="IVVpnZJj4IiTGcJY2tOR-58" value="tag">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="207.75" y="1640" as="sourcePoint" />
+            <mxPoint x="207.75" y="1707" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-62" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-45" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-58" value="stored_tag">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="842.75" y="1570" />
+            </Array>
+            <mxPoint x="935.75" y="1850" as="sourcePoint" />
+            <mxPoint x="707.75" y="2020" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-63" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-58" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-55" value="tag_match">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="842.75" y="1610" />
+            </Array>
+            <mxPoint x="137.75" y="1861" as="sourcePoint" />
+            <mxPoint x="342.75" y="1840" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-64" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-55" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-140" value="&lt;div&gt;load_hit /&lt;/div&gt;&lt;div&gt;load_miss_done&lt;/div&gt;">
+          <mxGeometry relative="1" x="0.2632" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1147.75" y="1700" />
+              <mxPoint x="1147.75" y="1415" />
+            </Array>
+            <mxPoint x="1167.75" y="1702" as="sourcePoint" />
+            <mxPoint x="1406.75" y="1560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-65" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-55" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0;exitY=0.3;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-60" value="store_hit">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="857.75" y="1890" as="sourcePoint" />
+            <mxPoint x="797.75" y="2210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-66" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-60" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-59" value="non-blocking write-through">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="357.75" y="1771" as="sourcePoint" />
+            <mxPoint x="1187.75" y="2411" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-67" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-59" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-53" value="mem_value">
+          <mxGeometry relative="1" x="0.0256" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="311.75" y="2020" />
+            </Array>
+            <mxPoint x="307.75" y="1920" as="sourcePoint" />
+            <mxPoint x="1017.75" y="2340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-68" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-53" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.118;exitY=-0.005;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-59" value="&lt;div&gt;memory_read /&amp;nbsp;&lt;/div&gt;&lt;div&gt;memory_write&lt;/div&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="497.75" y="1970" />
+              <mxPoint x="411.75" y="1970" />
+            </Array>
+            <mxPoint x="1137.75" y="2360" as="sourcePoint" />
+            <mxPoint x="1077.75" y="2680" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-69" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-57" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=light-dark(#000000,#000000);fontColor=light-dark(#000000, #6f9bf2);fontSize=12;entryX=0.601;entryY=-0.004;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-53" value="&lt;div&gt;start_wait /&lt;/div&gt;&lt;div&gt;access kind&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.0068" y="-6" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points" />
+            <mxPoint x="39.75" y="1800" as="sourcePoint" />
+            <mxPoint x="206.75" y="2117" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-70" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-53" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=light-dark(#000000,#000000);fontColor=light-dark(#000000, #6f9bf2);fontSize=12;exitX=0.291;exitY=0.002;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-57" value="mem_status">
+          <mxGeometry relative="1" x="-0.0101" y="-6" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points" />
+            <mxPoint x="589.75" y="2320" as="sourcePoint" />
+            <mxPoint x="756.75" y="2637" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-71" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-57" style="endArrow=block;html=1;rounded=0;strokeWidth=2;dashed=1;dashPattern=6 4;strokeColor=light-dark(#000000,#000000);fontColor=light-dark(#000000, #6f9bf2);fontSize=12;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-55" value="mem_rd / mem_wr">
+          <mxGeometry relative="1" x="0.0071" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="601.75" y="1725" />
+            </Array>
+            <mxPoint x="787.75" y="1860" as="sourcePoint" />
+            <mxPoint x="954.75" y="2177" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-72" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-55" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-53" value="cache_miss">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="897.75" y="2020" />
+            </Array>
+            <mxPoint x="217.75" y="1850" as="sourcePoint" />
+            <mxPoint x="157.75" y="2170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-73" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-39" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-53" value="address, write_data">
+          <mxGeometry relative="1" x="0.6451" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="207.75" y="2080" />
+            </Array>
+            <mxPoint x="157.75" y="1710" as="sourcePoint" />
+            <mxPoint x="277.75" y="2330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-74" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-39" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-60" value="address, write_data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="940.75" y="1030" as="sourcePoint" />
+            <mxPoint x="1477.75" y="1814" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-75" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-53" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" target="IVVpnZJj4IiTGcJY2tOR-45" value="fill / replace line[index]">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1097.75" y="2050" />
+              <mxPoint x="1097.75" y="1410" />
+            </Array>
+            <mxPoint x="57.75" y="1600" as="sourcePoint" />
+            <mxPoint x="717.75" y="1750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-140" parent="1" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=13;direction=south;" value="&lt;b&gt;Read Result MUX&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;hit: cache_value&lt;br&gt;miss: mem_value after MEM_WAIT&lt;/font&gt;" vertex="1">
+          <mxGeometry height="180" width="100" x="1197.75" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-141" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-55" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.845;exitY=-0.004;exitDx=0;exitDy=0;exitPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-45" value="&lt;div&gt;store_hit:&amp;nbsp;&lt;/div&gt;&lt;div&gt;update value&lt;/div&gt;">
+          <mxGeometry relative="1" x="0.1329" y="-1" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1010" y="1550" as="sourcePoint" />
+            <mxPoint x="1011" y="1750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
