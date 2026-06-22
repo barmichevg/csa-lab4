@@ -209,7 +209,7 @@ FETCH -> DECODE -> EXECUTE -> IRQ_CHECK
 | `EXECUTE` | 1 | выполнение инструкции |
 | `IRQ_CHECK` | 1 | проверка входного прерывания |
 
-`halt` занимает 3 такта, так как останавливает машину на стадии `EXECUTE`. `load` и `store` при cache hit выполняются за обычные 4 такта, а при cache miss или выключенном кэше занимают 13 тактов.
+`halt` выполняется на стадии `EXECUTE`. Если к моменту остановки в write buffer остаются незавершённые записи, процессор больше не выполняет инструкции, но модель продолжает тактировать подсистему памяти до полного опустошения буфера. `load` при cache hit и `store` при cache hit со свободным write buffer выполняются за обычные 4 такта. Cache miss или выключенный кэш обычно дают 13 тактов; при занятом write buffer обращение к нижней памяти дополнительно ждёт его опустошения.
 
 ### Стандартная библиотека
 
@@ -281,7 +281,7 @@ data.bin.hex     человекочитаемый листинг данных
 Интерфейс командной строки:
 
 ```bash
-python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--log <log.txt>] [--output <output.txt>] [--cache | --no-cache] [--cache-lines <n>]
+python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--log <log.txt>] [--output <output.txt>] [--cache | --no-cache] [--cache-lines <n>] [--write-buffer-capacity <n>]
 ```
 
 Опции:
@@ -290,7 +290,8 @@ python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--
 - `--log <log.txt>` -- сохраняет журнал;
 - `--output <output.txt>` -- сохраняет вывод программы;
 - `--cache/--no-cache` -- включает или выключает кэш данных;
-- `--cache-lines <n>` -- задаёт число строк кэша.
+- `--cache-lines <n>` -- задаёт число строк кэша;
+- `--write-buffer-capacity <n>` -- задаёт ёмкость FIFO write buffer, по умолчанию одна запись.
 
 Модель исполняет бинарную память команд и бинарную память данных. Выполнение идёт с точностью до такта.
 
@@ -299,10 +300,10 @@ python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--
 На каждом такте в журнал добавляется строка с номером такта, `PC`, состоянием ControlUnit, режимом `user/irq`, верхними значениями стеков, флагами прерываний, статистикой кэша, текущей инструкцией и событием такта.
 
 ```text
-DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NOS: ... DS_DEPTH: ... RS_DEPTH: ... DS: ... RS: ... IE:... IP:... CACHE:...    instr [event]
+DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NOS: ... DS_DEPTH: ... RS_DEPTH: ... DS: ... RS: ... IE:... IP:... CACHE:... WB:...    instr [event]
 ```
 
-Поле `STATE` показывает состояние FSM, которое выполнялось на данном такте. Остальные поля строки (`PC`, `MODE`, `IE`, стеки, кэш и т.д.) показывают состояние процессора после выполнения события этого такта.
+Поле `STATE` показывает состояние FSM, которое выполнялось на данном такте. Остальные поля строки (`PC`, `MODE`, `IE`, стеки, кэш и т.д.) показывают состояние процессора после выполнения события этого такта. Поле `WB` имеет вид `entries/capacity@remaining_ticks`; например, `1/1@6` означает занятую одноэлементную очередь, которой осталось шесть тактов до записи в нижнюю память.
 
 ### DataPath
 
@@ -362,6 +363,8 @@ Control Unit реализован как hardwired FSM, вместе с мини
 
 Реализован **direct-mapped data cache**: каждая ячейка памяти может находиться только в одной строке кэша. Кэш находится между `Address Decoder` и `Data Memory` и используется только для обычной памяти данных. MMIO-адреса отфильтровываются `Address Decoder` и идут напрямую в `MMIO`, минуя кэш.
 
+Записи cache hit обслуживаются настоящим тактируемым FIFO write buffer. По умолчанию он содержит одну запись. Буфер отделяет момент архитектурного обновления cache line от более позднего физического обновления нижней памяти.
+
 ![Data Cache](fig/cache.png)
 
 Основные блоки схемы:
@@ -371,7 +374,7 @@ Control Unit реализован как hardwired FSM, вместе с мини
 - `Tag Comparator` и `Hit Logic` определяют `hit/miss`;
 - `Read Result MUX` выбирает результат для `LOAD`;
 - `MEM_WAIT / Pending Access` моделирует ожидание медленной памяти при промахе;
-- `Write-through path` показывает неблокирующую запись при `STORE hit`.
+- `Buffered Write-through path` представляет FIFO write buffer, который хранит записи `address | value | remaining_ticks`, последовательно сбрасывает их в `Data Memory` и сообщает Control Unit о заполнении.
 
 Каждая строка кэша хранит одно 32-битное слово:
 
@@ -392,18 +395,18 @@ tag   = address // line_count
 
 При `LOAD miss` выбранная строка `line[index]` перезаписывается после обращения к нижней памяти: `line[index] <- valid=1, tag, mem_value`. Это конфликтное вытеснение прямо отображаемого кэша. Отдельный алгоритм вытеснения не нужен, потому что для каждого адреса существует только один возможный кандидат на замену — строка `line[index]`.
 
-При `STORE hit` обновляется значение в выбранной строке кэша, а запись в backing memory ставится в неблокирующий write-through path. В модели это представлено как немедленное обновление backing storage без остановки CPU, то есть процессор не переходит в `MEM_WAIT`.
+При `STORE hit` cache line и FIFO write buffer обновляются атомарно. Если в буфере есть свободный слот, значение записывается в cache line, а отдельная запись `address | value | remaining_ticks` добавляется в FIFO. Пока запись активна, её `remaining_ticks` уменьшается на каждом общем tick; после 10 тактов значение переносится в backing `Data Memory`. Если буфер заполнен, `STORE` переходит в `MEM_WAIT` и не изменяет cache line до освобождения слота. Каждый `STORE` создаёт отдельную FIFO-entry; записи не объединяются. `LOAD` может получить ещё не записанное в память значение через forwarding из самой новой подходящей entry.
 
-При `STORE miss` используется упрощённая политика `write-allocate`: процессор переходит в `MEM_WAIT`, после ожидания значение записывается в основную память и выбранная строка кэша заполняется записываемым значением: `line[index] <- valid=1, tag, write_data`, `DataMemory[address] <- write_data`. Так как используется `write-through`, признак `dirty` не требуется: изменённое значение не остаётся только в кэше, а синхронизируется с основной памятью.
+При `STORE miss` используется упрощённая политика `write-allocate`: процессор блокирующе обращается к нижней памяти, после ожидания записывает значение и заполняет выбранную строку `line[index] <- valid=1, tag, write_data`. Если в write buffer уже есть записи, однопортовая нижняя память сначала завершает их, а затем выполняет miss. Так как политика остаётся write-through, признак `dirty` не требуется.
 
-Доступ к кэшу занимает 1 tick, доступ к нижней памяти — 10 ticks. В модели miss обнаруживается на стадии `EXECUTE`, после чего процессор проводит дополнительные ticks в `MEM_WAIT`.
+Доступ к кэшу занимает 1 tick, одна транзакция нижней памяти — 10 ticks. Write buffer работает параллельно с обычными состояниями CPU и продвигается на каждом tick. Cache miss обнаруживается на стадии `EXECUTE`; если порт памяти свободен, далее следуют 9 ticks `MEM_WAIT`. Если write buffer занят, сначала учитывается время его опустошения, затем начинается полный доступ к памяти.
 
 ### Пример работы кэша
 
 Сравнение на `examples/cache_demo.fth`:
 
 ```text
-cache on : ticks=2299 instructions=530 hits=122 misses=20
+cache on : ticks=2302 instructions=530 hits=122 misses=20
 cache off: ticks=3397 instructions=530 uncached_reads=91 uncached_writes=51
 ```
 
@@ -411,23 +414,23 @@ cache off: ticks=3397 instructions=530 uncached_reads=91 uncached_writes=51
 
 | Алгоритм          | ticks cache on | ticks cache off | hits/misses | uncached R/W | Ускорение |
 | ----------------- | -------------: | --------------: | ----------: | -----------: | --------: |
-| `arithmetic`      |           1221 |            1698 |       53/14 |        47/20 |     1.39x |
-| `cache_demo`      |           2299 |            3397 |      122/20 |        91/51 |     1.48x |
+| `arithmetic`      |           1224 |            1698 |       53/14 |        47/20 |     1.39x |
+| `cache_demo`      |           2302 |            3397 |      122/20 |        91/51 |     1.48x |
 | `cat`             |           6355 |            6518 |      273/20 |       186/33 |     1.03x |
-| `hello`           |           1780 |            2509 |       81/21 |        72/30 |     1.41x |
-| `hello_user_name` |          17314 |           18239 |      771/87 |      539/125 |     1.05x |
+| `hello`           |           1786 |            2509 |       81/21 |        72/30 |     1.40x |
+| `hello_user_name` |          17335 |           18239 |      771/87 |      539/125 |     1.05x |
 | `irq_echo`        |            892 |            1252 |        40/1 |        20/21 |     1.40x |
-| `prob1`           |         113358 |          171892 |    6862/439 |    5693/1504 |     1.52x |
-| `sort`            |          24746 |           27732 |    1124/175 |      779/290 |     1.12x |
-| `wide`            |           1882 |            2602 |       80/31 |        69/42 |     1.38x |
-| `xt_demo`         |            902 |            1217 |       35/11 |        32/14 |     1.35x |
+| `prob1`           |         113364 |          171892 |    6862/439 |    5693/1504 |     1.52x |
+| `sort`            |          24809 |           27732 |    1124/175 |      779/290 |     1.12x |
+| `wide`            |           1885 |            2602 |       80/31 |        69/42 |     1.38x |
+| `xt_demo`         |            905 |            1217 |       35/11 |        32/14 |     1.34x |
 
 ## Тестирование
 
 Интеграционные тесты реализованы через `pytest-golden`.
 
 ```bash
-pytest tests/test_golden.py
+pytest tests/test_golden.py tests/test_write_buffer.py
 pytest --update-goldens tests/test_golden.py
 ```
 
@@ -464,6 +467,7 @@ CI выполняет те же проверки в GitHub Actions.
 | `wide`            | 64-битное сложение через 4 limb по 16 бит    | `tests/golden/wide.yml`            |
 | `prob1`           | Project Euler Problem 4                      | `tests/golden/prob1.yml`           |
 | `cache_demo`      | демонстрация кэша                            | `tests/golden/cache_demo.yml`      |
+| `write_buffer_demo` | заполнение и stall одноэлементного write buffer | `tests/golden/write_buffer_demo.yml` |
 | `irq_echo`        | демонстрация trap-прерывания                 | `tests/golden/irq_echo.yml`        |
 | `xt_demo`         | демонстрация execution token                 | `tests/golden/xt_demo.yml`         |
 | `arithmetic`      | базовая арифметика                           | `tests/golden/arithmetic.yml`      |
@@ -508,7 +512,7 @@ python src/machine.py program.bin data.bin --log hello.log
 
 ```text
 Hello, world!
-summary: ticks=1780 instructions=398 cache=on hits=81 misses=21 uncached_reads=0 uncached_writes=0 input_overruns=0
+summary: ticks=1786 instructions=398 cache=on hits=81 misses=21 uncached_reads=0 uncached_writes=0 wb=0/1 wb_enqueued=28 wb_stalls=0 wb_forwards=0 wb_drained=28 input_overruns=0
 ```
 
 Фрагмент журнала:
@@ -527,13 +531,14 @@ DEBUG   machine:simulation    TICK:     2 PC:   255 STATE: execute   MODE: user 
 
 | Алгоритм | LoC | code instr | code bytes | data cells | exec instr | ticks |
 |---|---:|---:|---:|---:|---:|---:|
-| `arithmetic` | 10 | 275 | 1100 | 108 | 274 | 1221 |
-| `cache_demo` | 21 | 292 | 1168 | 96 | 530 | 2299 |
+| `arithmetic` | 10 | 275 | 1100 | 108 | 274 | 1224 |
+| `cache_demo` | 21 | 292 | 1168 | 96 | 530 | 2302 |
 | `cat` | 15 | 273 | 1092 | 86 | 1544 | 6355 |
-| `hello` | 4 | 262 | 1048 | 101 | 398 | 1780 |
-| `hello_user_name` | 33 | 307 | 1228 | 151 | 4133 | 17314 |
+| `hello` | 4 | 262 | 1048 | 101 | 398 | 1786 |
+| `hello_user_name` | 33 | 307 | 1228 | 151 | 4133 | 17335 |
 | `irq_echo` | 17 | 274 | 1096 | 87 | 221 | 892 |
-| `prob1` | 91 | 424 | 1696 | 103 | 27352 | 113358 |
-| `sort` | 68 | 403 | 1612 | 122 | 5793 | 24746 |
-| `wide` | 65 | 367 | 1468 | 120 | 401 | 1882 |
-| `xt_demo` | 16 | 283 | 1132 | 102 | 201 | 902 |
+| `prob1` | 91 | 424 | 1696 | 103 | 27352 | 113364 |
+| `sort` | 68 | 403 | 1612 | 122 | 5793 | 24809 |
+| `wide` | 65 | 367 | 1468 | 120 | 401 | 1885 |
+| `write_buffer_demo` | 17 | 282 | 1128 | 92 | 355 | 1545 |
+| `xt_demo` | 16 | 283 | 1132 | 102 | 201 | 905 |

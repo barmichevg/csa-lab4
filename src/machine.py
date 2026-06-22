@@ -27,6 +27,7 @@ DEFAULT_STACK_LIMIT = 1024
 DEFAULT_TICK_LIMIT = 100_000
 
 DEFAULT_CACHE_LINES = 8
+DEFAULT_WRITE_BUFFER_CAPACITY = 1
 CACHE_HIT_TICKS = 1
 MEMORY_ACCESS_TICKS = 10
 MEMORY_WAIT_TICKS = MEMORY_ACCESS_TICKS - CACHE_HIT_TICKS
@@ -72,6 +73,81 @@ class MemoryAccess:
 
 
 @dataclass(slots=True)
+class WriteBufferEntry:
+    """Одна ожидающая запись в нижнюю память."""
+
+    address: int
+    value: int
+    remaining_ticks: int = MEMORY_ACCESS_TICKS
+
+
+@dataclass(slots=True)
+class WriteBuffer:
+    """Небольшая FIFO-очередь write-through записей."""
+
+    capacity: int = DEFAULT_WRITE_BUFFER_CAPACITY
+    entries: list[WriteBufferEntry] = field(default_factory=list)
+    enqueued: int = 0
+    stalls: int = 0
+    forwards: int = 0
+    drained: int = 0
+
+    def __post_init__(self) -> None:
+        if self.capacity <= 0:
+            raise MachineError("write buffer capacity must be positive")
+
+    @property
+    def busy(self) -> bool:
+        return bool(self.entries)
+
+    @property
+    def full(self) -> bool:
+        return len(self.entries) >= self.capacity
+
+    @property
+    def ticks_until_space(self) -> int:
+        if not self.full:
+            return 0
+        return self.entries[0].remaining_ticks
+
+    @property
+    def ticks_until_empty(self) -> int:
+        if not self.entries:
+            return 0
+        return self.entries[0].remaining_ticks + MEMORY_ACCESS_TICKS * (len(self.entries) - 1)
+
+    def enqueue(self, address: int, value: int) -> str | None:
+        if self.full:
+            self.stalls += 1
+            return None
+
+        self.entries.append(WriteBufferEntry(address=address, value=to_word(value)))
+        self.enqueued += 1
+        return "write_buffer_enqueue"
+
+    def forward(self, address: int) -> int | None:
+        for entry in reversed(self.entries):
+            if entry.address == address:
+                self.forwards += 1
+                return to_signed32(entry.value)
+        return None
+
+    def tick(self, backing_words: list[int]) -> str | None:
+        if not self.entries:
+            return None
+
+        entry = self.entries[0]
+        entry.remaining_ticks -= 1
+        if entry.remaining_ticks > 0:
+            return None
+
+        backing_words[entry.address] = entry.value
+        self.entries.pop(0)
+        self.drained += 1
+        return f"write_buffer_commit {to_signed32(entry.value)} -> [0x{entry.address:04X}]"
+
+
+@dataclass(slots=True)
 class CacheLine:
     valid: bool = False
     tag: int = 0
@@ -114,8 +190,7 @@ class DataCache:
         line.value = value
         return to_signed32(value)
 
-    def write(self, address: int, value: int, backing_words: list[int]) -> bool:
-        raw_value = to_word(value)
+    def probe_write(self, address: int) -> bool:
         index = address % self.line_count
         tag = address // self.line_count
         line = self.lines[index]
@@ -123,14 +198,19 @@ class DataCache:
         hit = line.valid and line.tag == tag
         if hit:
             self.hits += 1
-            line.value = raw_value
-            backing_words[address] = raw_value
-            return True
+        else:
+            self.misses += 1
+        return hit
 
-        self.misses += 1
-        return False
+    def update_hit(self, address: int, value: int) -> None:
+        index = address % self.line_count
+        tag = address // self.line_count
+        line = self.lines[index]
+        if not line.valid or line.tag != tag:
+            raise MachineError("cache line changed before buffered store commit")
+        line.value = to_word(value)
 
-    def complete_write_miss(self, address: int, value: int, backing_words: list[int]) -> None:
+    def fill(self, address: int, value: int) -> None:
         raw_value = to_word(value)
         index = address % self.line_count
         tag = address // self.line_count
@@ -138,7 +218,9 @@ class DataCache:
         line.valid = True
         line.tag = tag
         line.value = raw_value
-        backing_words[address] = raw_value
+
+    def complete_write_miss(self, address: int, value: int) -> None:
+        self.fill(address, value)
 
 
 @dataclass(slots=True)
@@ -148,17 +230,20 @@ class DataMemory:
     words: list[int]
     cache_enabled: bool = True
     cache_line_count: int = DEFAULT_CACHE_LINES
+    write_buffer_capacity: int = DEFAULT_WRITE_BUFFER_CAPACITY
     output_buffer: list[str] = field(default_factory=list)
     input_data: int = 0
     input_status: int = 0
     irq_pending: bool = False
     input_overrun_count: int = 0
     cache: DataCache | None = field(init=False)
+    write_buffer: WriteBuffer | None = field(init=False)
     uncached_reads: int = 0
     uncached_writes: int = 0
 
     def __post_init__(self) -> None:
         self.cache = DataCache(self.cache_line_count) if self.cache_enabled else None
+        self.write_buffer = WriteBuffer(self.write_buffer_capacity) if self.cache_enabled else None
 
     @classmethod
     def from_image(
@@ -168,11 +253,17 @@ class DataMemory:
         minimum_size: int = DEFAULT_DATA_MEMORY_SIZE,
         cache_enabled: bool = True,
         cache_line_count: int = DEFAULT_CACHE_LINES,
+        write_buffer_capacity: int = DEFAULT_WRITE_BUFFER_CAPACITY,
     ) -> DataMemory:
         words = [to_word(value) for value in image]
         if len(words) < minimum_size:
             words.extend([0] * (minimum_size - len(words)))
-        return cls(words=words, cache_enabled=cache_enabled, cache_line_count=cache_line_count)
+        return cls(
+            words=words,
+            cache_enabled=cache_enabled,
+            cache_line_count=cache_line_count,
+            write_buffer_capacity=write_buffer_capacity,
+        )
 
     def read(self, address: int) -> MemoryAccess:
         if address == MMIO_IN_DATA:
@@ -212,8 +303,8 @@ class DataMemory:
             self.uncached_reads += 1
             return MemoryAccess(
                 kind="load",
-                wait_ticks=MEMORY_WAIT_TICKS,
-                event=f"memory_read [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+                wait_ticks=self._blocking_memory_wait_ticks(),
+                event=f"memory_read [0x{address:04X}]; wait={self._blocking_memory_wait_ticks()}",
                 completion="memory_read",
                 address=address,
             )
@@ -229,10 +320,22 @@ class DataMemory:
                 value=cache_value,
             )
 
+        if self.write_buffer is not None:
+            forwarded = self.write_buffer.forward(address)
+            if forwarded is not None:
+                self.cache.fill(address, forwarded)
+                return MemoryAccess(
+                    kind="load",
+                    wait_ticks=0,
+                    event=f"write_buffer_forward [0x{address:04X}] -> {forwarded}",
+                    value=forwarded,
+                )
+
+        wait_ticks = self._blocking_memory_wait_ticks()
         return MemoryAccess(
             kind="load",
-            wait_ticks=MEMORY_WAIT_TICKS,
-            event=f"cache_miss read [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+            wait_ticks=wait_ticks,
+            event=f"cache_miss read [0x{address:04X}]; wait={wait_ticks}",
             completion="cache_read_miss",
             address=address,
         )
@@ -257,25 +360,45 @@ class DataMemory:
             self.uncached_writes += 1
             return MemoryAccess(
                 kind="store",
-                wait_ticks=MEMORY_WAIT_TICKS,
-                event=f"memory_write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+                wait_ticks=self._blocking_memory_wait_ticks(),
+                event=f"memory_write {value} -> [0x{address:04X}]; wait={self._blocking_memory_wait_ticks()}",
                 completion="memory_write",
                 address=address,
                 write_value=value,
             )
 
-        hit = self.cache.write(address, value, self.words)
+        hit = self.cache.probe_write(address)
         if hit:
+            if self.write_buffer is None:
+                raise MachineError("cache enabled without write buffer")
+
+            if not self.write_buffer.full:
+                self.cache.update_hit(address, value)
+                enqueue_event = self.write_buffer.enqueue(address, value)
+                if enqueue_event is None:
+                    raise MachineError("write buffer became full during atomic store hit")
+                return MemoryAccess(
+                    kind="store",
+                    wait_ticks=0,
+                    event=f"cache_hit write {value} -> [0x{address:04X}]; {enqueue_event}",
+                )
+
+            self.write_buffer.stalls += 1
+            wait_ticks = self.write_buffer.ticks_until_space
             return MemoryAccess(
                 kind="store",
-                wait_ticks=0,
-                event=f"cache_hit write {value} -> [0x{address:04X}]",
+                wait_ticks=wait_ticks,
+                event=f"cache_hit write {value} -> [0x{address:04X}]; write_buffer_full wait={wait_ticks}",
+                completion="cache_hit_buffered_store",
+                address=address,
+                write_value=value,
             )
 
+        wait_ticks = self._blocking_memory_wait_ticks()
         return MemoryAccess(
             kind="store",
-            wait_ticks=MEMORY_WAIT_TICKS,
-            event=f"cache_miss write {value} -> [0x{address:04X}]; wait={MEMORY_WAIT_TICKS}",
+            wait_ticks=wait_ticks,
+            event=f"cache_miss write {value} -> [0x{address:04X}]; wait={wait_ticks}",
             completion="cache_write_miss",
             address=address,
             write_value=value,
@@ -309,10 +432,41 @@ class DataMemory:
                 raise MachineError("cache write miss without cache")
             if access.write_value is None:
                 raise MachineError("pending cache write has no value")
-            self.cache.complete_write_miss(address, access.write_value, self.words)
+            self.cache.complete_write_miss(address, access.write_value)
+            self.words[address] = to_word(access.write_value)
             return None, f"cache_fill_done write {access.write_value} -> [0x{address:04X}]"
 
+        if access.completion == "cache_hit_buffered_store":
+            if self.cache is None or self.write_buffer is None:
+                raise MachineError("buffered cache-hit store without cache/write buffer")
+            if access.write_value is None:
+                raise MachineError("pending buffered store has no value")
+            if self.write_buffer.full:
+                raise MachineError("write buffer still full after wait")
+
+            self.cache.update_hit(address, access.write_value)
+            enqueue_event = self.write_buffer.enqueue(address, access.write_value)
+            if enqueue_event is None:
+                raise MachineError("write buffer became full during buffered store commit")
+            return None, f"cache_hit_commit {access.write_value} -> [0x{address:04X}]; {enqueue_event}"
+
         raise MachineError(f"unsupported memory completion: {access.completion}")
+
+    def tick_write_buffer(self) -> str | None:
+        if self.write_buffer is None:
+            return None
+        return self.write_buffer.tick(self.words)
+
+    @property
+    def write_buffer_busy(self) -> bool:
+        return self.write_buffer is not None and self.write_buffer.busy
+
+    def _blocking_memory_wait_ticks(self) -> int:
+        if self.write_buffer is None or not self.write_buffer.busy:
+            return MEMORY_WAIT_TICKS
+        # Нижняя память однопортовая: сначала должны завершиться накопленные
+        # write-through записи, затем начинается полный 10-тактовый доступ.
+        return self.write_buffer.ticks_until_empty + MEMORY_ACCESS_TICKS
 
     def push_input_char(self, char_code: int) -> bool:
         """Передать байт во входной регистр устройства."""
@@ -379,6 +533,7 @@ class Machine:
         *,
         cache_enabled: bool = True,
         cache_line_count: int = DEFAULT_CACHE_LINES,
+        write_buffer_capacity: int = DEFAULT_WRITE_BUFFER_CAPACITY,
     ) -> Machine:
         program = read_program_binary(program_path)
         data_image = read_data_binary(data_path)
@@ -389,25 +544,30 @@ class Machine:
                 data_image,
                 cache_enabled=cache_enabled,
                 cache_line_count=cache_line_count,
+                write_buffer_capacity=write_buffer_capacity,
             ),
             input_events=input_events,
         )
 
     def run(self, *, limit: int = DEFAULT_TICK_LIMIT) -> str:
-        while not self.halted and self.tick_counter < limit:
+        while (not self.halted or self.data_memory.write_buffer_busy) and self.tick_counter < limit:
             self.step_tick()
 
-        if not self.halted:
+        if not self.halted or self.data_memory.write_buffer_busy:
             raise MachineError(f"tick limit exceeded: {limit}")
 
         return self.data_memory.output
 
     def step_tick(self) -> None:
         state_before = self.control_state
+        write_buffer_event = self.data_memory.tick_write_buffer()
 
         if self.halted:
             self.control_state = ControlState.HALTED
-            self._append_log("already halted", state_before)
+            event = "halted; draining write buffer" if self.data_memory.write_buffer_busy else "halted"
+            if write_buffer_event is not None:
+                event += f"; {write_buffer_event}"
+            self._append_log(event, state_before)
             self.tick_counter += 1
             return
 
@@ -426,6 +586,8 @@ class Machine:
         else:
             raise MachineError(f"unsupported control state: {state_before}")
 
+        if write_buffer_event is not None:
+            event += f"; {write_buffer_event}"
         self._append_log(event, state_before)
         self.tick_counter += 1
 
@@ -688,7 +850,21 @@ class Machine:
 
     def cache_summary(self) -> str:
         cache_mode = "on" if self.data_memory.cache is not None else "off"
-        return f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} input_overruns={self.data_memory.input_overrun_count}"
+        write_buffer = self.data_memory.write_buffer
+        if write_buffer is None:
+            wb_summary = "wb=off"
+        else:
+            wb_summary = (
+                f"wb={len(write_buffer.entries)}/{write_buffer.capacity} "
+                f"wb_enqueued={write_buffer.enqueued} "
+                f"wb_stalls={write_buffer.stalls} wb_forwards={write_buffer.forwards} "
+                f"wb_drained={write_buffer.drained}"
+            )
+        return (
+            f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} "
+            f"uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} "
+            f"{wb_summary} input_overruns={self.data_memory.input_overrun_count}"
+        )
 
     def _append_log(self, event: str, state: ControlState) -> None:
         mode = "irq" if self.in_irq else "user"
@@ -697,6 +873,13 @@ class Machine:
         nos = str(self.data_stack[-2]) if len(self.data_stack) > 1 else "-"
         stack = "[" + ",".join(str(value) for value in self.data_stack[-6:]) + "]"
         rstack = "[" + ",".join(f"0x{value:08X}" for value in self.return_stack[-6:]) + "]"
+        write_buffer = self.data_memory.write_buffer
+        if write_buffer is None:
+            wb_state = "off"
+        elif write_buffer.entries:
+            wb_state = f"{len(write_buffer.entries)}/{write_buffer.capacity}@{write_buffer.entries[0].remaining_ticks}"
+        else:
+            wb_state = f"0/{write_buffer.capacity}"
         self.log_lines.append(
             f"DEBUG   machine:simulation    "
             f"TICK: {self.tick_counter:5} "
@@ -711,7 +894,8 @@ class Machine:
             f"RS: {rstack:<16} "
             f"IE:{int(self.irq_enable)} "
             f"IP:{int(self.data_memory.irq_pending)} "
-            f"CACHE:{self.data_memory.cache_hits}/{self.data_memory.cache_misses}	"
+            f"CACHE:{self.data_memory.cache_hits}/{self.data_memory.cache_misses} "
+            f"WB:{wb_state:<8}	"
             f"{instr} [{event}]"
         )
 
@@ -806,6 +990,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--cache", action=argparse.BooleanOptionalAction, default=True, help="включить или выключить cache данных"
     )
     parser.add_argument("--cache-lines", type=int, default=DEFAULT_CACHE_LINES, help="число строк cache")
+    parser.add_argument(
+        "--write-buffer-capacity",
+        type=int,
+        default=DEFAULT_WRITE_BUFFER_CAPACITY,
+        help="число записей в write-through buffer",
+    )
     return parser
 
 
@@ -818,6 +1008,7 @@ def main(argv: list[str] | None = None) -> int:
         args.input,
         cache_enabled=args.cache,
         cache_line_count=args.cache_lines,
+        write_buffer_capacity=args.write_buffer_capacity,
     )
     output = machine.run(limit=args.limit)
 
