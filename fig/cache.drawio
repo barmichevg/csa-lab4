@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Страница-1" id="6LoON6mabmbmhEtFXeCD">
-    <mxGraphModel dx="1796" dy="-72" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1572" dy="-209" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -110,7 +110,7 @@
         <mxCell id="IVVpnZJj4IiTGcJY2tOR-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Data Memory&lt;/b&gt;&lt;br&gt;lower memory 10-tick access" vertex="1">
           <mxGeometry height="80" width="200" x="261.75" y="1820" as="geometry" />
         </mxCell>
-        <mxCell id="IVVpnZJj4IiTGcJY2tOR-60" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;b&gt;Write-through path&lt;/b&gt;&lt;br&gt;STORE hit: CPU continues&lt;br&gt;lower memory update is modeled as non-blocking" vertex="1">
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-60" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fontSize=13;" value="&lt;div&gt;&lt;b&gt;Buffered&amp;nbsp;Write-through path&lt;/b&gt;&lt;/div&gt;&lt;div&gt;mem_wr / addr / write_data&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="260" x="231.75" y="1660" as="geometry" />
         </mxCell>
         <mxCell id="IVVpnZJj4IiTGcJY2tOR-61" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-43" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;" target="IVVpnZJj4IiTGcJY2tOR-58" value="tag">
@@ -155,7 +155,7 @@
             <mxPoint x="797.75" y="2210" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="IVVpnZJj4IiTGcJY2tOR-66" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-60" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="IVVpnZJj4IiTGcJY2tOR-59" value="non-blocking write-through">
+        <mxCell id="IVVpnZJj4IiTGcJY2tOR-66" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-60" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.18;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-59" value="&lt;div&gt;mem_wr /&amp;nbsp;&lt;/div&gt;&lt;div&gt;addr / write_data&lt;/div&gt;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
             <mxPoint x="357.75" y="1771" as="sourcePoint" />
@@ -253,6 +253,13 @@
             <mxPoint as="offset" />
             <mxPoint x="1010" y="1550" as="sourcePoint" />
             <mxPoint x="1011" y="1750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SF4w3poqQP8KzkD1iNpZ-1" edge="1" parent="1" source="IVVpnZJj4IiTGcJY2tOR-59" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;fontSize=12;exitX=0.823;exitY=0.006;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitPerimeter=0;" target="IVVpnZJj4IiTGcJY2tOR-60" value="memory_done">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="440" y="1780" as="sourcePoint" />
+            <mxPoint x="441" y="1860" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>
