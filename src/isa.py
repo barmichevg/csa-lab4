@@ -11,6 +11,7 @@ OPCODE_BITS = 8
 ARG_BITS = WORD_BITS - OPCODE_BITS
 
 WORD_MASK = (1 << WORD_BITS) - 1
+WORD_SIGN_BIT = 1 << (WORD_BITS - 1)
 OPCODE_MASK = (1 << OPCODE_BITS) - 1
 ARG_MASK = (1 << ARG_BITS) - 1
 ARG_SIGN_BIT = 1 << (ARG_BITS - 1)
@@ -21,6 +22,9 @@ MAX_UNSIGNED_ARG = ARG_MASK
 
 WORD_BYTEORDER: Literal["big", "little"] = "big"
 WORD_SIZE_BYTES = WORD_BITS // 8
+
+RESET_VECTOR = 0
+IRQ_VECTOR = 1
 
 # Адреса memory-mapped ввода-вывода.
 MMIO_IN_DATA = 0xFFF0
@@ -191,18 +195,30 @@ def write_program_binary(path: str | Path, instructions: Iterable[Instruction]) 
             file.write(word.to_bytes(WORD_SIZE_BYTES, byteorder=WORD_BYTEORDER, signed=False))
 
 
-def read_program_binary(path: str | Path) -> list[Instruction]:
-    """Прочитать память команд из бинарного файла."""
+def read_words(path: str | Path, *, description: str) -> list[int]:
+    """Прочитать бинарный файл как последовательность 32-битных слов."""
     data = Path(path).read_bytes()
     if len(data) % WORD_SIZE_BYTES != 0:
-        raise IsaError(f"program binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}")
+        raise IsaError(f"{description} binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}")
 
-    instructions: list[Instruction] = []
-    for offset in range(0, len(data), WORD_SIZE_BYTES):
-        chunk = data[offset : offset + WORD_SIZE_BYTES]
-        word = int.from_bytes(chunk, byteorder=WORD_BYTEORDER, signed=False)
-        instructions.append(decode_instruction(word))
-    return instructions
+    return [
+        int.from_bytes(
+            data[offset : offset + WORD_SIZE_BYTES],
+            byteorder=WORD_BYTEORDER,
+            signed=False,
+        )
+        for offset in range(0, len(data), WORD_SIZE_BYTES)
+    ]
+
+
+def read_program_words(path: str | Path) -> list[int]:
+    """Прочитать память команд как сырые 32-битные машинные слова."""
+    return read_words(path, description="program")
+
+
+def read_program_binary(path: str | Path) -> list[Instruction]:
+    """Прочитать и декодировать память команд для листинга и тестов."""
+    return [decode_instruction(word) for word in read_program_words(path)]
 
 
 def write_data_binary(path: str | Path, words: Iterable[int]) -> None:
@@ -215,15 +231,7 @@ def write_data_binary(path: str | Path, words: Iterable[int]) -> None:
 
 def read_data_binary(path: str | Path) -> list[int]:
     """Прочитать память данных как 32-битные слова."""
-    data = Path(path).read_bytes()
-    if len(data) % WORD_SIZE_BYTES != 0:
-        raise IsaError(f"data binary size must be divisible by {WORD_SIZE_BYTES}, got {len(data)}")
-
-    words: list[int] = []
-    for offset in range(0, len(data), WORD_SIZE_BYTES):
-        chunk = data[offset : offset + WORD_SIZE_BYTES]
-        words.append(int.from_bytes(chunk, byteorder=WORD_BYTEORDER, signed=False))
-    return words
+    return read_words(path, description="data")
 
 
 def format_instruction_listing_line(address: int, instruction: Instruction) -> str:

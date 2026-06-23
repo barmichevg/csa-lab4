@@ -1,26 +1,29 @@
 from __future__ import annotations
 
 import argparse
+import json
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
 from isa import (
+    IRQ_VECTOR,
     MMIO_IN_DATA,
     MMIO_IN_STATUS,
     MMIO_IRQ_ACK,
     MMIO_OUT_DATA,
+    RESET_VECTOR,
     Instruction,
+    IsaError,
     Opcode,
+    encode_instruction,
     make_data_listing,
     make_program_listing,
     write_data_binary,
     write_program_binary,
 )
-
-RESET_VECTOR = 0
-IRQ_VECTOR = 1
 
 
 class TranslatorError(RuntimeError):
@@ -40,6 +43,28 @@ class Token:
     value: str | int
     line: int
     column: int
+    source_name: str
+    source_text: str
+
+
+@dataclass(frozen=True, slots=True)
+class SourceRef:
+    source_name: str
+    line: int
+    column: int
+    source_text: str
+
+    @classmethod
+    def from_token(cls, token: Token) -> SourceRef:
+        return cls(token.source_name, token.line, token.column, token.source_text)
+
+    def to_json(self) -> dict[str, str | int]:
+        return {
+            "source_name": self.source_name,
+            "line": self.line,
+            "column": self.column,
+            "source_text": self.source_text,
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,7 +72,6 @@ class Fixup:
     instruction_index: int
     label: str
     token: Token
-    opcode: Opcode
 
 
 BUILTIN_WORDS: dict[str, Opcode] = {
@@ -100,6 +124,10 @@ RESERVED_WORDS = (
     }
 )
 
+USER_WORD_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_?!-]*$")
+INTERNAL_WORD_NAME_RE = re.compile(r"^__[A-Za-z0-9_?!-]+$")
+UNSAFE_EXECUTION_TOKEN_WORDS = {"iret", "halt"}
+
 
 class Compiler:
     """Компилятор."""
@@ -117,11 +145,15 @@ class Compiler:
 
         self.irq_handler_label: str | None = None
         self.builtin_xt_labels: dict[str, str] = {}
-        self.builtin_xt_order: list[str] = []
+        self.source_map: dict[int, SourceRef] = {
+            RESET_VECTOR: SourceRef("<generated>", 0, 0, "reset vector"),
+            IRQ_VECTOR: SourceRef("<generated>", 0, 0, "interrupt vector"),
+        }
 
-    def compile(self, source: str) -> tuple[list[Instruction], list[int]]:
-        full_source = load_stdlib_source() + "\n" + source
-        tokens = tokenize(full_source)
+    def compile(self, source: str, *, source_name: str = "<input>") -> tuple[list[Instruction], list[int]]:
+        stdlib_tokens = tokenize(load_stdlib_source(), source_name="<stdlib>")
+        user_tokens = tokenize(source, source_name=source_name)
+        tokens = [*stdlib_tokens, *user_tokens]
         procedures, main_tokens = self.parse(tokens)
 
         for name, body, is_irq in procedures:
@@ -137,10 +169,10 @@ class Compiler:
         if self.irq_handler_label is None:
             self.irq_handler_label = "__default_irq_handler"
             self.code_labels[self.irq_handler_label] = self.current_address
-            self.emit(Opcode.LIT, 1)
-            self.emit(Opcode.LIT, MMIO_IRQ_ACK)
-            self.emit(Opcode.STORE)
-            self.emit(Opcode.IRET)
+            self.emit(Opcode.LIT, 1, source_note="default IRQ handler")
+            self.emit(Opcode.LIT, MMIO_IRQ_ACK, source_note="default IRQ handler")
+            self.emit(Opcode.STORE, source_note="default IRQ handler")
+            self.emit(Opcode.IRET, source_note="default IRQ handler")
 
         self.instructions[RESET_VECTOR] = Instruction(Opcode.JMP, main_addr)
         self.instructions[IRQ_VECTOR] = Instruction(Opcode.JMP, self.code_labels[self.irq_handler_label])
@@ -208,45 +240,70 @@ class Compiler:
 
         return procedures, main_tokens
 
-    def emit(self, opcode: Opcode, arg: int = 0) -> int:
+    def emit(
+        self,
+        opcode: Opcode,
+        arg: int = 0,
+        *,
+        token: Token | None = None,
+        source_note: str | None = None,
+    ) -> int:
+        try:
+            encode_instruction(opcode, arg)
+        except IsaError as exc:
+            if token is not None:
+                raise error_at(token, str(exc)) from exc
+            raise TranslatorError(str(exc)) from exc
+
         index = len(self.instructions)
         self.instructions.append(Instruction(opcode, arg))
+        if token is not None:
+            self.source_map[index] = SourceRef.from_token(token)
+        elif source_note is not None:
+            self.source_map[index] = SourceRef("<generated>", 0, 0, source_note)
         return index
 
     def emit_fixup(self, opcode: Opcode, label: str, token: Token) -> None:
-        index = self.emit(opcode, 0)
-        self.fixups.append(Fixup(index, label, token, opcode))
+        index = self.emit(opcode, 0, token=token)
+        self.fixups.append(Fixup(index, label, token))
 
     def emit_halt_if_needed(self) -> None:
         if not self.instructions or self.instructions[-1].opcode != Opcode.HALT:
-            self.emit(Opcode.HALT)
+            self.emit(Opcode.HALT, source_note="implicit halt")
 
     def builtin_xt_label(self, name: str) -> str:
         label = self.builtin_xt_labels.get(name)
         if label is None:
-            label = f"__xt_builtin_{len(self.builtin_xt_order)}"
+            label = f"__xt_builtin_{len(self.builtin_xt_labels)}"
             self.builtin_xt_labels[name] = label
-            self.builtin_xt_order.append(name)
         return label
 
     def _emit_builtin_xt_trampolines(self) -> None:
-        for name in self.builtin_xt_order:
-            label = self.builtin_xt_labels[name]
+        for name, label in self.builtin_xt_labels.items():
             if label in self.code_labels:
                 continue
             opcode = BUILTIN_WORDS[name]
             self.code_labels[label] = self.current_address
-            self.emit(opcode)
-            if opcode not in {Opcode.HALT, Opcode.IRET}:
-                self.emit(Opcode.RET)
+            self.emit(opcode, source_note=f"execution-token trampoline for {name}")
+            self.emit(Opcode.RET, source_note=f"execution-token trampoline for {name}")
 
     def patch_instruction_arg(self, instruction_index: int, arg: int) -> None:
         old = self.instructions[instruction_index]
+        try:
+            encode_instruction(old.opcode, arg)
+        except IsaError as exc:
+            raise TranslatorError(str(exc)) from exc
         self.instructions[instruction_index] = Instruction(old.opcode, arg)
 
     def allocate_data(self, values: Iterable[int]) -> int:
+        allocated = list(values)
         address = len(self.data)
-        self.data.extend(values)
+        new_size = address + len(allocated)
+        if new_size > MMIO_IN_DATA:
+            raise TranslatorError(
+                f"data image occupies {new_size} words and overlaps MMIO starting at 0x{MMIO_IN_DATA:04X}"
+            )
+        self.data.extend(allocated)
         return address
 
     def allocate_pstring(self, text: str) -> int:
@@ -268,6 +325,9 @@ class Compiler:
         self.data_labels[name] = self.allocate_data([0] * size)
 
     def _check_user_word_name(self, name: str, token: Token) -> None:
+        is_internal_stdlib_name = token.source_name == "<stdlib>" and INTERNAL_WORD_NAME_RE.fullmatch(name) is not None
+        if not USER_WORD_NAME_RE.fullmatch(name) and not is_internal_stdlib_name:
+            raise error_at(token, f"invalid word name: {name}")
         if name in RESERVED_WORDS or name.startswith("__xt_builtin_"):
             raise error_at(token, f"reserved word cannot be redefined: {name}")
         if name in self.code_labels:
@@ -287,7 +347,8 @@ class Compiler:
                 raise TranslatorError(":irq handler must explicitly end with iret")
             return
 
-        self.emit(Opcode.RET)
+        source_token = tokens[-1] if tokens else None
+        self.emit(Opcode.RET, token=source_token, source_note=f"return from {name}")
 
     def _compile_tokens(self, tokens: list[Token], name: str) -> None:
         if_stack: list[int] = []
@@ -297,19 +358,19 @@ class Compiler:
             token = tokens[index]
 
             if token.kind == TokenKind.NUMBER:
-                self.emit(Opcode.LIT, int(token.value))
+                self.emit(Opcode.LIT, int(token.value), token=token)
                 index += 1
                 continue
 
             if token.kind == TokenKind.PSTRING:
                 address = self.allocate_pstring(str(token.value))
-                self.emit(Opcode.LIT, address)
+                self.emit(Opcode.LIT, address, token=token)
                 index += 1
                 continue
 
             if token.kind == TokenKind.PRINT_STRING:
                 address = self.allocate_pstring(str(token.value))
-                self.emit(Opcode.LIT, address)
+                self.emit(Opcode.LIT, address, token=token)
                 self.emit_fixup(Opcode.CALL, "type", token)
                 index += 1
                 continue
@@ -322,13 +383,15 @@ class Compiler:
             if word == "'":
                 name_token = require_token(tokens, index + 1, "expected word name after execution-token quote")
                 name = require_word_name(name_token)
+                if name in UNSAFE_EXECUTION_TOKEN_WORDS:
+                    raise error_at(name_token, f"word cannot be used as execution token: {name}")
                 label = self.builtin_xt_label(name) if name in BUILTIN_WORDS else name
                 self.emit_fixup(Opcode.LIT, label, name_token)
                 index += 2
                 continue
 
             if word == "if":
-                placeholder_index = self.emit(Opcode.JZ, 0)
+                placeholder_index = self.emit(Opcode.JZ, 0, token=token)
                 if_stack.append(placeholder_index)
                 index += 1
                 continue
@@ -337,7 +400,7 @@ class Compiler:
                 if not if_stack:
                     raise error_at(token, "else without matching if")
                 jz_index = if_stack.pop()
-                jmp_index = self.emit(Opcode.JMP, 0)
+                jmp_index = self.emit(Opcode.JMP, 0, token=token)
                 self.patch_instruction_arg(jz_index, self.current_address)
                 if_stack.append(jmp_index)
                 index += 1
@@ -360,22 +423,22 @@ class Compiler:
                 if not begin_stack:
                     raise error_at(token, "until without matching begin")
                 begin_address = begin_stack.pop()
-                self.emit(Opcode.JZ, begin_address)
+                self.emit(Opcode.JZ, begin_address, token=token)
                 index += 1
                 continue
 
             if word in BUILTIN_WORDS:
-                self.emit(BUILTIN_WORDS[word])
+                self.emit(BUILTIN_WORDS[word], token=token)
                 index += 1
                 continue
 
             if word in MMIO_WORDS:
-                self.emit(Opcode.LIT, MMIO_WORDS[word])
+                self.emit(Opcode.LIT, MMIO_WORDS[word], token=token)
                 index += 1
                 continue
 
             if word in self.data_labels:
-                self.emit(Opcode.LIT, self.data_labels[word])
+                self.emit(Opcode.LIT, self.data_labels[word], token=token)
                 index += 1
                 continue
 
@@ -392,12 +455,13 @@ class Compiler:
             if fixup.label not in self.code_labels:
                 raise error_at(fixup.token, f"unknown word: {fixup.label}")
             address = self.code_labels[fixup.label]
-            self.instructions[fixup.instruction_index] = Instruction(fixup.opcode, address)
+            self.patch_instruction_arg(fixup.instruction_index, address)
 
 
 # Токенизация и вспомогательные функции
-def tokenize(source: str) -> list[Token]:
+def tokenize(source: str, *, source_name: str = "<input>") -> list[Token]:
     tokens: list[Token] = []
+    source_lines = source.splitlines()
     index = 0
     line = 1
     column = 1
@@ -417,13 +481,31 @@ def tokenize(source: str) -> list[Token]:
         if source.startswith('p"', index):
             start_line, start_column = line, column
             text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
-            tokens.append(Token(TokenKind.PSTRING, text, start_line, start_column))
+            tokens.append(
+                Token(
+                    TokenKind.PSTRING,
+                    text,
+                    start_line,
+                    start_column,
+                    source_name,
+                    source_line_text(source_lines, start_line),
+                )
+            )
             continue
 
         if source.startswith('."', index):
             start_line, start_column = line, column
             text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
-            tokens.append(Token(TokenKind.PRINT_STRING, text, start_line, start_column))
+            tokens.append(
+                Token(
+                    TokenKind.PRINT_STRING,
+                    text,
+                    start_line,
+                    start_column,
+                    source_name,
+                    source_line_text(source_lines, start_line),
+                )
+            )
             continue
 
         start_index = index
@@ -440,11 +522,35 @@ def tokenize(source: str) -> list[Token]:
 
         number = parse_number(raw)
         if number is not None:
-            tokens.append(Token(TokenKind.NUMBER, number, start_line, start_column))
+            tokens.append(
+                Token(
+                    TokenKind.NUMBER,
+                    number,
+                    start_line,
+                    start_column,
+                    source_name,
+                    source_line_text(source_lines, start_line),
+                )
+            )
         else:
-            tokens.append(Token(TokenKind.WORD, raw, start_line, start_column))
+            tokens.append(
+                Token(
+                    TokenKind.WORD,
+                    raw,
+                    start_line,
+                    start_column,
+                    source_name,
+                    source_line_text(source_lines, start_line),
+                )
+            )
 
     return tokens
+
+
+def source_line_text(lines: list[str], line: int) -> str:
+    if not 1 <= line <= len(lines):
+        return ""
+    return lines[line - 1].strip()
 
 
 def read_string_literal(
@@ -521,7 +627,7 @@ def collect_until_semicolon(tokens: list[Token], start_index: int) -> tuple[list
 
 
 def error_at(token: Token, message: str) -> TranslatorError:
-    return TranslatorError(f"{message} at line {token.line}, column {token.column}")
+    return TranslatorError(f"{message} at {token.source_name}:{token.line}:{token.column}")
 
 
 # Консольный интерфейс
@@ -529,8 +635,19 @@ def load_stdlib_source() -> str:
     return Path(__file__).with_name("stdlib.fth").read_text(encoding="utf-8")
 
 
-def translate_source(source: str) -> tuple[list[Instruction], list[int]]:
-    return Compiler().compile(source)
+def translate_source(
+    source: str,
+    *,
+    source_name: str = "<input>",
+) -> tuple[list[Instruction], list[int], dict[int, SourceRef]]:
+    compiler = Compiler()
+    instructions, data = compiler.compile(source, source_name=source_name)
+    return instructions, data, compiler.source_map
+
+
+def write_source_map(path: str | Path, source_map: dict[int, SourceRef]) -> None:
+    payload = {str(address): ref.to_json() for address, ref in sorted(source_map.items())}
+    Path(path).write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -540,26 +657,32 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("data", type=Path, help="выходной data.bin")
     parser.add_argument("--program-hex", type=Path, default=None, help="листинг команд")
     parser.add_argument("--data-hex", type=Path, default=None, help="листинг данных")
+    parser.add_argument("--source-map", type=Path, default=None, help="карта адресов машинного кода на Forth-код")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_arg_parser().parse_args(argv)
 
-    instructions, data = translate_source(args.source.read_text(encoding="utf-8"))
+    instructions, data, source_map = translate_source(
+        args.source.read_text(encoding="utf-8"), source_name=str(args.source)
+    )
 
     program_hex = args.program_hex or args.program.with_suffix(args.program.suffix + ".hex")
     data_hex = args.data_hex or args.data.with_suffix(args.data.suffix + ".hex")
+    source_map_path = args.source_map or args.program.with_suffix(args.program.suffix + ".map.json")
 
     write_program_binary(args.program, instructions)
     write_data_binary(args.data, data)
     program_hex.write_text(make_program_listing(instructions).rstrip() + "\n", encoding="utf-8")
     data_hex.write_text(make_data_listing(data).rstrip() + "\n", encoding="utf-8")
+    write_source_map(source_map_path, source_map)
 
     print(f"program: {args.program} ({len(instructions)} instructions)")
     print(f"data:    {args.data} ({len(data)} cells)")
     print(f"listing: {program_hex}")
     print(f"listing: {data_hex}")
+    print(f"source map: {source_map_path}")
 
     return 0
 

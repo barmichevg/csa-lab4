@@ -32,28 +32,31 @@ begin
 until
 
 \ bubble sort
-0 i !
-begin
-    n @ i @ - 1 - limit !
-    0 j !
-
+n @ 1 >
+if
+    0 i !
     begin
-        numbers j @ + @ a !
-        numbers j @ 1 + + @ b !
+        n @ i @ - 1 - limit !
+        0 j !
 
-        a @ b @ >
-        if
-            b @ numbers j @ + !
-            a @ numbers j @ 1 + + !
-        then
+        begin
+            numbers j @ + @ a !
+            numbers j @ 1 + + @ b !
 
-        j @ 1 + dup j !
-        limit @ =
+            a @ b @ >
+            if
+                b @ numbers j @ + !
+                a @ numbers j @ 1 + + !
+            then
+
+            j @ 1 + dup j !
+            limit @ =
+        until
+
+        i @ 1 + dup i !
+        n @ 1 - =
     until
-
-    i @ 1 + dup i !
-    n @ 1 - =
-until
+then
 
 \ печать массива
 0 i !

@@ -9,27 +9,27 @@ variable palindrome
 variable quotient
 variable result
 
-variable __rev-x
-variable __rev-r
+variable rev-x
+variable rev-r
 
 :irq
     read-char ack-irq input-push iret
 ;
 
 : reverse-number
-    __rev-x !
-    0 __rev-r !
+    rev-x !
+    0 rev-r !
     begin
-        __rev-x @ 0 >
+        rev-x @ 0 >
         if
-            __rev-r @ 10 * __rev-x @ 10 mod + __rev-r !
-            __rev-x @ 10 / __rev-x !
+            rev-r @ 10 * rev-x @ 10 mod + rev-r !
+            rev-x @ 10 / rev-x !
             0
         else
             1
         then
     until
-    __rev-r @
+    rev-r @
 ;
 
 : make-palindrome

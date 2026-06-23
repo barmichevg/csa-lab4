@@ -1,4 +1,4 @@
-\ cat: печать ввода до '\n'
+\ cat: потоковая печать до перевода строки
 
 :irq
     read-char ack-irq input-push iret

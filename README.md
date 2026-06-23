@@ -61,6 +61,10 @@ integer        = [ "-" ] , digit , { digit } ;
 comment        = "\\" , { any-char-except-newline } , newline ;
 ```
 
+Имена пользовательских процедур, переменных и буферов проверяются регулярным выражением
+`[A-Za-z][A-Za-z0-9_?!-]*`. Имена служебных объектов стандартной библиотеки с префиксом `__`
+разрешены только внутри `src/stdlib.fth`.
+
 ### Семантика
 
 #### Стратегия вычислений
@@ -114,31 +118,45 @@ Program memory
 
 ### Память данных
 
+Используется единое 16-битное адресное пространство из `2^16 = 65536` адресов. Адрес остаётся
+пословным: один адрес выбирает одно 32-битное слово. Верхние адреса зарезервированы под MMIO.
+
 ```text
-Data memory
-+------------------------------+
-| 0000 : stdlib variables      |
-| .... : input buffer          |
-| .... : user variables        |
-| .... : user buffers          |
-| .... : static pstrings       |
-| FFF0 : MMIO_IN_DATA          |
-| FFF1 : MMIO_IN_STATUS        |
-| FFF2 : MMIO_OUT_DATA         |
-| FFF3 : MMIO_IRQ_ACK          |
-+------------------------------+
+Data address space
++-----------------------------------+
+| 0000 : stdlib variables           |
+| .... : input buffer               |
+| .... : user variables/buffers     |
+| .... : static pstrings            |
+| FFEF : last regular memory word   |
+| FFF0 : MMIO_IN_DATA               |
+| FFF1 : MMIO_IN_STATUS             |
+| FFF2 : MMIO_OUT_DATA              |
+| FFF3 : MMIO_IRQ_ACK               |
+| FFF4..FFFF : reserved/unmapped     |
++-----------------------------------+
 ```
 
-Строковые литералы, переменные и буферы размещаются статически на этапе трансляции. Обычные адреса памяти данных проходят через кэш. MMIO-адреса распознаются декодером адреса и направляются напрямую в регистры устройств.
+Статический образ `data.bin` обязан полностью находиться ниже `0xFFF0`. И транслятор, и загрузчик
+модели отклоняют образ, пересекающийся с MMIO. Образ дополняется нулями до полного 16-битного
+адресного пространства, поэтому ширина адресной шины одинакова для обычной памяти и MMIO.
+
+Строковые литералы, переменные и буферы размещаются статически на этапе трансляции. Обычные адреса
+памяти данных проходят через cache. MMIO распознаётся декодером адреса до cache и никогда не
+кешируется.
 
 ### Стеки
 
 Процессор использует два стека.
 
-- `Data Stack` -- основной стек операндов. Через него выполняются арифметика, сравнения, работа с адресами и памятью.
-- `Return Stack` -- стек адресов возврата. Он используется командами `call`, `ret`, `execute`, входом в прерывание и `iret`. 
+- `Data Stack` -- основной стек операндов. В модели он представлен `list[int]`; `SP` вычисляется как
+  длина списка, а аппаратные `TOS` и `NOS` соответствуют двум верхним элементам. Операции `push`,
+  `pop` и `peek` выполняют проверки overflow/underflow в классе `Machine`.
+- `Return Stack` -- отдельный список адресов возврата для `call`, `ret`, `execute`, входа в IRQ и
+  `iret`.
 
-Архитектурно верхушка стека обозначается как `TOS` (`top of stack`), подверхушка -- как `NOS` (`next on stack`). ALU получает операнды из `TOS/NOS`, а результат возвращается на `Data Stack`. В Python-модели стек хранится списком, а `TOS/NOS` выводятся в журнале как derived view.
+Списки являются функциональной моделью аппаратных стеков. На схеме `Data Stack`, `Return Stack`, `SP`,
+`TOS` и `NOS` остаются самостоятельными аппаратными элементами независимо от представления в Python.
 
 ## Система команд
 
@@ -163,6 +181,9 @@ Data memory
 ```
 
 В бинарных файлах `program.bin` и `data.bin` каждое машинное слово записывается как 4 байта в порядке **big-endian**. Внутри модели адресация остаётся пословной: адрес указывает на номер 32-битного слова. В `.hex`-листингах то же слово отображается как 8 шестнадцатеричных цифр.
+Непосредственный аргумент `lit` является знаковым 24-битным значением
+`[-8388608, 8388607]`. Значение вне этого диапазона отклоняется непосредственно транслятором с
+указанием исходной позиции, а не на стадии записи бинарного файла.
 
 ### Набор инструкций
 
@@ -196,7 +217,8 @@ Data memory
 
 ### Длительности выполнения инструкций
 
-Один `tick` соответствует одному состоянию конечного автомата ControlUnit. Обычная инструкция выполняется за 4 такта:
+Один вызов `Machine.step_tick()` соответствует одному переходу hardwired FSM и одному фронту такта.
+Обычная инструкция выполняется за четыре такта:
 
 ```text
 FETCH -> DECODE -> EXECUTE -> IRQ_CHECK
@@ -204,12 +226,31 @@ FETCH -> DECODE -> EXECUTE -> IRQ_CHECK
 
 | Стадия | Тактов | Действие |
 |---|---:|---|
-| `FETCH` | 1 | чтение `program_memory[PC]` в `IR`, увеличение `PC` |
-| `DECODE` | 1 | декодирование opcode и аргумента |
-| `EXECUTE` | 1 | выполнение инструкции |
-| `IRQ_CHECK` | 1 | проверка входного прерывания |
+| `FETCH` | 1 | чтение сырого 32-битного слова `program_memory[PC]` в `IR`, `PC <- PC + 1` |
+| `DECODE` | 1 | реальный вызов `decode_instruction(IR)` и защёлкивание `opcode/arg` |
+| `EXECUTE` | 1 | выполнение простой инструкции либо cache lookup/запуск памяти |
+| `IRQ_CHECK` | 1 | приём pending IRQ только на границе инструкций |
 
-`halt` выполняется на стадии `EXECUTE`. Если к моменту остановки в write buffer остаются незавершённые записи, процессор больше не выполняет инструкции, но модель продолжает тактировать подсистему памяти до полного опустошения буфера. `load` при cache hit и `store` при cache hit со свободным write buffer выполняются за обычные 4 такта. Cache miss или выключенный кэш обычно дают 13 тактов; при занятом write buffer обращение к нижней памяти дополнительно ждёт его опустошения.
+Память команд внутри процессора содержит именно сырые 32-битные слова. Объект `Instruction`
+возникает только на стадии `DECODE`.
+
+| Случай | Полный цикл инструкции |
+|---|---:|
+| ALU, стек, переход, `LOAD/STORE` MMIO | 4 такта |
+| `LOAD` cache hit | 4 такта |
+| `STORE` cache hit при свободном write register | 4 такта |
+| cache miss или cache disabled | 14 тактов: `FETCH + DECODE + EXECUTE/cache lookup + 10 MEM_WAIT + IRQ_CHECK` |
+| `STORE` hit при занятом write register | 4 такта плюс ожидание освобождения регистра |
+| `halt` без незавершённой записи | 3 такта; `IRQ_CHECK` после остановки не выполняется |
+
+Для cache miss принята буквальная трактовка требования: cache lookup занимает один такт, затем
+нижняя память занимает ещё десять тактов. Поэтому доступ при miss равен `1 + 10 = 11` тактам
+подсистемы памяти. Каждый из десяти тактов нижней памяти виден в журнале как отдельный `MEM_WAIT`.
+Если write register уже владеет однопортовой памятью, CPU не уменьшает свой счётчик ожидания до
+освобождения порта.
+
+`halt` запрещает выборку новых инструкций, но модель продолжает тактировать write register до commit,
+чтобы backing memory не потеряла принятую write-through запись.
 
 ### Стандартная библиотека
 
@@ -236,216 +277,218 @@ FETCH -> DECODE -> EXECUTE -> IRQ_CHECK
 Интерфейс командной строки:
 
 ```bash
-python src/translator.py <source.fth> <program.bin> <data.bin>
+python src/translator.py <source.fth> <program.bin> <data.bin> \
+    [--program-hex <program.hex>] [--data-hex <data.hex>] [--source-map <program.map.json>]
 ```
 
-В результате создаются:
+По умолчанию создаются:
 
 ```text
-program.bin      бинарная память команд
-data.bin         бинарная память данных
-program.bin.hex  человекочитаемый листинг команд
-data.bin.hex     человекочитаемый листинг данных
+program.bin           бинарная память команд
+data.bin              бинарная память данных
+program.bin.hex       человекочитаемый листинг команд
+data.bin.hex          человекочитаемый листинг данных
+program.bin.map.json  отображение адресов на исходные строки Forth
 ```
 
 Этапы трансляции:
 
-1. Подключение `src/stdlib.fth` перед пользовательским кодом.
-2. Лексический разбор исходного текста.
-3. Обработка объявлений `variable`, `buffer`, процедур `: ... ;`, обработчика `:irq ... ;` и основного кода.
-4. Размещение переменных, буферов и строковых литералов в памяти данных.
-5. Генерация инструкций и фиксация неразрешённых адресов.
-6. Разрешение адресов процедур, переходов и `execution token` через `fixups`.
-7. Запись бинарных файлов `program.bin`, `data.bin` и текстовых листингов `program.bin.hex`, `data.bin.hex`.
+1. Раздельная токенизация `src/stdlib.fth` и пользовательского файла с сохранением имени файла,
+   строки, столбца и короткого текста исходной строки.
+2. Проверка имён, объявлений `variable`/`buffer`, процедур `: ... ;` и `:irq ... ;`.
+3. Статическое размещение переменных, буферов и Pascal-строк ниже MMIO.
+4. Генерация инструкций с немедленной проверкой возможности бинарного кодирования.
+5. Разрешение адресов процедур, переходов и execution token через fixups.
+6. Запись binary, листингов и source map.
 
 Правила генерации кода:
 
-- числовой литерал компилируется в `lit value`;
-- встроенные арифметические слова компилируются в соответствующие ALU-инструкции;
+- литерал компилируется в `lit value`; значение обязано помещаться в signed imm24;
 - имя переменной или буфера компилируется как `lit address`;
-- `@` компилируется в `load`, `!` -- в `store`;
+- `@`/`!` компилируются в обычные `load`/`store`, включая MMIO;
 - вызов пользовательского слова компилируется в `call address`;
-- определение `: name ... ;` размещает тело процедуры в памяти команд и завершает его `ret`;
-- `' name` компилируется как `lit address(name)`;
-- для встроенных примитивов, которые обычно не имеют собственного адреса в памяти команд, транслятор создаёт скрытое trampoline-слово вида `primitive; ret`, поэтому их тоже можно использовать как `execution token`;
-- `execute` выполняет косвенный вызов по адресу с вершины стека;
-- `if/else/then` компилируются через `jz` и `jmp`;
-- `begin/until` компилируется как метка начала цикла и условный переход назад;
-- `p"..."` размещает Pascal-строку в памяти данных и кладёт её адрес на стек;
-- `."..."` размещает Pascal-строку и сразу генерирует вызов `type`;
-- `type` печатает Pascal-строку, адрес которой лежит на вершине стека;
-- если программа не определяет `:irq`, транслятор создаёт безопасный обработчик по умолчанию: он записывает `1` в `MMIO_IRQ_ACK` и выполняет `iret`, чтобы сбросить внешний запрос прерывания.
+- определение `: name ... ;` завершается `ret`;
+- `' name` компилируется как `lit address(name)`; для безопасных встроенных примитивов создаётся
+  trampoline `primitive; ret`;
+- execution token для `iret` и `halt` запрещён, поскольку эти инструкции не имеют обычной семантики
+  возврата из косвенного вызова;
+- `execute` является косвенным `call`: сохраняет адрес возврата в Return Stack и переходит по token;
+- `if/else/then` компилируются через `jz`/`jmp`, `begin/until` -- через обратный `jz`;
+- `p"..."` создаёт статическую Pascal-строку, `."..."` дополнительно генерирует вызов `type`;
+- при отсутствии `:irq` создаётся обработчик, записывающий `1` в `MMIO_IRQ_ACK` и выполняющий `iret`.
 
 ## Модель процессора
 
 Интерфейс командной строки:
 
 ```bash
-python src/machine.py <program.bin> <data.bin> [input.txt] [--limit <ticks>] [--log <log.txt>] [--output <output.txt>] [--cache | --no-cache] [--cache-lines <n>] [--write-buffer-capacity <n>]
+python src/machine.py <program.bin> <data.bin> [input.txt] \
+    [--source-map <program.map.json>] [--limit <hard-limit>] [--stop-at-tick <N>] \
+    [--log <log.txt>] [--output <output.txt>] [--cache | --no-cache] [--cache-lines <power-of-two>]
 ```
 
-Опции:
-
-- `--limit <ticks>` -- задаёт ограничение моделирования;
-- `--log <log.txt>` -- сохраняет журнал;
-- `--output <output.txt>` -- сохраняет вывод программы;
-- `--cache/--no-cache` -- включает или выключает кэш данных;
-- `--cache-lines <n>` -- задаёт число строк кэша;
-- `--write-buffer-capacity <n>` -- задаёт ёмкость FIFO write buffer, по умолчанию одна запись.
-
-Модель исполняет бинарную память команд и бинарную память данных. Выполнение идёт с точностью до такта.
+- `--limit` -- защитный лимит; его превышение является ошибкой;
+- `--stop-at-tick N` -- штатная пауза сразу после `N` тактов со статусом `paused`;
+- после паузы состояние не доводится до границы инструкции, write register не дренируется и pending
+  IRQ не принимается автоматически;
+- повторный вызов `run()` продолжает выполнение с сохранённого состояния;
+- `--source-map` необязателен: по умолчанию модель ищет `<program.bin>.map.json`;
+- число строк cache должно быть положительной степенью двойки.
 
 ### Формат журнала
 
-На каждом такте в журнал добавляется строка с номером такта, `PC`, состоянием ControlUnit, режимом `user/irq`, верхними значениями стеков, флагами прерываний, статистикой кэша, текущей инструкцией и событием такта.
+Каждая строка содержит состояние после одного такта:
 
 ```text
-DEBUG   machine:simulation    TICK: ... PC: ... STATE: ... MODE: ... TOS: ... NOS: ... DS_DEPTH: ... RS_DEPTH: ... DS: ... RS: ... IE:... IP:... CACHE:... WB:...    instr [event]
+TICK PC STATE MODE SP DS RS IRQ CACHE WR instr [event] SRC
 ```
 
-Поле `STATE` показывает состояние FSM, которое выполнялось на данном такте. Остальные поля строки (`PC`, `MODE`, `IE`, стеки, кэш и т.д.) показывают состояние процессора после выполнения события этого такта. Поле `WB` имеет вид `entries/capacity@remaining_ticks`; например, `1/1@6` означает занятую одноэлементную очередь, которой осталось шесть тактов до записи в нижнюю память.
+- `IR` в `FETCH` показывается как raw word; после `DECODE` -- как мнемоника;
+- `IRQ` объединяет `E` (`irq_enable`), `P` (`irq_pending`) и `S` (`MMIO_IN_STATUS`);
+- `CACHE` показывает накопленные попадания/промахи;
+- `WR` -- состояние одноэлементного write register;
+- владелец нижней памяти показывается только в событии ожидания, когда это существенно;
+- `SRC` -- короткая исходная строка Forth из `program.bin.map.json`.
 
 ### DataPath
 
 ![DataPath](fig/datapath.png)
 
-Глобальные линии `clk/reset` на схеме DataPath не показаны, чтобы не перегружать рисунок; обновление регистров задаётся управляющими сигналами `pc_latch`, `ir_latch`, `stack_op`, `rs_op`, `mem_rd/mem_wr` и другими.
-
-Основные блоки DataPath:
-
-- `Program Memory` -- память инструкций;
-- `PC` -- счётчик команд;
-- `IR` -- регистр текущей инструкции;
-- `Data Stack` -- стек операндов;
-- `Return Stack` -- стек адресов возврата;
-- `ALU` -- арифметика и сравнения;
-- `Data Cache` -- кэш обычной памяти данных;
-- `Data Memory` -- память данных;
-- `Address Decoder` -- выбор между обычной памятью и MMIO;
-- `MMIO` -- memory-mapped регистры ввода-вывода;
-- `Input IRQ Controller` -- внешнее устройство ввода: получает события из `input schedule`, выставляет `input_char`, `input_status`, `irq_pending` и фиксирует `overrun`;
-- `Next PC MUX` -- выбирает следующий адрес команды: `pc + 1`, `target_addr` из `IR`, `ret_addr` из `Return Stack`, `xt_addr` из `Data Stack` или `irq_vector_addr`;
-- `WriteBack MUX` -- выбирает источник значения, записываемого обратно в `Data Stack`: результат ALU, `lit`-значение или значение из памяти/MMIO;
-- `Read Data MUX` -- выбирает источник результата чтения: `Data Cache` или `MMIO`;
-
-Обычные адреса памяти данных проходят через `Data Cache`. MMIO-адреса распознаются `Address Decoder` и обходят кэш. Подтверждение входного прерывания выполняется не сигналом процессора, а записью обработчика в регистр `MMIO_IRQ_ACK`; эта запись приходит из `MMIO` в `Input IRQ Controller` как `irq_ack write`.
+Основные блоки: raw `Program Memory`, `PC`, `IR`, `Data Stack`, `Return Stack`, `ALU`,
+`Address Decoder`, MMIO, direct-mapped Data Cache, одноэлементный Write Register, Memory Port Arbiter и
+16-битная Data Memory. `Address Decoder` выбирает MMIO до cache. Write register и blocking miss не
+могут использовать нижнюю память в одном такте: владелец выбирается `MemoryPortArbiter`.
 
 ### ControlUnit
 
 ![Control Unit](fig/control_unit.png)
 
-Control Unit реализован как hardwired FSM, вместе с минимальным внешним контекстом DataPath. Пунктирная рамка отделяет внутреннюю логику ControlUnit от внешних фрагментов DataPath.
+Control Unit -- hardwired FSM. Схемные блоки сопоставлены с кодом без отдельной микропрограммной
+памяти:
 
-Основные блоки ControlUnit:
+| Блок схемы | Поле или метод модели |
+|---|---|
+| State Register | `Machine.control_state` |
+| Program Memory / IR latch | `_tick_fetch()`, `ir_word`, `ir_address` |
+| Decode / dispatch | `_tick_decode()`, `decode_instruction()`, `_tick_execute()` |
+| Stack datapath control | `_execute_stack()`, `data_stack`, `push()`, `pop()`, `peek()` |
+| ALU control | `_execute_alu()` |
+| Memory control | `_execute_memory()`, `_handle_memory_access()`, `_tick_mem_wait()` |
+| Flow control | `_execute_flow()` |
+| IRQ control | `_execute_irq()`, `_tick_irq_check()` |
+| Next-state logic | присваивания `control_state` в `_tick_*` и `_finish_instruction()` |
+| One-port arbitration | `MemoryPortArbiter.choose()` |
 
-- `Decode / dispatch` получает `opcode, arg` из `IR` и формирует класс операции `op_class`;
-- `Sequencer / next-state` является комбинационной логикой переходов FSM и по `current_state`, `op_class` и `cache_status` выбирает следующий state;
-- `State Register` хранит текущее состояние FSM: `FETCH`, `DECODE`, `EXECUTE`, `MEM_WAIT`, `IRQ_CHECK`, `HALTED`;
-- `Datapath control` по `current_state`, `op_class`, `zero?`, `cache_status` и `irq_enter` формирует управляющие сигналы для DataPath;
-- `IRQ control` хранит внутренние флаги `IE` и `IN_IRQ`, получает `irq_pending` от `Input IRQ Controller`, учитывает `op_class` и `current_state`, обновляет флаги на `ei`, `di`, `iret` и формирует внутренний сигнал `irq_enter`.
-
-Сигналы `tick/clk` и `reset` являются внешними входами FSM. `tick/clk` фиксирует переход `State Register` из `current_state` в `next_state`. `reset` переводит автомат в начальное состояние `FETCH`; также при сбросе инициализируются начальные значения процессора, включая `PC <- 0`, `IE <- 0`, `IN_IRQ <- 0`.
+Такое разбиение сохраняет простой Python-код, но позволяет для любого блока схемы указать конкретное
+место модели и соответствующий переход FSM.
 
 ## Ввод-вывод MMIO и прерывания
 
-Ввод-вывод реализован как memory-mapped I/O. Специальных инструкций `in/out` нет, устройства доступны обычными `load` и `store`. Вход работает через `trap`: входной файл содержит пары `tick symbol`, например `10 Z`. Когда счётчик тактов достигает указанного значения, символ становится доступен в `MMIO_IN_DATA`, `MMIO_IN_STATUS` становится равен `1`, а `irq_pending` устанавливается в `true`.
+Входной файл содержит пары `tick token`. Токеном является один байт. Программа `cat` обрабатывает
+вход потоково и завершает работу после символа перевода строки `\n`.
 
 | Адрес | Имя | Доступ | Назначение |
 |---:|---|---|---|
-| `0xFFF0` | `MMIO_IN_DATA` | read | входной символ |
-| `0xFFF1` | `MMIO_IN_STATUS` | read | флаг готовности входного символа |
-| `0xFFF2` | `MMIO_OUT_DATA` | write | вывести символ |
-| `0xFFF3` | `MMIO_IRQ_ACK` | write | подтвердить обработку IRQ |
+| `0xFFF0` | `MMIO_IN_DATA` | read | текущий входной байт |
+| `0xFFF1` | `MMIO_IN_STATUS` | read | bit 0 `ready`, bit 1 `overrun` |
+| `0xFFF2` | `MMIO_OUT_DATA` | write-only | вывести младший байт |
+| `0xFFF3` | `MMIO_IRQ_ACK` | write-only | bit 0 очистить ready/IRQ, bit 1 очистить overrun |
 
-Программа разрешает прерывания инструкцией `ei`. На стадии `IRQ_CHECK` процессор проверяет `irq_enable`, `irq_pending` и `in_irq`. При входе в обработчик текущий `PC` сохраняется в `Return Stack`, `PC` устанавливается в `IRQ_VECTOR`, `irq_enable` сбрасывается. Пользовательский обработчик `:irq` читает символ через `read-char`, подтверждает обработку через `ack-irq` и возвращается инструкцией `iret`.
+Чтение write-only регистров и запись в read-only регистры приводят к `MachineError`.
+
+Если новый токен приходит при установленном `ready`, он не заменяет старый токен: устанавливается
+бит `overrun`, увеличивается аппаратный счётчик потерь, а старое значение остаётся доступным. Overrun
+наблюдаем программой через `MMIO_IN_STATUS` и может быть сброшен записью `2` в `MMIO_IRQ_ACK`.
+
+IRQ принимается только в `IRQ_CHECK`, то есть после полного завершения текущей инструкции, включая
+cache miss. При входе `PC` сохраняется в Return Stack, `IE` сбрасывается и `PC <- IRQ_VECTOR`.
+Вложенный IRQ остаётся pending до `iret`. Обработчик написан на Forth и обязан иметь нулевой итоговый
+эффект на Data Stack.
 
 ## Кэш
 
-Реализован **direct-mapped data cache**: каждая ячейка памяти может находиться только в одной строке кэша. Кэш находится между `Address Decoder` и `Data Memory` и используется только для обычной памяти данных. MMIO-адреса отфильтровываются `Address Decoder` и идут напрямую в `MMIO`, минуя кэш.
-
-Записи cache hit обслуживаются настоящим тактируемым FIFO write buffer. По умолчанию он содержит одну запись. Буфер отделяет момент архитектурного обновления cache line от более позднего физического обновления нижней памяти.
+Реализован direct-mapped **Data Cache**. Память команд является отдельной однотактной Harvard memory
+и не кешируется. MMIO обходит cache.
 
 ![Data Cache](fig/cache.png)
 
-Основные блоки схемы:
+Параметры:
 
-- `Address Split` разбивает адрес на `index` и `tag`;
-- `Cache Line Array` хранит строки вида `valid | tag | value`;
-- `Tag Comparator` и `Hit Logic` определяют `hit/miss`;
-- `Read Result MUX` выбирает результат для `LOAD`;
-- `MEM_WAIT / Pending Access` моделирует ожидание медленной памяти при промахе;
-- `Buffered Write-through path` представляет FIFO write buffer, который хранит записи `address | value | remaining_ticks`, последовательно сбрасывает их в `Data Memory` и сообщает Control Unit о заполнении.
+- одна строка содержит одно 32-битное слово;
+- число строк -- положительная степень двойки;
+- строка: `valid | tag | value`;
+- `index` -- младшие `log2(line_count)` бит адреса;
+- `tag` -- оставшиеся старшие биты;
+- политика записи -- write-through, write-allocate;
+- отложенная запись хранится не в FIFO, а в одном аппаратном Write Register
+  `address | value | remaining_ticks`;
+- forwarding удалён: cache line обновляется на store hit немедленно, поэтому последующий load получает
+  новое значение непосредственно через cache hit.
 
-Каждая строка кэша хранит одно 32-битное слово:
+### Чтение
+
+`LOAD hit` завершается на такте `EXECUTE`. При miss cache lookup занимает один такт, после чего
+создаётся pending access на десять тактов нижней памяти. На десятом предоставленном CPU такте значение
+читается, строка заполняется, а инструкция retire-ится.
+
+### Запись
+
+- `STORE hit` при свободном Write Register одновременно обновляет cache line и защёлкивает
+  `address/value` в регистр; CPU продолжает работу;
+- Write Register получает порт памяти в фоне и commit-ит значение после десяти своих тактов;
+- если регистр занят, следующая store-hit инструкция ждёт его освобождения, затем обновляет cache и
+  загружает новую запись;
+- `STORE miss` блокирует CPU на десять тактов нижней памяти, записывает backing memory и выполняет
+  write-allocate.
+
+### Однопортовый арбитр
+
+На каждом такте `MemoryPortArbiter` выбирает ровно одного владельца нижней памяти. Уже активный Write
+Register имеет приоритет перед новым blocking access. Если commit Write Register происходит на
+текущем такте, CPU не может считать этот же такт первым тактом своего memory access. В журнале это
+видно по `PORT:write_register` или `PORT:cpu`.
+
+### Задержки
 
 ```text
-valid | tag | value
+cache hit  = 1 tick cache lookup
+cache miss = 1 tick cache lookup + 10 ticks lower memory
 ```
 
-Адрес обычной памяти данных разбивается на `index` и `tag`:
+То есть miss занимает 11 тактов подсистемы памяти и добавляет десять наблюдаемых `MEM_WAIT` после
+`EXECUTE`. При выключенном cache обычное обращение также выполняет десять тактов нижней памяти после
+выдачи запроса.
 
-```text
-index = address % line_count
-tag   = address // line_count
-```
+### Пример влияния на производительность
 
-`index` выбирает единственную строку `line[index]`. Если строка валидна и `tag` совпадает, происходит **cache hit**. Если строка невалидна или `tag` не совпадает, происходит **cache miss**. Процессор переходит в `MEM_WAIT / Pending Access`, ждёт доступ к нижней памяти и затем заполняет или заменяет выбранную строку `line[index]`. 
+Для чистого сравнения используются программы без timed trap-ввода, чтобы обе конфигурации исполняли
+одинаковое число инструкций.
 
-При `LOAD hit` значение `cache_value` из выбранной строки кэша сразу передаётся через `Read Result MUX` и `WriteBack MUX` обратно на стек данных. Дополнительное состояние `MEM_WAIT` не требуется.
+| Алгоритм | cache on | cache off | Инструкций | Ускорение |
+|---|---:|---:|---:|---:|
+| `arithmetic` | 1237 | 1765 | 274 | 1.43x |
+| `cache_demo` | 2321 | 3539 | 530 | 1.52x |
+| `hello` | 1805 | 2611 | 398 | 1.45x |
+| `wide` | 1915 | 2713 | 401 | 1.42x |
+| `xt_demo` | 915 | 1263 | 201 | 1.38x |
 
-При `LOAD miss` выбранная строка `line[index]` перезаписывается после обращения к нижней памяти: `line[index] <- valid=1, tag, mem_value`. Это конфликтное вытеснение прямо отображаемого кэша. Отдельный алгоритм вытеснения не нужен, потому что для каждого адреса существует только один возможный кандидат на замену — строка `line[index]`.
-
-При `STORE hit` cache line и FIFO write buffer обновляются атомарно. Если в буфере есть свободный слот, значение записывается в cache line, а отдельная запись `address | value | remaining_ticks` добавляется в FIFO. Пока запись активна, её `remaining_ticks` уменьшается на каждом общем tick; после 10 тактов значение переносится в backing `Data Memory`. Если буфер заполнен, `STORE` переходит в `MEM_WAIT` и не изменяет cache line до освобождения слота. Каждый `STORE` создаёт отдельную FIFO-entry; записи не объединяются. `LOAD` может получить ещё не записанное в память значение через forwarding из самой новой подходящей entry.
-
-При `STORE miss` используется упрощённая политика `write-allocate`: процессор блокирующе обращается к нижней памяти, после ожидания записывает значение и заполняет выбранную строку `line[index] <- valid=1, tag, write_data`. Если в write buffer уже есть записи, однопортовая нижняя память сначала завершает их, а затем выполняет miss. Так как политика остаётся write-through, признак `dirty` не требуется.
-
-Доступ к кэшу занимает 1 tick, одна транзакция нижней памяти — 10 ticks. Write buffer работает параллельно с обычными состояниями CPU и продвигается на каждом tick. Cache miss обнаруживается на стадии `EXECUTE`; если порт памяти свободен, далее следуют 9 ticks `MEM_WAIT`. Если write buffer занят, сначала учитывается время его опустошения, затем начинается полный доступ к памяти.
-
-### Пример работы кэша
-
-Сравнение на `examples/cache_demo.fth`:
-
-```text
-cache on : ticks=2302 instructions=530 hits=122 misses=20
-cache off: ticks=3397 instructions=530 uncached_reads=91 uncached_writes=51
-```
-
-В `cache_demo` количество исполненных инструкций одинаковое, но с включённым кэшем требуется меньше тактов за счёт повторных cache hit.
-
-| Алгоритм          | ticks cache on | ticks cache off | hits/misses | uncached R/W | Ускорение |
-| ----------------- | -------------: | --------------: | ----------: | -----------: | --------: |
-| `arithmetic`      |           1224 |            1698 |       53/14 |        47/20 |     1.39x |
-| `cache_demo`      |           2302 |            3397 |      122/20 |        91/51 |     1.48x |
-| `cat`             |           6355 |            6518 |      273/20 |       186/33 |     1.03x |
-| `hello`           |           1786 |            2509 |       81/21 |        72/30 |     1.40x |
-| `hello_user_name` |          17335 |           18239 |      771/87 |      539/125 |     1.05x |
-| `irq_echo`        |            892 |            1252 |        40/1 |        20/21 |     1.40x |
-| `prob1`           |         113364 |          171892 |    6862/439 |    5693/1504 |     1.52x |
-| `sort`            |          24809 |           27732 |    1124/175 |      779/290 |     1.12x |
-| `wide`            |           1885 |            2602 |       80/31 |        69/42 |     1.38x |
-| `xt_demo`         |            905 |            1217 |       35/11 |        32/14 |     1.34x |
+Trap-программы не используются для строгого speedup: расписание привязано к абсолютным тактам, и
+быстрая конфигурация успевает выполнить другое число busy-wait итераций до следующего символа.
 
 ## Тестирование
 
-Интеграционные тесты реализованы через `pytest-golden`.
+Интеграционные тесты реализованы через `pytest-golden`. Новые golden-наборы не добавлялись; после
+изменения FSM, журнала и программ обновлены существующие эталоны.
 
 ```bash
-pytest tests/test_golden.py tests/test_write_buffer.py
+pytest tests/test_golden.py
 pytest --update-goldens tests/test_golden.py
 ```
 
-Каждый golden-файл содержит:
+Каждый golden-файл содержит исходный Forth-код, расписание ввода, листинги обеих Harvard memories,
+вывод и адаптированный потактовый журнал с source mapping.
 
-- `in_source` -- исходную программу;
-- `in_stdin` -- расписание входных событий;
-- `out_code` -- листинг памяти команд;
-- `out_data` -- листинг памяти данных;
-- `out_stdout` -- вывод инструментальной цепочки;
-- `out_log` -- адаптированный журнал работы процессора.
-
-Журнал в golden tests сокращается до начала и конца выполнения, чтобы не хранить сотни строк лога.
-
-Проверка качества кода:
+Проверка качества:
 
 ```bash
 ruff format --check .
@@ -454,23 +497,21 @@ mypy src tests
 pytest tests/test_golden.py
 ```
 
-CI выполняет те же проверки в GitHub Actions.
-
 ### Golden tests
 
-| Тест              | Назначение                                   | Ссылка                             |
-| ----------------- | -------------------------------------------- | ---------------------------------- |
-| `hello`           | печать Hello world через `pstr` и `type`     | `tests/golden/hello.yml`           |
-| `cat`             | печать входных символов через trap-ввод      | `tests/golden/cat.yml`             |
-| `hello_user_name` | ввод имени и приветствие                     | `tests/golden/hello_user_name.yml` |
-| `sort`            | length-prefixed сортировка знаковых чисел    | `tests/golden/sort.yml`            |
-| `wide`            | 64-битное сложение через 4 limb по 16 бит    | `tests/golden/wide.yml`            |
-| `prob1`           | Project Euler Problem 4                      | `tests/golden/prob1.yml`           |
-| `cache_demo`      | демонстрация кэша                            | `tests/golden/cache_demo.yml`      |
-| `write_buffer_demo` | заполнение и stall одноэлементного write buffer | `tests/golden/write_buffer_demo.yml` |
-| `irq_echo`        | демонстрация trap-прерывания                 | `tests/golden/irq_echo.yml`        |
-| `xt_demo`         | демонстрация execution token                 | `tests/golden/xt_demo.yml`         |
-| `arithmetic`      | базовая арифметика                           | `tests/golden/arithmetic.yml`      |
+| Тест | Назначение | Ссылка |
+|---|---|---|
+| `hello` | Pascal string и `type` | `tests/golden/hello.yml` |
+| `cat` | потоковый trap-ввод до перевода строки `\n` | `tests/golden/cat.yml` |
+| `cat2` | плотный ввод и аппаратный overrun | `tests/golden/cat2.yml` |
+| `hello_user_name` | ввод имени с границей 31 символ | `tests/golden/hello_user_name.yml` |
+| `sort` | length-prefixed сортировка, включая guard для `n = 1` | `tests/golden/sort.yml` |
+| `wide` | программная 64-битная арифметика | `tests/golden/wide.yml` |
+| `prob1` | Euler Problem 4 | `tests/golden/prob1.yml` |
+| `cache_demo` | влияние cache | `tests/golden/cache_demo.yml` |
+| `irq_echo` | пользовательский IRQ handler | `tests/golden/irq_echo.yml` |
+| `xt_demo` | execution token | `tests/golden/xt_demo.yml` |
+| `arithmetic` | арифметика ISA | `tests/golden/arithmetic.yml` |
 
 ## Примеры работы
 
@@ -512,33 +553,30 @@ python src/machine.py program.bin data.bin --log hello.log
 
 ```text
 Hello, world!
-summary: ticks=1786 instructions=398 cache=on hits=81 misses=21 uncached_reads=0 uncached_writes=0 wb=0/1 wb_enqueued=28 wb_stalls=0 wb_forwards=0 wb_drained=28 input_overruns=0
+summary: status=halted ticks=1805 instructions=398 cache=on hits=81 misses=21 uncached_reads=0 uncached_writes=0 wr=empty wr_enqueued=28 wr_stalls=0 wr_drained=28 input_overruns=0
 ```
 
 Фрагмент журнала:
 
 ```text
-DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [fetch @00000000]
-
-DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [decode jmp 255]
-
-DEBUG   machine:simulation    TICK:     2 PC:   255 STATE: execute   MODE: user TOS:       - NOS:       - DS_DEPTH:  0 RS_DEPTH:  0 DS: []               RS: []               IE:0 IP:0 CACHE:0/0	jmp 255 [jmp 0x000000FF]
+DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x400000FF  [fetch raw=0x400000FF @00000000] SRC:<generated> reset vector
+DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 255         [decode jmp 255] SRC:<generated> reset vector
+DEBUG   machine:simulation    TICK:     2 PC:   255 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 255         [jmp 0x000000FF] SRC:<generated> reset vector
 ```
 
 ## Статистика
 
-Статистика получена запуском программ из `examples` после подключения `src/stdlib.fth`.
+Статистика получена после внесённых изменений и запуска файлов из `examples` с cache enabled.
 
 | Алгоритм | LoC | code instr | code bytes | data cells | exec instr | ticks |
 |---|---:|---:|---:|---:|---:|---:|
-| `arithmetic` | 10 | 275 | 1100 | 108 | 274 | 1224 |
-| `cache_demo` | 21 | 292 | 1168 | 96 | 530 | 2302 |
-| `cat` | 15 | 273 | 1092 | 86 | 1544 | 6355 |
-| `hello` | 4 | 262 | 1048 | 101 | 398 | 1786 |
-| `hello_user_name` | 33 | 307 | 1228 | 151 | 4133 | 17335 |
-| `irq_echo` | 17 | 274 | 1096 | 87 | 221 | 892 |
-| `prob1` | 91 | 424 | 1696 | 103 | 27352 | 113364 |
-| `sort` | 68 | 403 | 1612 | 122 | 5793 | 24809 |
-| `wide` | 65 | 367 | 1468 | 120 | 401 | 1885 |
-| `write_buffer_demo` | 17 | 282 | 1128 | 92 | 355 | 1545 |
-| `xt_demo` | 16 | 283 | 1132 | 102 | 201 | 905 |
+| `arithmetic` | 10 | 275 | 1100 | 108 | 274 | 1237 |
+| `cache_demo` | 21 | 292 | 1168 | 96 | 530 | 2321 |
+| `cat` | 19 | 273 | 1092 | 86 | 1783 | 7341 |
+| `hello` | 4 | 262 | 1048 | 101 | 398 | 1805 |
+| `hello_user_name` | 47 | 326 | 1304 | 170 | 4125 | 17409 |
+| `irq_echo` | 17 | 274 | 1096 | 87 | 221 | 893 |
+| `prob1` | 91 | 424 | 1696 | 103 | 27341 | 113757 |
+| `sort` | 71 | 408 | 1632 | 122 | 5776 | 24895 |
+| `wide` | 65 | 367 | 1468 | 120 | 401 | 1915 |
+| `xt_demo` | 16 | 283 | 1132 | 102 | 201 | 915 |

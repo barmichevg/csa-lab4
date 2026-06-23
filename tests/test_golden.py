@@ -3,7 +3,6 @@ from __future__ import annotations
 import contextlib
 import io
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -24,36 +23,35 @@ from isa import (  # noqa: E402
     write_program_binary,
 )
 from machine import Machine  # noqa: E402
-from translator import translate_source  # noqa: E402
+from translator import translate_source, write_source_map  # noqa: E402
 
 
 @pytest.mark.golden_test("golden/*.yml")
-def test_translator_and_machine(golden) -> None:
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        tmpdir = Path(tmpdirname)
-        code_bin = tmpdir / "program.bin"
-        data_bin = tmpdir / "data.bin"
-        input_file = tmpdir / "input.txt"
+def test_translator_and_machine(golden, tmp_path: Path) -> None:
+    code_bin = tmp_path / "program.bin"
+    data_bin = tmp_path / "data.bin"
+    input_file = tmp_path / "input.txt"
 
-        input_file.write_text(golden["in_stdin"], encoding="utf-8")
+    input_file.write_text(golden["in_stdin"], encoding="utf-8")
 
-        with contextlib.redirect_stdout(io.StringIO()) as stdout:
-            instructions, data = translate_source(golden["in_source"])
-            write_program_binary(code_bin, instructions)
-            write_data_binary(data_bin, data)
+    with contextlib.redirect_stdout(io.StringIO()) as stdout:
+        instructions, data, source_map = translate_source(golden["in_source"], source_name="<golden>")
+        write_program_binary(code_bin, instructions)
+        write_data_binary(data_bin, data)
+        write_source_map(code_bin.with_suffix(code_bin.suffix + ".map.json"), source_map)
 
-            print(f"program: {code_bin.name} ({len(instructions)} instructions)")
-            print(f"data:    {data_bin.name} ({len(data)} cells)")
-            print("============================================================")
+        print(f"program: {code_bin.name} ({len(instructions)} instructions)")
+        print(f"data:    {data_bin.name} ({len(data)} cells)")
+        print("============================================================")
 
-            machine = Machine.from_files(code_bin, data_bin, input_file)
-            output = machine.run(limit=TICK_LIMIT)
-            print(output, end="")
-            print(f"ticks: {machine.tick_counter}")
+        machine = Machine.from_files(code_bin, data_bin, input_file)
+        output = machine.run(limit=TICK_LIMIT)
+        print(output, end="")
+        print(f"ticks: {machine.tick_counter}")
 
-        code_listing = make_program_listing(read_program_binary(code_bin))
-        data_listing = make_data_listing(read_data_binary(data_bin))
-        log_listing = adapt_log(machine.log_lines, max_lines=MAX_LOG_LINES)
+    code_listing = make_program_listing(read_program_binary(code_bin))
+    data_listing = make_data_listing(read_data_binary(data_bin))
+    log_listing = adapt_log(machine.log_lines, max_lines=MAX_LOG_LINES)
 
     assert golden.out["out_code"] == ensure_trailing_newline(code_listing)
     assert golden.out["out_data"] == ensure_trailing_newline(data_listing)
