@@ -58,3 +58,7 @@ exclude = [
     "^\\.pytest_cache/",
     "__pycache__",
 ]
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+enable_assertion_pass_hook = true
