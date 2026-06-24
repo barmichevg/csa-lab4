@@ -31,7 +31,12 @@ MMIO_IN_DATA = 0xFFF0
 MMIO_IN_STATUS = 0xFFF1
 MMIO_OUT_DATA = 0xFFF2
 MMIO_IRQ_ACK = 0xFFF3
-MMIO_READ_ONLY = {MMIO_IN_DATA, MMIO_IN_STATUS}
+
+# Биты статуса входа и регистра подтверждения IRQ.
+INPUT_STATUS_READY = 0b0001
+INPUT_STATUS_OVERRUN = 0b0010
+IRQ_ACK_READY = INPUT_STATUS_READY
+IRQ_ACK_OVERRUN = INPUT_STATUS_OVERRUN
 
 
 class Opcode(IntEnum):
@@ -84,9 +89,6 @@ ARGUMENT_OPCODES = {
     Opcode.CALL,
 }
 
-SIGNED_ARGUMENT_OPCODES = {
-    Opcode.LIT,
-}
 
 MNEMONICS: dict[Opcode, str] = {
     Opcode.NOP: "nop",
@@ -163,27 +165,43 @@ def encode_instruction(opcode: Opcode | int, arg: int = 0) -> int:
     if not has_argument and arg != 0:
         raise IsaError(f"instruction {op.name} does not accept an argument")
 
-    raw_arg = encode_arg(arg, signed=op in SIGNED_ARGUMENT_OPCODES)
+    raw_arg = encode_arg(arg, signed=op is Opcode.LIT)
     return ((int(op) & OPCODE_MASK) << ARG_BITS) | raw_arg
 
 
-def decode_instruction(word: int) -> Instruction:
-    """Декодировать одну 32-битную инструкцию."""
+def opcode_from_word(word: int) -> Opcode:
+    """Выделить поле opcode[31:24] из сырого 32-битного слова IR."""
     if not 0 <= word <= WORD_MASK:
         raise IsaError(f"machine word out of 32-bit range: {word}")
 
     opcode_value = (word >> ARG_BITS) & OPCODE_MASK
-    raw_arg = word & ARG_MASK
-
     try:
-        opcode = Opcode(opcode_value)
+        return Opcode(opcode_value)
     except ValueError as exc:
         raise IsaError(f"unknown opcode in machine word 0x{word:08X}: 0x{opcode_value:02X}") from exc
+
+
+def raw_arg_from_word(word: int) -> int:
+    """Выделить беззнаковое поле arg[23:0] из сырого слова IR."""
+    if not 0 <= word <= WORD_MASK:
+        raise IsaError(f"machine word out of 32-bit range: {word}")
+    return word & ARG_MASK
+
+
+def signed_arg_from_word(word: int) -> int:
+    """Интерпретировать поле arg[23:0] как знаковый литерал."""
+    return sign_extend_arg(raw_arg_from_word(word))
+
+
+def decode_instruction(word: int) -> Instruction:
+    """Комбинационно декодировать одно 32-битное слово IR."""
+    opcode = opcode_from_word(word)
+    raw_arg = word & ARG_MASK
 
     if opcode not in ARGUMENT_OPCODES and raw_arg != 0:
         raise IsaError(f"instruction {opcode.name} must not have an argument")
 
-    arg = sign_extend_arg(raw_arg) if opcode in SIGNED_ARGUMENT_OPCODES else raw_arg
+    arg = sign_extend_arg(raw_arg) if opcode is Opcode.LIT else raw_arg
     return Instruction(opcode=opcode, arg=arg)
 
 

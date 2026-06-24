@@ -22,8 +22,8 @@ in_source: |-
   halt
 in_stdin: ''
 out_code: |
-  00000000 - 400000FF - jmp 255
-  00000001 - 40000120 - jmp 288
+  00000000 - 40000102 - jmp 258
+  00000001 - 40000123 - jmp 291
   00000002 - 0100FFF2 - lit 65522
   00000003 - 31000000 - store
   00000004 - 43000000 - ret
@@ -179,141 +179,144 @@ out_code: |
   0000009A - 02000000 - dup
   0000009B - 01000000 - lit 0
   0000009C - 21000000 - lt
-  0000009D - 410000A2 - jz 162
+  0000009D - 410000A1 - jz 161
   0000009E - 0100002D - lit 45
   0000009F - 42000002 - call 2
-  000000A0 - 01FFFFFF - lit -1
-  000000A1 - 12000000 - mul
-  000000A2 - 01000054 - lit 84
-  000000A3 - 31000000 - store
-  000000A4 - 01000054 - lit 84
-  000000A5 - 30000000 - load
-  000000A6 - 01000000 - lit 0
-  000000A7 - 20000000 - eq
-  000000A8 - 410000AC - jz 172
-  000000A9 - 01000030 - lit 48
-  000000AA - 42000002 - call 2
-  000000AB - 400000DC - jmp 220
-  000000AC - 01000000 - lit 0
-  000000AD - 01000055 - lit 85
-  000000AE - 31000000 - store
-  000000AF - 01000054 - lit 84
-  000000B0 - 30000000 - load
-  000000B1 - 0100000A - lit 10
-  000000B2 - 14000000 - mod
-  000000B3 - 01000030 - lit 48
-  000000B4 - 10000000 - add
-  000000B5 - 0100004A - lit 74
-  000000B6 - 01000055 - lit 85
-  000000B7 - 30000000 - load
-  000000B8 - 10000000 - add
-  000000B9 - 31000000 - store
-  000000BA - 01000055 - lit 85
-  000000BB - 30000000 - load
-  000000BC - 01000001 - lit 1
-  000000BD - 10000000 - add
-  000000BE - 01000055 - lit 85
-  000000BF - 31000000 - store
-  000000C0 - 01000054 - lit 84
-  000000C1 - 30000000 - load
-  000000C2 - 0100000A - lit 10
-  000000C3 - 13000000 - div
-  000000C4 - 01000054 - lit 84
-  000000C5 - 31000000 - store
-  000000C6 - 01000054 - lit 84
-  000000C7 - 30000000 - load
-  000000C8 - 01000000 - lit 0
-  000000C9 - 20000000 - eq
-  000000CA - 410000AF - jz 175
-  000000CB - 01000055 - lit 85
-  000000CC - 30000000 - load
-  000000CD - 01000001 - lit 1
-  000000CE - 11000000 - sub
-  000000CF - 01000055 - lit 85
-  000000D0 - 31000000 - store
-  000000D1 - 0100004A - lit 74
+  000000A0 - 400000A3 - jmp 163
+  000000A1 - 01FFFFFF - lit -1
+  000000A2 - 12000000 - mul
+  000000A3 - 01000054 - lit 84
+  000000A4 - 31000000 - store
+  000000A5 - 01000054 - lit 84
+  000000A6 - 30000000 - load
+  000000A7 - 01000000 - lit 0
+  000000A8 - 20000000 - eq
+  000000A9 - 410000AD - jz 173
+  000000AA - 01000030 - lit 48
+  000000AB - 42000002 - call 2
+  000000AC - 400000DF - jmp 223
+  000000AD - 01000000 - lit 0
+  000000AE - 01000055 - lit 85
+  000000AF - 31000000 - store
+  000000B0 - 01000054 - lit 84
+  000000B1 - 30000000 - load
+  000000B2 - 0100000A - lit 10
+  000000B3 - 14000000 - mod
+  000000B4 - 01FFFFFF - lit -1
+  000000B5 - 12000000 - mul
+  000000B6 - 01000030 - lit 48
+  000000B7 - 10000000 - add
+  000000B8 - 0100004A - lit 74
+  000000B9 - 01000055 - lit 85
+  000000BA - 30000000 - load
+  000000BB - 10000000 - add
+  000000BC - 31000000 - store
+  000000BD - 01000055 - lit 85
+  000000BE - 30000000 - load
+  000000BF - 01000001 - lit 1
+  000000C0 - 10000000 - add
+  000000C1 - 01000055 - lit 85
+  000000C2 - 31000000 - store
+  000000C3 - 01000054 - lit 84
+  000000C4 - 30000000 - load
+  000000C5 - 0100000A - lit 10
+  000000C6 - 13000000 - div
+  000000C7 - 01000054 - lit 84
+  000000C8 - 31000000 - store
+  000000C9 - 01000054 - lit 84
+  000000CA - 30000000 - load
+  000000CB - 01000000 - lit 0
+  000000CC - 20000000 - eq
+  000000CD - 410000B0 - jz 176
+  000000CE - 01000055 - lit 85
+  000000CF - 30000000 - load
+  000000D0 - 01000001 - lit 1
+  000000D1 - 11000000 - sub
   000000D2 - 01000055 - lit 85
-  000000D3 - 30000000 - load
-  000000D4 - 10000000 - add
-  000000D5 - 30000000 - load
-  000000D6 - 42000002 - call 2
-  000000D7 - 01000055 - lit 85
+  000000D3 - 31000000 - store
+  000000D4 - 0100004A - lit 74
+  000000D5 - 01000055 - lit 85
+  000000D6 - 30000000 - load
+  000000D7 - 10000000 - add
   000000D8 - 30000000 - load
-  000000D9 - 01000000 - lit 0
-  000000DA - 20000000 - eq
-  000000DB - 410000CB - jz 203
-  000000DC - 43000000 - ret
-  000000DD - 02000000 - dup
-  000000DE - 30000000 - load
-  000000DF - 01000001 - lit 1
-  000000E0 - 31000000 - store
-  000000E1 - 01000001 - lit 1
-  000000E2 - 10000000 - add
-  000000E3 - 01000000 - lit 0
-  000000E4 - 31000000 - store
-  000000E5 - 01000001 - lit 1
-  000000E6 - 30000000 - load
-  000000E7 - 01000000 - lit 0
-  000000E8 - 22000000 - gt
-  000000E9 - 410000FC - jz 252
+  000000D9 - 42000002 - call 2
+  000000DA - 01000055 - lit 85
+  000000DB - 30000000 - load
+  000000DC - 01000000 - lit 0
+  000000DD - 20000000 - eq
+  000000DE - 410000CE - jz 206
+  000000DF - 43000000 - ret
+  000000E0 - 02000000 - dup
+  000000E1 - 30000000 - load
+  000000E2 - 01000001 - lit 1
+  000000E3 - 31000000 - store
+  000000E4 - 01000001 - lit 1
+  000000E5 - 10000000 - add
+  000000E6 - 01000000 - lit 0
+  000000E7 - 31000000 - store
+  000000E8 - 01000001 - lit 1
+  000000E9 - 30000000 - load
   000000EA - 01000000 - lit 0
-  000000EB - 30000000 - load
-  000000EC - 30000000 - load
-  000000ED - 42000002 - call 2
-  000000EE - 01000000 - lit 0
+  000000EB - 22000000 - gt
+  000000EC - 410000FF - jz 255
+  000000ED - 01000000 - lit 0
+  000000EE - 30000000 - load
   000000EF - 30000000 - load
-  000000F0 - 01000001 - lit 1
-  000000F1 - 10000000 - add
-  000000F2 - 01000000 - lit 0
-  000000F3 - 31000000 - store
-  000000F4 - 01000001 - lit 1
-  000000F5 - 30000000 - load
-  000000F6 - 01000001 - lit 1
-  000000F7 - 11000000 - sub
-  000000F8 - 01000001 - lit 1
-  000000F9 - 31000000 - store
-  000000FA - 01000000 - lit 0
-  000000FB - 400000FD - jmp 253
-  000000FC - 01000001 - lit 1
-  000000FD - 410000E5 - jz 229
-  000000FE - 43000000 - ret
-  000000FF - 0100002A - lit 42
-  00000100 - 01000056 - lit 86
-  00000101 - 31000000 - store
-  00000102 - 01000000 - lit 0
-  00000103 - 01000057 - lit 87
+  000000F0 - 42000002 - call 2
+  000000F1 - 01000000 - lit 0
+  000000F2 - 30000000 - load
+  000000F3 - 01000001 - lit 1
+  000000F4 - 10000000 - add
+  000000F5 - 01000000 - lit 0
+  000000F6 - 31000000 - store
+  000000F7 - 01000001 - lit 1
+  000000F8 - 30000000 - load
+  000000F9 - 01000001 - lit 1
+  000000FA - 11000000 - sub
+  000000FB - 01000001 - lit 1
+  000000FC - 31000000 - store
+  000000FD - 01000000 - lit 0
+  000000FE - 40000100 - jmp 256
+  000000FF - 01000001 - lit 1
+  00000100 - 410000E8 - jz 232
+  00000101 - 43000000 - ret
+  00000102 - 0100002A - lit 42
+  00000103 - 01000056 - lit 86
   00000104 - 31000000 - store
   00000105 - 01000000 - lit 0
-  00000106 - 01000058 - lit 88
+  00000106 - 01000057 - lit 87
   00000107 - 31000000 - store
-  00000108 - 01000058 - lit 88
-  00000109 - 30000000 - load
-  0000010A - 01000056 - lit 86
-  0000010B - 30000000 - load
-  0000010C - 10000000 - add
-  0000010D - 01000058 - lit 88
-  0000010E - 31000000 - store
-  0000010F - 01000057 - lit 87
-  00000110 - 30000000 - load
-  00000111 - 01000001 - lit 1
-  00000112 - 10000000 - add
-  00000113 - 02000000 - dup
-  00000114 - 01000057 - lit 87
-  00000115 - 31000000 - store
-  00000116 - 0100000A - lit 10
-  00000117 - 20000000 - eq
-  00000118 - 41000108 - jz 264
-  00000119 - 01000059 - lit 89
-  0000011A - 420000DD - call 221
-  0000011B - 01000058 - lit 88
-  0000011C - 30000000 - load
-  0000011D - 4200009A - call 154
-  0000011E - 42000005 - call 5
-  0000011F - FF000000 - halt
-  00000120 - 01000001 - lit 1
-  00000121 - 0100FFF3 - lit 65523
-  00000122 - 31000000 - store
-  00000123 - 52000000 - iret
+  00000108 - 01000000 - lit 0
+  00000109 - 01000058 - lit 88
+  0000010A - 31000000 - store
+  0000010B - 01000058 - lit 88
+  0000010C - 30000000 - load
+  0000010D - 01000056 - lit 86
+  0000010E - 30000000 - load
+  0000010F - 10000000 - add
+  00000110 - 01000058 - lit 88
+  00000111 - 31000000 - store
+  00000112 - 01000057 - lit 87
+  00000113 - 30000000 - load
+  00000114 - 01000001 - lit 1
+  00000115 - 10000000 - add
+  00000116 - 02000000 - dup
+  00000117 - 01000057 - lit 87
+  00000118 - 31000000 - store
+  00000119 - 0100000A - lit 10
+  0000011A - 20000000 - eq
+  0000011B - 4100010B - jz 267
+  0000011C - 01000059 - lit 89
+  0000011D - 420000E0 - call 224
+  0000011E - 01000058 - lit 88
+  0000011F - 30000000 - load
+  00000120 - 4200009A - call 154
+  00000121 - 42000005 - call 5
+  00000122 - FF000000 - halt
+  00000123 - 01000001 - lit 1
+  00000124 - 0100FFF3 - lit 65523
+  00000125 - 31000000 - store
+  00000126 - 52000000 - iret
 out_data: |
   00000000 - 00000000 - 0
   00000001 - 00000000 - 0
@@ -412,309 +415,309 @@ out_data: |
   0000005E - 00000045 - 69
   0000005F - 00000020 - 32
 out_stdout: |
-  program: program.bin (292 instructions)
+  program: program.bin (295 instructions)
   data:    data.bin (96 cells)
   ============================================================
   CACHE 420
-  ticks: 2321
+  ticks: 1817
 out_log: |
-  DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x400000FF  [fetch raw=0x400000FF @00000000] SRC:<generated> reset vector
-  DEBUG   machine:simulation    TICK:     1 PC:     1 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 255         [decode jmp 255] SRC:<generated> reset vector
-  DEBUG   machine:simulation    TICK:     2 PC:   255 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 255         [jmp 0x000000FF] SRC:<generated> reset vector
-  DEBUG   machine:simulation    TICK:     3 PC:   255 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 255         [no irq] SRC:<generated> reset vector
-  DEBUG   machine:simulation    TICK:     4 PC:   256 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x0100002A  [fetch raw=0x0100002A @000000FF] SRC:<golden>:7:1 42 x !
-  DEBUG   machine:simulation    TICK:     5 PC:   256 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 42          [decode lit 42] SRC:<golden>:7:1 42 x !
-  DEBUG   machine:simulation    TICK:     6 PC:   256 STATE: execute   MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 42          [push 42] SRC:<golden>:7:1 42 x !
-  DEBUG   machine:simulation    TICK:     7 PC:   256 STATE: irq_check MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 42          [no irq] SRC:<golden>:7:1 42 x !
-  DEBUG   machine:simulation    TICK:     8 PC:   257 STATE: fetch     MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @00000100] SRC:<golden>:7:4 42 x !
-  DEBUG   machine:simulation    TICK:     9 PC:   257 STATE: decode    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 86          [decode lit 86] SRC:<golden>:7:4 42 x !
-  DEBUG   machine:simulation    TICK:    10 PC:   257 STATE: execute   MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 86          [push 86] SRC:<golden>:7:4 42 x !
-  DEBUG   machine:simulation    TICK:    11 PC:   257 STATE: irq_check MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 86          [no irq] SRC:<golden>:7:4 42 x !
-  DEBUG   machine:simulation    TICK:    12 PC:   258 STATE: fetch     MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000101] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    13 PC:   258 STATE: decode    MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    store           [decode store] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    14 PC:   258 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [cache_miss write 42 -> [0x0056]; wait=10] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    15 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=9] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    16 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=8] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    17 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=7] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    18 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=6] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    19 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=5] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    20 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=4] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    21 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=3] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    22 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=2] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    23 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=1] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    24 PC:   258 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [cache_fill_done write 42 -> [0x0056]] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    25 PC:   258 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [no irq] SRC:<golden>:7:6 42 x !
-  DEBUG   machine:simulation    TICK:    26 PC:   259 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x01000000  [fetch raw=0x01000000 @00000102] SRC:<golden>:8:1 0 i !
-  DEBUG   machine:simulation    TICK:    27 PC:   259 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 0           [decode lit 0] SRC:<golden>:8:1 0 i !
-  DEBUG   machine:simulation    TICK:    28 PC:   259 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 0           [push 0] SRC:<golden>:8:1 0 i !
-  DEBUG   machine:simulation    TICK:    29 PC:   259 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 0           [no irq] SRC:<golden>:8:1 0 i !
-  DEBUG   machine:simulation    TICK:    30 PC:   260 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x01000057  [fetch raw=0x01000057 @00000103] SRC:<golden>:8:3 0 i !
-  DEBUG   machine:simulation    TICK:    31 PC:   260 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 87          [decode lit 87] SRC:<golden>:8:3 0 i !
-  DEBUG   machine:simulation    TICK:    32 PC:   260 STATE: execute   MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 87          [push 87] SRC:<golden>:8:3 0 i !
-  DEBUG   machine:simulation    TICK:    33 PC:   260 STATE: irq_check MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 87          [no irq] SRC:<golden>:8:3 0 i !
-  DEBUG   machine:simulation    TICK:    34 PC:   261 STATE: fetch     MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000104] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    35 PC:   261 STATE: decode    MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [decode store] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    36 PC:   261 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [cache_miss write 0 -> [0x0057]; wait=10] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    37 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=9] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    38 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=8] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    39 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=7] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    40 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=6] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    41 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=5] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    42 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=4] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    43 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=3] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    44 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=2] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    45 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=1] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    46 PC:   261 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [cache_fill_done write 0 -> [0x0057]] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    47 PC:   261 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [no irq] SRC:<golden>:8:5 0 i !
-  DEBUG   machine:simulation    TICK:    48 PC:   262 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x01000000  [fetch raw=0x01000000 @00000105] SRC:<golden>:9:1 0 sum !
-  DEBUG   machine:simulation    TICK:    49 PC:   262 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 0           [decode lit 0] SRC:<golden>:9:1 0 sum !
-  DEBUG   machine:simulation    TICK:    50 PC:   262 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 0           [push 0] SRC:<golden>:9:1 0 sum !
-  DEBUG   machine:simulation    TICK:    51 PC:   262 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 0           [no irq] SRC:<golden>:9:1 0 sum !
-  DEBUG   machine:simulation    TICK:    52 PC:   263 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000106] SRC:<golden>:9:3 0 sum !
-  DEBUG   machine:simulation    TICK:    53 PC:   263 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 88          [decode lit 88] SRC:<golden>:9:3 0 sum !
-  DEBUG   machine:simulation    TICK:    54 PC:   263 STATE: execute   MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 88          [push 88] SRC:<golden>:9:3 0 sum !
-  DEBUG   machine:simulation    TICK:    55 PC:   263 STATE: irq_check MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 88          [no irq] SRC:<golden>:9:3 0 sum !
-  DEBUG   machine:simulation    TICK:    56 PC:   264 STATE: fetch     MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000107] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    57 PC:   264 STATE: decode    MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [decode store] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    58 PC:   264 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [cache_miss write 0 -> [0x0058]; wait=10] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    59 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=9] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    60 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=8] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    61 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=7] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    62 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=6] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    63 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=5] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    64 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=4] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    65 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=3] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    66 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=2] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    67 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=1] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    68 PC:   264 STATE: mem_wait  MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [cache_fill_done write 0 -> [0x0058]] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    69 PC:   264 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [no irq] SRC:<golden>:9:7 0 sum !
-  DEBUG   machine:simulation    TICK:    70 PC:   265 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000108] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    71 PC:   265 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    lit 88          [decode lit 88] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    72 PC:   265 STATE: execute   MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    lit 88          [push 88] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    73 PC:   265 STATE: irq_check MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    lit 88          [no irq] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    74 PC:   266 STATE: fetch     MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @00000109] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    75 PC:   266 STATE: decode    MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    load            [decode load] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    76 PC:   266 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    load            [cache_hit read [0x0058] -> 0] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    77 PC:   266 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    load            [no irq] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    78 PC:   267 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @0000010A] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    79 PC:   267 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    lit 86          [decode lit 86] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    80 PC:   267 STATE: execute   MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    lit 86          [push 86] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    81 PC:   267 STATE: irq_check MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    lit 86          [no irq] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    82 PC:   268 STATE: fetch     MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @0000010B] SRC:<golden>:12:13 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    83 PC:   268 STATE: decode    MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    load            [decode load] SRC:<golden>:12:13 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    84 PC:   268 STATE: execute   MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    load            [cache_hit read [0x0056] -> 42] SRC:<golden>:12:13 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    85 PC:   268 STATE: irq_check MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    load            [no irq] SRC:<golden>:12:13 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    86 PC:   269 STATE: fetch     MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @0000010C] SRC:<golden>:12:15 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    87 PC:   269 STATE: decode    MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    add             [decode add] SRC:<golden>:12:15 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    88 PC:   269 STATE: execute   MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    add             [add 0 42 -> 42] SRC:<golden>:12:15 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    89 PC:   269 STATE: irq_check MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    add             [no irq] SRC:<golden>:12:15 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    90 PC:   270 STATE: fetch     MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @0000010D] SRC:<golden>:12:17 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    91 PC:   270 STATE: decode    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    lit 88          [decode lit 88] SRC:<golden>:12:17 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    92 PC:   270 STATE: execute   MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    lit 88          [push 88] SRC:<golden>:12:17 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    93 PC:   270 STATE: irq_check MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    lit 88          [no irq] SRC:<golden>:12:17 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    94 PC:   271 STATE: fetch     MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @0000010E] SRC:<golden>:12:21 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    95 PC:   271 STATE: decode    MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    store           [decode store] SRC:<golden>:12:21 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    96 PC:   271 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@10  store           [cache_hit write 42 -> [0x0058]; wr_load] SRC:<golden>:12:21 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    97 PC:   271 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@9   store           [no irq] SRC:<golden>:12:21 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:    98 PC:   272 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@8   raw 0x01000057  [fetch raw=0x01000057 @0000010F] SRC:<golden>:13:5 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:    99 PC:   272 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@7   lit 87          [decode lit 87] SRC:<golden>:13:5 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   100 PC:   272 STATE: execute   MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@6   lit 87          [push 87] SRC:<golden>:13:5 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   101 PC:   272 STATE: irq_check MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@5   lit 87          [no irq] SRC:<golden>:13:5 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   102 PC:   273 STATE: fetch     MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@4   raw 0x30000000  [fetch raw=0x30000000 @00000110] SRC:<golden>:13:7 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   103 PC:   273 STATE: decode    MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@3   load            [decode load] SRC:<golden>:13:7 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   104 PC:   273 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@2   load            [cache_hit read [0x0057] -> 0] SRC:<golden>:13:7 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   105 PC:   273 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@1   load            [no irq] SRC:<golden>:13:7 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   106 PC:   274 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x01000001  [fetch raw=0x01000001 @00000111; wr_commit 42 -> [0x0058]] SRC:<golden>:13:9 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   107 PC:   274 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 1           [decode lit 1] SRC:<golden>:13:9 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   108 PC:   274 STATE: execute   MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 1           [push 1] SRC:<golden>:13:9 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   109 PC:   274 STATE: irq_check MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 1           [no irq] SRC:<golden>:13:9 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   110 PC:   275 STATE: fetch     MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @00000112] SRC:<golden>:13:11 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   111 PC:   275 STATE: decode    MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    add             [decode add] SRC:<golden>:13:11 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   112 PC:   275 STATE: execute   MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    add             [add 0 1 -> 1] SRC:<golden>:13:11 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   113 PC:   275 STATE: irq_check MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    add             [no irq] SRC:<golden>:13:11 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   114 PC:   276 STATE: fetch     MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x02000000  [fetch raw=0x02000000 @00000113] SRC:<golden>:13:13 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   115 PC:   276 STATE: decode    MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    dup             [decode dup] SRC:<golden>:13:13 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   116 PC:   276 STATE: execute   MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    dup             [dup] SRC:<golden>:13:13 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   117 PC:   276 STATE: irq_check MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    dup             [no irq] SRC:<golden>:13:13 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   118 PC:   277 STATE: fetch     MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x01000057  [fetch raw=0x01000057 @00000114] SRC:<golden>:13:17 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   119 PC:   277 STATE: decode    MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 87          [decode lit 87] SRC:<golden>:13:17 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   120 PC:   277 STATE: execute   MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 87          [push 87] SRC:<golden>:13:17 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   121 PC:   277 STATE: irq_check MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 87          [no irq] SRC:<golden>:13:17 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   122 PC:   278 STATE: fetch     MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000115] SRC:<golden>:13:19 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   123 PC:   278 STATE: decode    MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    store           [decode store] SRC:<golden>:13:19 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   124 PC:   278 STATE: execute   MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@10  store           [cache_hit write 1 -> [0x0057]; wr_load] SRC:<golden>:13:19 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   125 PC:   278 STATE: irq_check MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@9   store           [no irq] SRC:<golden>:13:19 i @ 1 + dup i !
-  DEBUG   machine:simulation    TICK:   126 PC:   279 STATE: fetch     MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@8   raw 0x0100000A  [fetch raw=0x0100000A @00000116] SRC:<golden>:14:5 10 =
-  DEBUG   machine:simulation    TICK:   127 PC:   279 STATE: decode    MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@7   lit 10          [decode lit 10] SRC:<golden>:14:5 10 =
-  DEBUG   machine:simulation    TICK:   128 PC:   279 STATE: execute   MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@6   lit 10          [push 10] SRC:<golden>:14:5 10 =
-  DEBUG   machine:simulation    TICK:   129 PC:   279 STATE: irq_check MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@5   lit 10          [no irq] SRC:<golden>:14:5 10 =
-  DEBUG   machine:simulation    TICK:   130 PC:   280 STATE: fetch     MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@4   raw 0x20000000  [fetch raw=0x20000000 @00000117] SRC:<golden>:14:8 10 =
-  DEBUG   machine:simulation    TICK:   131 PC:   280 STATE: decode    MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@3   eq              [decode eq] SRC:<golden>:14:8 10 =
-  DEBUG   machine:simulation    TICK:   132 PC:   280 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@2   eq              [eq 1 10 -> 0] SRC:<golden>:14:8 10 =
-  DEBUG   machine:simulation    TICK:   133 PC:   280 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@1   eq              [no irq] SRC:<golden>:14:8 10 =
-  DEBUG   machine:simulation    TICK:   134 PC:   281 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    raw 0x41000108  [fetch raw=0x41000108 @00000118; wr_commit 1 -> [0x0057]] SRC:<golden>:15:1 until
-  DEBUG   machine:simulation    TICK:   135 PC:   281 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    jz 264          [decode jz 264] SRC:<golden>:15:1 until
-  DEBUG   machine:simulation    TICK:   136 PC:   264 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    jz 264          [jz taken 0x00000108] SRC:<golden>:15:1 until
-  DEBUG   machine:simulation    TICK:   137 PC:   264 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    jz 264          [no irq] SRC:<golden>:15:1 until
-  DEBUG   machine:simulation    TICK:   138 PC:   265 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000108] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   139 PC:   265 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    lit 88          [decode lit 88] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   140 PC:   265 STATE: execute   MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    lit 88          [push 88] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   141 PC:   265 STATE: irq_check MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    lit 88          [no irq] SRC:<golden>:12:5 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   142 PC:   266 STATE: fetch     MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @00000109] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   143 PC:   266 STATE: decode    MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    load            [decode load] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   144 PC:   266 STATE: execute   MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    load            [cache_hit read [0x0058] -> 42] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   145 PC:   266 STATE: irq_check MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    load            [no irq] SRC:<golden>:12:9 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   146 PC:   267 STATE: fetch     MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @0000010A] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   147 PC:   267 STATE: decode    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    lit 86          [decode lit 86] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   148 PC:   267 STATE: execute   MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    lit 86          [push 86] SRC:<golden>:12:11 sum @ x @ + sum !
-  DEBUG   machine:simulation    TICK:   149 PC:   267 STATE: irq_check MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    lit 86          [no irq] SRC:<golden>:12:11 sum @ x @ + sum !
-  ... omitted 2022 lines ...
-  DEBUG   machine:simulation    TICK:  2172 PC:     2 STATE: execute   MODE: user SP:  1 DS: [50]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    call 2          [call 0x00000002] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2173 PC:     2 STATE: irq_check MODE: user SP:  1 DS: [50]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    call 2          [no irq] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2174 PC:     3 STATE: fetch     MODE: user SP:  1 DS: [50]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2175 PC:     3 STATE: decode    MODE: user SP:  1 DS: [50]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 65522       [decode lit 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2176 PC:     3 STATE: execute   MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 65522       [push 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2177 PC:     3 STATE: irq_check MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 65522       [no irq] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2178 PC:     4 STATE: fetch     MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2179 PC:     4 STATE: decode    MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    store           [decode store] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2180 PC:     4 STATE: execute   MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    store           [mmio_write 50 -> [0xFFF2]] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2181 PC:     4 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    store           [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2182 PC:     5 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2183 PC:     5 STATE: decode    MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    ret             [decode ret] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2184 PC:   215 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    ret             [ret 0x000000D7] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2185 PC:   215 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    ret             [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2186 PC:   216 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000D7] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2187 PC:   216 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 85          [decode lit 85] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2188 PC:   216 STATE: execute   MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 85          [push 85] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2189 PC:   216 STATE: irq_check MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 85          [no irq] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2190 PC:   217 STATE: fetch     MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D8] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2191 PC:   217 STATE: decode    MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    load            [decode load] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2192 PC:   217 STATE: execute   MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    load            [cache_hit read [0x0055] -> 1] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2193 PC:   217 STATE: irq_check MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    load            [no irq] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2194 PC:   218 STATE: fetch     MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x01000000  [fetch raw=0x01000000 @000000D9] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2195 PC:   218 STATE: decode    MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 0           [decode lit 0] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2196 PC:   218 STATE: execute   MODE: user SP:  2 DS: [1,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 0           [push 0] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2197 PC:   218 STATE: irq_check MODE: user SP:  2 DS: [1,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 0           [no irq] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2198 PC:   219 STATE: fetch     MODE: user SP:  2 DS: [1,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x20000000  [fetch raw=0x20000000 @000000DA] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2199 PC:   219 STATE: decode    MODE: user SP:  2 DS: [1,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    eq              [decode eq] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2200 PC:   219 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    eq              [eq 1 0 -> 0] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2201 PC:   219 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    eq              [no irq] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2202 PC:   220 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x410000CB  [fetch raw=0x410000CB @000000DB] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2203 PC:   220 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    jz 203          [decode jz 203] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2204 PC:   203 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    jz 203          [jz taken 0x000000CB] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2205 PC:   203 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    jz 203          [no irq] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2206 PC:   204 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000CB] SRC:<stdlib>:140:13 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2207 PC:   204 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 85          [decode lit 85] SRC:<stdlib>:140:13 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2208 PC:   204 STATE: execute   MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 85          [push 85] SRC:<stdlib>:140:13 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2209 PC:   204 STATE: irq_check MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 85          [no irq] SRC:<stdlib>:140:13 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2210 PC:   205 STATE: fetch     MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000CC] SRC:<stdlib>:140:27 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2211 PC:   205 STATE: decode    MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    load            [decode load] SRC:<stdlib>:140:27 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2212 PC:   205 STATE: execute   MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    load            [cache_hit read [0x0055] -> 1] SRC:<stdlib>:140:27 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2213 PC:   205 STATE: irq_check MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    load            [no irq] SRC:<stdlib>:140:27 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2214 PC:   206 STATE: fetch     MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x01000001  [fetch raw=0x01000001 @000000CD] SRC:<stdlib>:140:29 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2215 PC:   206 STATE: decode    MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 1           [decode lit 1] SRC:<stdlib>:140:29 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2216 PC:   206 STATE: execute   MODE: user SP:  2 DS: [1,1]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 1           [push 1] SRC:<stdlib>:140:29 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2217 PC:   206 STATE: irq_check MODE: user SP:  2 DS: [1,1]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 1           [no irq] SRC:<stdlib>:140:29 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2218 PC:   207 STATE: fetch     MODE: user SP:  2 DS: [1,1]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x11000000  [fetch raw=0x11000000 @000000CE] SRC:<stdlib>:140:31 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2219 PC:   207 STATE: decode    MODE: user SP:  2 DS: [1,1]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    sub             [decode sub] SRC:<stdlib>:140:31 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2220 PC:   207 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    sub             [sub 1 1 -> 0] SRC:<stdlib>:140:31 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2221 PC:   207 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    sub             [no irq] SRC:<stdlib>:140:31 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2222 PC:   208 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000CF] SRC:<stdlib>:140:33 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2223 PC:   208 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 85          [decode lit 85] SRC:<stdlib>:140:33 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2224 PC:   208 STATE: execute   MODE: user SP:  2 DS: [0,85]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 85          [push 85] SRC:<stdlib>:140:33 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2225 PC:   208 STATE: irq_check MODE: user SP:  2 DS: [0,85]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 85          [no irq] SRC:<stdlib>:140:33 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2226 PC:   209 STATE: fetch     MODE: user SP:  2 DS: [0,85]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @000000D0] SRC:<stdlib>:140:47 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2227 PC:   209 STATE: decode    MODE: user SP:  2 DS: [0,85]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    store           [decode store] SRC:<stdlib>:140:47 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2228 PC:   209 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@10  store           [cache_hit write 0 -> [0x0055]; wr_load] SRC:<stdlib>:140:47 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2229 PC:   209 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@9   store           [no irq] SRC:<stdlib>:140:47 __print-count @ 1 - __print-count !
-  DEBUG   machine:simulation    TICK:  2230 PC:   210 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@8   raw 0x0100004A  [fetch raw=0x0100004A @000000D1] SRC:<stdlib>:141:13 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2231 PC:   210 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@7   lit 74          [decode lit 74] SRC:<stdlib>:141:13 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2232 PC:   210 STATE: execute   MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@6   lit 74          [push 74] SRC:<stdlib>:141:13 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2233 PC:   210 STATE: irq_check MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@5   lit 74          [no irq] SRC:<stdlib>:141:13 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2234 PC:   211 STATE: fetch     MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@4   raw 0x01000055  [fetch raw=0x01000055 @000000D2] SRC:<stdlib>:141:28 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2235 PC:   211 STATE: decode    MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@3   lit 85          [decode lit 85] SRC:<stdlib>:141:28 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2236 PC:   211 STATE: execute   MODE: user SP:  2 DS: [74,85]              RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@2   lit 85          [push 85] SRC:<stdlib>:141:28 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2237 PC:   211 STATE: irq_check MODE: user SP:  2 DS: [74,85]              RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@1   lit 85          [no irq] SRC:<stdlib>:141:28 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2238 PC:   212 STATE: fetch     MODE: user SP:  2 DS: [74,85]              RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D3; wr_commit 0 -> [0x0055]] SRC:<stdlib>:141:42 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2239 PC:   212 STATE: decode    MODE: user SP:  2 DS: [74,85]              RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:119/20      WR:empty    load            [decode load] SRC:<stdlib>:141:42 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2240 PC:   212 STATE: execute   MODE: user SP:  2 DS: [74,0]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    load            [cache_hit read [0x0055] -> 0] SRC:<stdlib>:141:42 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2241 PC:   212 STATE: irq_check MODE: user SP:  2 DS: [74,0]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    load            [no irq] SRC:<stdlib>:141:42 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2242 PC:   213 STATE: fetch     MODE: user SP:  2 DS: [74,0]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    raw 0x10000000  [fetch raw=0x10000000 @000000D4] SRC:<stdlib>:141:44 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2243 PC:   213 STATE: decode    MODE: user SP:  2 DS: [74,0]               RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    add             [decode add] SRC:<stdlib>:141:44 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2244 PC:   213 STATE: execute   MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    add             [add 74 0 -> 74] SRC:<stdlib>:141:44 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2245 PC:   213 STATE: irq_check MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    add             [no irq] SRC:<stdlib>:141:44 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2246 PC:   214 STATE: fetch     MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D5] SRC:<stdlib>:141:46 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2247 PC:   214 STATE: decode    MODE: user SP:  1 DS: [74]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    load            [decode load] SRC:<stdlib>:141:46 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2248 PC:   214 STATE: execute   MODE: user SP:  1 DS: [48]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    load            [cache_hit read [0x004A] -> 48] SRC:<stdlib>:141:46 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2249 PC:   214 STATE: irq_check MODE: user SP:  1 DS: [48]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    load            [no irq] SRC:<stdlib>:141:46 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2250 PC:   215 STATE: fetch     MODE: user SP:  1 DS: [48]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x42000002  [fetch raw=0x42000002 @000000D6] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2251 PC:   215 STATE: decode    MODE: user SP:  1 DS: [48]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    call 2          [decode call 2] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2252 PC:     2 STATE: execute   MODE: user SP:  1 DS: [48]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    call 2          [call 0x00000002] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2253 PC:     2 STATE: irq_check MODE: user SP:  1 DS: [48]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    call 2          [no irq] SRC:<stdlib>:141:48 __print-digits __print-count @ + @ emit
-  DEBUG   machine:simulation    TICK:  2254 PC:     3 STATE: fetch     MODE: user SP:  1 DS: [48]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2255 PC:     3 STATE: decode    MODE: user SP:  1 DS: [48]                 RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 65522       [decode lit 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2256 PC:     3 STATE: execute   MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 65522       [push 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2257 PC:     3 STATE: irq_check MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 65522       [no irq] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2258 PC:     4 STATE: fetch     MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2259 PC:     4 STATE: decode    MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    store           [decode store] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2260 PC:     4 STATE: execute   MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    store           [mmio_write 48 -> [0xFFF2]] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2261 PC:     4 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    store           [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2262 PC:     5 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2263 PC:     5 STATE: decode    MODE: user SP:  0 DS: []                   RS: [...,0x000000D7]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    ret             [decode ret] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2264 PC:   215 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    ret             [ret 0x000000D7] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2265 PC:   215 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    ret             [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2266 PC:   216 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000D7] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2267 PC:   216 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 85          [decode lit 85] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2268 PC:   216 STATE: execute   MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 85          [push 85] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2269 PC:   216 STATE: irq_check MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 85          [no irq] SRC:<stdlib>:142:13 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2270 PC:   217 STATE: fetch     MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D8] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2271 PC:   217 STATE: decode    MODE: user SP:  1 DS: [85]                 RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    load            [decode load] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2272 PC:   217 STATE: execute   MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    load            [cache_hit read [0x0055] -> 0] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2273 PC:   217 STATE: irq_check MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    load            [no irq] SRC:<stdlib>:142:27 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2274 PC:   218 STATE: fetch     MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x01000000  [fetch raw=0x01000000 @000000D9] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2275 PC:   218 STATE: decode    MODE: user SP:  1 DS: [0]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 0           [decode lit 0] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2276 PC:   218 STATE: execute   MODE: user SP:  2 DS: [0,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 0           [push 0] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2277 PC:   218 STATE: irq_check MODE: user SP:  2 DS: [0,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 0           [no irq] SRC:<stdlib>:142:29 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2278 PC:   219 STATE: fetch     MODE: user SP:  2 DS: [0,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x20000000  [fetch raw=0x20000000 @000000DA] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2279 PC:   219 STATE: decode    MODE: user SP:  2 DS: [0,0]                RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    eq              [decode eq] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2280 PC:   219 STATE: execute   MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    eq              [eq 0 0 -> 1] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2281 PC:   219 STATE: irq_check MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    eq              [no irq] SRC:<stdlib>:142:31 __print-count @ 0 =
-  DEBUG   machine:simulation    TICK:  2282 PC:   220 STATE: fetch     MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x410000CB  [fetch raw=0x410000CB @000000DB] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2283 PC:   220 STATE: decode    MODE: user SP:  1 DS: [1]                  RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    jz 203          [decode jz 203] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2284 PC:   220 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    jz 203          [jz not taken] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2285 PC:   220 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    jz 203          [no irq] SRC:<stdlib>:143:9 until
-  DEBUG   machine:simulation    TICK:  2286 PC:   221 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @000000DC] SRC:<stdlib>:144:5 then
-  DEBUG   machine:simulation    TICK:  2287 PC:   221 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011E]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [decode ret] SRC:<stdlib>:144:5 then
-  DEBUG   machine:simulation    TICK:  2288 PC:   286 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x0000011E] SRC:<stdlib>:144:5 then
-  DEBUG   machine:simulation    TICK:  2289 PC:   286 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq] SRC:<stdlib>:144:5 then
-  DEBUG   machine:simulation    TICK:  2290 PC:   287 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x42000005  [fetch raw=0x42000005 @0000011E] SRC:<golden>:19:1 cr
-  DEBUG   machine:simulation    TICK:  2291 PC:   287 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 5          [decode call 5] SRC:<golden>:19:1 cr
-  DEBUG   machine:simulation    TICK:  2292 PC:     5 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 5          [call 0x00000005] SRC:<golden>:19:1 cr
-  DEBUG   machine:simulation    TICK:  2293 PC:     5 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 5          [no irq] SRC:<golden>:19:1 cr
-  DEBUG   machine:simulation    TICK:  2294 PC:     6 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x0100000A  [fetch raw=0x0100000A @00000005] SRC:<stdlib>:24:5 10 emit
-  DEBUG   machine:simulation    TICK:  2295 PC:     6 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 10          [decode lit 10] SRC:<stdlib>:24:5 10 emit
-  DEBUG   machine:simulation    TICK:  2296 PC:     6 STATE: execute   MODE: user SP:  1 DS: [10]                 RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 10          [push 10] SRC:<stdlib>:24:5 10 emit
-  DEBUG   machine:simulation    TICK:  2297 PC:     6 STATE: irq_check MODE: user SP:  1 DS: [10]                 RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 10          [no irq] SRC:<stdlib>:24:5 10 emit
-  DEBUG   machine:simulation    TICK:  2298 PC:     7 STATE: fetch     MODE: user SP:  1 DS: [10]                 RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x42000002  [fetch raw=0x42000002 @00000006] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2299 PC:     7 STATE: decode    MODE: user SP:  1 DS: [10]                 RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 2          [decode call 2] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2300 PC:     2 STATE: execute   MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 2          [call 0x00000002] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2301 PC:     2 STATE: irq_check MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 2          [no irq] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2302 PC:     3 STATE: fetch     MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2303 PC:     3 STATE: decode    MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 65522       [decode lit 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2304 PC:     3 STATE: execute   MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 65522       [push 65522] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2305 PC:     3 STATE: irq_check MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 65522       [no irq] SRC:<stdlib>:20:5 out-data !
-  DEBUG   machine:simulation    TICK:  2306 PC:     4 STATE: fetch     MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2307 PC:     4 STATE: decode    MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    store           [decode store] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2308 PC:     4 STATE: execute   MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    store           [mmio_write 10 -> [0xFFF2]] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2309 PC:     4 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    store           [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2310 PC:     5 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2311 PC:     5 STATE: decode    MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [decode ret] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2312 PC:     7 STATE: execute   MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x00000007] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2313 PC:     7 STATE: irq_check MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq] SRC:<stdlib>:20:14 out-data !
-  DEBUG   machine:simulation    TICK:  2314 PC:     8 STATE: fetch     MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000007] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2315 PC:     8 STATE: decode    MODE: user SP:  0 DS: []                   RS: [0x0000011F]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [decode ret] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2316 PC:   287 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x0000011F] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2317 PC:   287 STATE: irq_check MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq] SRC:<stdlib>:24:8 10 emit
-  DEBUG   machine:simulation    TICK:  2318 PC:   288 STATE: fetch     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0xFF000000  [fetch raw=0xFF000000 @0000011F] SRC:<golden>:21:1 halt
-  DEBUG   machine:simulation    TICK:  2319 PC:   288 STATE: decode    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    halt            [decode halt] SRC:<golden>:21:1 halt
-  DEBUG   machine:simulation    TICK:  2320 PC:   288 STATE: execute   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    halt            [halt] SRC:<golden>:21:1 halt
+  DEBUG   machine:simulation    TICK:     0 PC:     1 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x40000102  [fetch raw=0x40000102 @00000000]
+  DEBUG   machine:simulation    TICK:     1 PC:   258 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 258         [jmp 0x00000102]
+  DEBUG   machine:simulation    TICK:     2 PC:   258 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    jmp 258         [no irq]
+  DEBUG   machine:simulation    TICK:     3 PC:   259 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x0100002A  [fetch raw=0x0100002A @00000102]
+  DEBUG   machine:simulation    TICK:     4 PC:   259 STATE: execute->irq_check    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 42          [push 42]
+  DEBUG   machine:simulation    TICK:     5 PC:   259 STATE: irq_check->fetch      MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 42          [no irq]
+  DEBUG   machine:simulation    TICK:     6 PC:   260 STATE: fetch->execute        MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @00000103]
+  DEBUG   machine:simulation    TICK:     7 PC:   260 STATE: execute->irq_check    MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 86          [push 86]
+  DEBUG   machine:simulation    TICK:     8 PC:   260 STATE: irq_check->fetch      MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    lit 86          [no irq]
+  DEBUG   machine:simulation    TICK:     9 PC:   261 STATE: fetch->execute        MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:0/0         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000104]
+  DEBUG   machine:simulation    TICK:    10 PC:   261 STATE: execute->mem_wait     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [cache_miss write 42 -> [0x0056]; wait=10]
+  DEBUG   machine:simulation    TICK:    11 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=9]
+  DEBUG   machine:simulation    TICK:    12 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=8]
+  DEBUG   machine:simulation    TICK:    13 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=7]
+  DEBUG   machine:simulation    TICK:    14 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=6]
+  DEBUG   machine:simulation    TICK:    15 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=5]
+  DEBUG   machine:simulation    TICK:    16 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=4]
+  DEBUG   machine:simulation    TICK:    17 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=3]
+  DEBUG   machine:simulation    TICK:    18 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=2]
+  DEBUG   machine:simulation    TICK:    19 PC:   261 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [mem_wait; wait=1]
+  DEBUG   machine:simulation    TICK:    20 PC:   261 STATE: mem_wait->irq_check   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [cache_fill_done write 42 -> [0x0056]]
+  DEBUG   machine:simulation    TICK:    21 PC:   261 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:    22 PC:   262 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x01000000  [fetch raw=0x01000000 @00000105]
+  DEBUG   machine:simulation    TICK:    23 PC:   262 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 0           [push 0]
+  DEBUG   machine:simulation    TICK:    24 PC:   262 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 0           [no irq]
+  DEBUG   machine:simulation    TICK:    25 PC:   263 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x01000057  [fetch raw=0x01000057 @00000106]
+  DEBUG   machine:simulation    TICK:    26 PC:   263 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 87          [push 87]
+  DEBUG   machine:simulation    TICK:    27 PC:   263 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    lit 87          [no irq]
+  DEBUG   machine:simulation    TICK:    28 PC:   264 STATE: fetch->execute        MODE: user SP:  2 DS: [0,87]               RS: []                   IRQ:E0/P0/S00 CACHE:0/1         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000107]
+  DEBUG   machine:simulation    TICK:    29 PC:   264 STATE: execute->mem_wait     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [cache_miss write 0 -> [0x0057]; wait=10]
+  DEBUG   machine:simulation    TICK:    30 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=9]
+  DEBUG   machine:simulation    TICK:    31 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=8]
+  DEBUG   machine:simulation    TICK:    32 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=7]
+  DEBUG   machine:simulation    TICK:    33 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=6]
+  DEBUG   machine:simulation    TICK:    34 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=5]
+  DEBUG   machine:simulation    TICK:    35 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=4]
+  DEBUG   machine:simulation    TICK:    36 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=3]
+  DEBUG   machine:simulation    TICK:    37 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=2]
+  DEBUG   machine:simulation    TICK:    38 PC:   264 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [mem_wait; wait=1]
+  DEBUG   machine:simulation    TICK:    39 PC:   264 STATE: mem_wait->irq_check   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [cache_fill_done write 0 -> [0x0057]]
+  DEBUG   machine:simulation    TICK:    40 PC:   264 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:    41 PC:   265 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x01000000  [fetch raw=0x01000000 @00000108]
+  DEBUG   machine:simulation    TICK:    42 PC:   265 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 0           [push 0]
+  DEBUG   machine:simulation    TICK:    43 PC:   265 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 0           [no irq]
+  DEBUG   machine:simulation    TICK:    44 PC:   266 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000109]
+  DEBUG   machine:simulation    TICK:    45 PC:   266 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 88          [push 88]
+  DEBUG   machine:simulation    TICK:    46 PC:   266 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    lit 88          [no irq]
+  DEBUG   machine:simulation    TICK:    47 PC:   267 STATE: fetch->execute        MODE: user SP:  2 DS: [0,88]               RS: []                   IRQ:E0/P0/S00 CACHE:0/2         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @0000010A]
+  DEBUG   machine:simulation    TICK:    48 PC:   267 STATE: execute->mem_wait     MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [cache_miss write 0 -> [0x0058]; wait=10]
+  DEBUG   machine:simulation    TICK:    49 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=9]
+  DEBUG   machine:simulation    TICK:    50 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=8]
+  DEBUG   machine:simulation    TICK:    51 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=7]
+  DEBUG   machine:simulation    TICK:    52 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=6]
+  DEBUG   machine:simulation    TICK:    53 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=5]
+  DEBUG   machine:simulation    TICK:    54 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=4]
+  DEBUG   machine:simulation    TICK:    55 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=3]
+  DEBUG   machine:simulation    TICK:    56 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=2]
+  DEBUG   machine:simulation    TICK:    57 PC:   267 STATE: mem_wait->mem_wait    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [mem_wait; wait=1]
+  DEBUG   machine:simulation    TICK:    58 PC:   267 STATE: mem_wait->irq_check   MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [cache_fill_done write 0 -> [0x0058]]
+  DEBUG   machine:simulation    TICK:    59 PC:   267 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:    60 PC:   268 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @0000010B]
+  DEBUG   machine:simulation    TICK:    61 PC:   268 STATE: execute->irq_check    MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    lit 88          [push 88]
+  DEBUG   machine:simulation    TICK:    62 PC:   268 STATE: irq_check->fetch      MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    lit 88          [no irq]
+  DEBUG   machine:simulation    TICK:    63 PC:   269 STATE: fetch->execute        MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:0/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @0000010C]
+  DEBUG   machine:simulation    TICK:    64 PC:   269 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    load            [cache_hit read [0x0058] -> 0]
+  DEBUG   machine:simulation    TICK:    65 PC:   269 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:    66 PC:   270 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @0000010D]
+  DEBUG   machine:simulation    TICK:    67 PC:   270 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    lit 86          [push 86]
+  DEBUG   machine:simulation    TICK:    68 PC:   270 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    lit 86          [no irq]
+  DEBUG   machine:simulation    TICK:    69 PC:   271 STATE: fetch->execute        MODE: user SP:  2 DS: [0,86]               RS: []                   IRQ:E0/P0/S00 CACHE:1/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @0000010E]
+  DEBUG   machine:simulation    TICK:    70 PC:   271 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    load            [cache_hit read [0x0056] -> 42]
+  DEBUG   machine:simulation    TICK:    71 PC:   271 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:    72 PC:   272 STATE: fetch->execute        MODE: user SP:  2 DS: [0,42]               RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @0000010F]
+  DEBUG   machine:simulation    TICK:    73 PC:   272 STATE: execute->irq_check    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    add             [add 0 42 -> 42]
+  DEBUG   machine:simulation    TICK:    74 PC:   272 STATE: irq_check->fetch      MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:    75 PC:   273 STATE: fetch->execute        MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000110]
+  DEBUG   machine:simulation    TICK:    76 PC:   273 STATE: execute->irq_check    MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    lit 88          [push 88]
+  DEBUG   machine:simulation    TICK:    77 PC:   273 STATE: irq_check->fetch      MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    lit 88          [no irq]
+  DEBUG   machine:simulation    TICK:    78 PC:   274 STATE: fetch->execute        MODE: user SP:  2 DS: [42,88]              RS: []                   IRQ:E0/P0/S00 CACHE:2/3         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000111]
+  DEBUG   machine:simulation    TICK:    79 PC:   274 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@10  store           [cache_hit write 42 -> [0x0058]; wr_load]
+  DEBUG   machine:simulation    TICK:    80 PC:   274 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@9   store           [no irq]
+  DEBUG   machine:simulation    TICK:    81 PC:   275 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@8   raw 0x01000057  [fetch raw=0x01000057 @00000112]
+  DEBUG   machine:simulation    TICK:    82 PC:   275 STATE: execute->irq_check    MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@7   lit 87          [push 87]
+  DEBUG   machine:simulation    TICK:    83 PC:   275 STATE: irq_check->fetch      MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@6   lit 87          [no irq]
+  DEBUG   machine:simulation    TICK:    84 PC:   276 STATE: fetch->execute        MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:3/3         WR:busy@5   raw 0x30000000  [fetch raw=0x30000000 @00000113]
+  DEBUG   machine:simulation    TICK:    85 PC:   276 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@4   load            [cache_hit read [0x0057] -> 0]
+  DEBUG   machine:simulation    TICK:    86 PC:   276 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@3   load            [no irq]
+  DEBUG   machine:simulation    TICK:    87 PC:   277 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@2   raw 0x01000001  [fetch raw=0x01000001 @00000114]
+  DEBUG   machine:simulation    TICK:    88 PC:   277 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:busy@1   lit 1           [push 1]
+  DEBUG   machine:simulation    TICK:    89 PC:   277 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 1           [no irq; wr_commit 42 -> [0x0058]]
+  DEBUG   machine:simulation    TICK:    90 PC:   278 STATE: fetch->execute        MODE: user SP:  2 DS: [0,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @00000115]
+  DEBUG   machine:simulation    TICK:    91 PC:   278 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    add             [add 0 1 -> 1]
+  DEBUG   machine:simulation    TICK:    92 PC:   278 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:    93 PC:   279 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x02000000  [fetch raw=0x02000000 @00000116]
+  DEBUG   machine:simulation    TICK:    94 PC:   279 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    dup             [dup]
+  DEBUG   machine:simulation    TICK:    95 PC:   279 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    dup             [no irq]
+  DEBUG   machine:simulation    TICK:    96 PC:   280 STATE: fetch->execute        MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x01000057  [fetch raw=0x01000057 @00000117]
+  DEBUG   machine:simulation    TICK:    97 PC:   280 STATE: execute->irq_check    MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 87          [push 87]
+  DEBUG   machine:simulation    TICK:    98 PC:   280 STATE: irq_check->fetch      MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    lit 87          [no irq]
+  DEBUG   machine:simulation    TICK:    99 PC:   281 STATE: fetch->execute        MODE: user SP:  3 DS: [1,1,87]             RS: []                   IRQ:E0/P0/S00 CACHE:4/3         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000118]
+  DEBUG   machine:simulation    TICK:   100 PC:   281 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@10  store           [cache_hit write 1 -> [0x0057]; wr_load]
+  DEBUG   machine:simulation    TICK:   101 PC:   281 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@9   store           [no irq]
+  DEBUG   machine:simulation    TICK:   102 PC:   282 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@8   raw 0x0100000A  [fetch raw=0x0100000A @00000119]
+  DEBUG   machine:simulation    TICK:   103 PC:   282 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@7   lit 10          [push 10]
+  DEBUG   machine:simulation    TICK:   104 PC:   282 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@6   lit 10          [no irq]
+  DEBUG   machine:simulation    TICK:   105 PC:   283 STATE: fetch->execute        MODE: user SP:  2 DS: [1,10]               RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@5   raw 0x20000000  [fetch raw=0x20000000 @0000011A]
+  DEBUG   machine:simulation    TICK:   106 PC:   283 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@4   eq              [eq 1 10 -> 0]
+  DEBUG   machine:simulation    TICK:   107 PC:   283 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@3   eq              [no irq]
+  DEBUG   machine:simulation    TICK:   108 PC:   284 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@2   raw 0x4100010B  [fetch raw=0x4100010B @0000011B]
+  DEBUG   machine:simulation    TICK:   109 PC:   267 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:busy@1   jz 267          [jz taken 0x0000010B]
+  DEBUG   machine:simulation    TICK:   110 PC:   267 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    jz 267          [no irq; wr_commit 1 -> [0x0057]]
+  DEBUG   machine:simulation    TICK:   111 PC:   268 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @0000010B]
+  DEBUG   machine:simulation    TICK:   112 PC:   268 STATE: execute->irq_check    MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    lit 88          [push 88]
+  DEBUG   machine:simulation    TICK:   113 PC:   268 STATE: irq_check->fetch      MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    lit 88          [no irq]
+  DEBUG   machine:simulation    TICK:   114 PC:   269 STATE: fetch->execute        MODE: user SP:  1 DS: [88]                 RS: []                   IRQ:E0/P0/S00 CACHE:5/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @0000010C]
+  DEBUG   machine:simulation    TICK:   115 PC:   269 STATE: execute->irq_check    MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    load            [cache_hit read [0x0058] -> 42]
+  DEBUG   machine:simulation    TICK:   116 PC:   269 STATE: irq_check->fetch      MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:   117 PC:   270 STATE: fetch->execute        MODE: user SP:  1 DS: [42]                 RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    raw 0x01000056  [fetch raw=0x01000056 @0000010D]
+  DEBUG   machine:simulation    TICK:   118 PC:   270 STATE: execute->irq_check    MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    lit 86          [push 86]
+  DEBUG   machine:simulation    TICK:   119 PC:   270 STATE: irq_check->fetch      MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    lit 86          [no irq]
+  DEBUG   machine:simulation    TICK:   120 PC:   271 STATE: fetch->execute        MODE: user SP:  2 DS: [42,86]              RS: []                   IRQ:E0/P0/S00 CACHE:6/3         WR:empty    raw 0x30000000  [fetch raw=0x30000000 @0000010E]
+  DEBUG   machine:simulation    TICK:   121 PC:   271 STATE: execute->irq_check    MODE: user SP:  2 DS: [42,42]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    load            [cache_hit read [0x0056] -> 42]
+  DEBUG   machine:simulation    TICK:   122 PC:   271 STATE: irq_check->fetch      MODE: user SP:  2 DS: [42,42]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:   123 PC:   272 STATE: fetch->execute        MODE: user SP:  2 DS: [42,42]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @0000010F]
+  DEBUG   machine:simulation    TICK:   124 PC:   272 STATE: execute->irq_check    MODE: user SP:  1 DS: [84]                 RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    add             [add 42 42 -> 84]
+  DEBUG   machine:simulation    TICK:   125 PC:   272 STATE: irq_check->fetch      MODE: user SP:  1 DS: [84]                 RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:   126 PC:   273 STATE: fetch->execute        MODE: user SP:  1 DS: [84]                 RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    raw 0x01000058  [fetch raw=0x01000058 @00000110]
+  DEBUG   machine:simulation    TICK:   127 PC:   273 STATE: execute->irq_check    MODE: user SP:  2 DS: [84,88]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    lit 88          [push 88]
+  DEBUG   machine:simulation    TICK:   128 PC:   273 STATE: irq_check->fetch      MODE: user SP:  2 DS: [84,88]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    lit 88          [no irq]
+  DEBUG   machine:simulation    TICK:   129 PC:   274 STATE: fetch->execute        MODE: user SP:  2 DS: [84,88]              RS: []                   IRQ:E0/P0/S00 CACHE:7/3         WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000111]
+  DEBUG   machine:simulation    TICK:   130 PC:   274 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@10  store           [cache_hit write 84 -> [0x0058]; wr_load]
+  DEBUG   machine:simulation    TICK:   131 PC:   274 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@9   store           [no irq]
+  DEBUG   machine:simulation    TICK:   132 PC:   275 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@8   raw 0x01000057  [fetch raw=0x01000057 @00000112]
+  DEBUG   machine:simulation    TICK:   133 PC:   275 STATE: execute->irq_check    MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@7   lit 87          [push 87]
+  DEBUG   machine:simulation    TICK:   134 PC:   275 STATE: irq_check->fetch      MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@6   lit 87          [no irq]
+  DEBUG   machine:simulation    TICK:   135 PC:   276 STATE: fetch->execute        MODE: user SP:  1 DS: [87]                 RS: []                   IRQ:E0/P0/S00 CACHE:8/3         WR:busy@5   raw 0x30000000  [fetch raw=0x30000000 @00000113]
+  DEBUG   machine:simulation    TICK:   136 PC:   276 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:busy@4   load            [cache_hit read [0x0057] -> 1]
+  DEBUG   machine:simulation    TICK:   137 PC:   276 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:busy@3   load            [no irq]
+  DEBUG   machine:simulation    TICK:   138 PC:   277 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:busy@2   raw 0x01000001  [fetch raw=0x01000001 @00000114]
+  DEBUG   machine:simulation    TICK:   139 PC:   277 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:busy@1   lit 1           [push 1]
+  DEBUG   machine:simulation    TICK:   140 PC:   277 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    lit 1           [no irq; wr_commit 84 -> [0x0058]]
+  DEBUG   machine:simulation    TICK:   141 PC:   278 STATE: fetch->execute        MODE: user SP:  2 DS: [1,1]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    raw 0x10000000  [fetch raw=0x10000000 @00000115]
+  DEBUG   machine:simulation    TICK:   142 PC:   278 STATE: execute->irq_check    MODE: user SP:  1 DS: [2]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    add             [add 1 1 -> 2]
+  DEBUG   machine:simulation    TICK:   143 PC:   278 STATE: irq_check->fetch      MODE: user SP:  1 DS: [2]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:   144 PC:   279 STATE: fetch->execute        MODE: user SP:  1 DS: [2]                  RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    raw 0x02000000  [fetch raw=0x02000000 @00000116]
+  DEBUG   machine:simulation    TICK:   145 PC:   279 STATE: execute->irq_check    MODE: user SP:  2 DS: [2,2]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    dup             [dup]
+  DEBUG   machine:simulation    TICK:   146 PC:   279 STATE: irq_check->fetch      MODE: user SP:  2 DS: [2,2]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    dup             [no irq]
+  DEBUG   machine:simulation    TICK:   147 PC:   280 STATE: fetch->execute        MODE: user SP:  2 DS: [2,2]                RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    raw 0x01000057  [fetch raw=0x01000057 @00000117]
+  DEBUG   machine:simulation    TICK:   148 PC:   280 STATE: execute->irq_check    MODE: user SP:  3 DS: [2,2,87]             RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    lit 87          [push 87]
+  DEBUG   machine:simulation    TICK:   149 PC:   280 STATE: irq_check->fetch      MODE: user SP:  3 DS: [2,2,87]             RS: []                   IRQ:E0/P0/S00 CACHE:9/3         WR:empty    lit 87          [no irq]
+  ... omitted 1518 lines ...
+  DEBUG   machine:simulation    TICK:  1668 PC:   223 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    raw 0x410000CE  [fetch raw=0x410000CE @000000DE]
+  DEBUG   machine:simulation    TICK:  1669 PC:   206 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    jz 206          [jz taken 0x000000CE]
+  DEBUG   machine:simulation    TICK:  1670 PC:   206 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    jz 206          [no irq]
+  DEBUG   machine:simulation    TICK:  1671 PC:   207 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000CE]
+  DEBUG   machine:simulation    TICK:  1672 PC:   207 STATE: execute->irq_check    MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1673 PC:   207 STATE: irq_check->fetch      MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1674 PC:   208 STATE: fetch->execute        MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:112/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000CF]
+  DEBUG   machine:simulation    TICK:  1675 PC:   208 STATE: execute->irq_check    MODE: user SP:  1 DS: [2]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    load            [cache_hit read [0x0055] -> 2]
+  DEBUG   machine:simulation    TICK:  1676 PC:   208 STATE: irq_check->fetch      MODE: user SP:  1 DS: [2]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1677 PC:   209 STATE: fetch->execute        MODE: user SP:  1 DS: [2]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    raw 0x01000001  [fetch raw=0x01000001 @000000D0]
+  DEBUG   machine:simulation    TICK:  1678 PC:   209 STATE: execute->irq_check    MODE: user SP:  2 DS: [2,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    lit 1           [push 1]
+  DEBUG   machine:simulation    TICK:  1679 PC:   209 STATE: irq_check->fetch      MODE: user SP:  2 DS: [2,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    lit 1           [no irq]
+  DEBUG   machine:simulation    TICK:  1680 PC:   210 STATE: fetch->execute        MODE: user SP:  2 DS: [2,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    raw 0x11000000  [fetch raw=0x11000000 @000000D1]
+  DEBUG   machine:simulation    TICK:  1681 PC:   210 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    sub             [sub 2 1 -> 1]
+  DEBUG   machine:simulation    TICK:  1682 PC:   210 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    sub             [no irq]
+  DEBUG   machine:simulation    TICK:  1683 PC:   211 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000D2]
+  DEBUG   machine:simulation    TICK:  1684 PC:   211 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1685 PC:   211 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1686 PC:   212 STATE: fetch->execute        MODE: user SP:  2 DS: [1,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:113/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @000000D3]
+  DEBUG   machine:simulation    TICK:  1687 PC:   212 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@10  store           [cache_hit write 1 -> [0x0055]; wr_load]
+  DEBUG   machine:simulation    TICK:  1688 PC:   212 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@9   store           [no irq]
+  DEBUG   machine:simulation    TICK:  1689 PC:   213 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@8   raw 0x0100004A  [fetch raw=0x0100004A @000000D4]
+  DEBUG   machine:simulation    TICK:  1690 PC:   213 STATE: execute->irq_check    MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@7   lit 74          [push 74]
+  DEBUG   machine:simulation    TICK:  1691 PC:   213 STATE: irq_check->fetch      MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@6   lit 74          [no irq]
+  DEBUG   machine:simulation    TICK:  1692 PC:   214 STATE: fetch->execute        MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@5   raw 0x01000055  [fetch raw=0x01000055 @000000D5]
+  DEBUG   machine:simulation    TICK:  1693 PC:   214 STATE: execute->irq_check    MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@4   lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1694 PC:   214 STATE: irq_check->fetch      MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@3   lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1695 PC:   215 STATE: fetch->execute        MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:114/20      WR:busy@2   raw 0x30000000  [fetch raw=0x30000000 @000000D6]
+  DEBUG   machine:simulation    TICK:  1696 PC:   215 STATE: execute->irq_check    MODE: user SP:  2 DS: [74,1]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:busy@1   load            [cache_hit read [0x0055] -> 1]
+  DEBUG   machine:simulation    TICK:  1697 PC:   215 STATE: irq_check->fetch      MODE: user SP:  2 DS: [74,1]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:empty    load            [no irq; wr_commit 1 -> [0x0055]]
+  DEBUG   machine:simulation    TICK:  1698 PC:   216 STATE: fetch->execute        MODE: user SP:  2 DS: [74,1]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:empty    raw 0x10000000  [fetch raw=0x10000000 @000000D7]
+  DEBUG   machine:simulation    TICK:  1699 PC:   216 STATE: execute->irq_check    MODE: user SP:  1 DS: [75]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:empty    add             [add 74 1 -> 75]
+  DEBUG   machine:simulation    TICK:  1700 PC:   216 STATE: irq_check->fetch      MODE: user SP:  1 DS: [75]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:  1701 PC:   217 STATE: fetch->execute        MODE: user SP:  1 DS: [75]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:115/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D8]
+  DEBUG   machine:simulation    TICK:  1702 PC:   217 STATE: execute->irq_check    MODE: user SP:  1 DS: [50]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    load            [cache_hit read [0x004B] -> 50]
+  DEBUG   machine:simulation    TICK:  1703 PC:   217 STATE: irq_check->fetch      MODE: user SP:  1 DS: [50]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1704 PC:   218 STATE: fetch->execute        MODE: user SP:  1 DS: [50]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x42000002  [fetch raw=0x42000002 @000000D9]
+  DEBUG   machine:simulation    TICK:  1705 PC:     2 STATE: execute->irq_check    MODE: user SP:  1 DS: [50]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    call 2          [call 0x00000002]
+  DEBUG   machine:simulation    TICK:  1706 PC:     2 STATE: irq_check->fetch      MODE: user SP:  1 DS: [50]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    call 2          [no irq]
+  DEBUG   machine:simulation    TICK:  1707 PC:     3 STATE: fetch->execute        MODE: user SP:  1 DS: [50]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002]
+  DEBUG   machine:simulation    TICK:  1708 PC:     3 STATE: execute->irq_check    MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 65522       [push 65522]
+  DEBUG   machine:simulation    TICK:  1709 PC:     3 STATE: irq_check->fetch      MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 65522       [no irq]
+  DEBUG   machine:simulation    TICK:  1710 PC:     4 STATE: fetch->execute        MODE: user SP:  2 DS: [50,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003]
+  DEBUG   machine:simulation    TICK:  1711 PC:     4 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    store           [mmio_write 50 -> [0xFFF2]]
+  DEBUG   machine:simulation    TICK:  1712 PC:     4 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:  1713 PC:     5 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004]
+  DEBUG   machine:simulation    TICK:  1714 PC:   218 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    ret             [ret 0x000000DA]
+  DEBUG   machine:simulation    TICK:  1715 PC:   218 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    ret             [no irq]
+  DEBUG   machine:simulation    TICK:  1716 PC:   219 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000DA]
+  DEBUG   machine:simulation    TICK:  1717 PC:   219 STATE: execute->irq_check    MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1718 PC:   219 STATE: irq_check->fetch      MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1719 PC:   220 STATE: fetch->execute        MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:116/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000DB]
+  DEBUG   machine:simulation    TICK:  1720 PC:   220 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    load            [cache_hit read [0x0055] -> 1]
+  DEBUG   machine:simulation    TICK:  1721 PC:   220 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1722 PC:   221 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x01000000  [fetch raw=0x01000000 @000000DC]
+  DEBUG   machine:simulation    TICK:  1723 PC:   221 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 0           [push 0]
+  DEBUG   machine:simulation    TICK:  1724 PC:   221 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 0           [no irq]
+  DEBUG   machine:simulation    TICK:  1725 PC:   222 STATE: fetch->execute        MODE: user SP:  2 DS: [1,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x20000000  [fetch raw=0x20000000 @000000DD]
+  DEBUG   machine:simulation    TICK:  1726 PC:   222 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    eq              [eq 1 0 -> 0]
+  DEBUG   machine:simulation    TICK:  1727 PC:   222 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    eq              [no irq]
+  DEBUG   machine:simulation    TICK:  1728 PC:   223 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x410000CE  [fetch raw=0x410000CE @000000DE]
+  DEBUG   machine:simulation    TICK:  1729 PC:   206 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    jz 206          [jz taken 0x000000CE]
+  DEBUG   machine:simulation    TICK:  1730 PC:   206 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    jz 206          [no irq]
+  DEBUG   machine:simulation    TICK:  1731 PC:   207 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000CE]
+  DEBUG   machine:simulation    TICK:  1732 PC:   207 STATE: execute->irq_check    MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1733 PC:   207 STATE: irq_check->fetch      MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1734 PC:   208 STATE: fetch->execute        MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:117/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000CF]
+  DEBUG   machine:simulation    TICK:  1735 PC:   208 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    load            [cache_hit read [0x0055] -> 1]
+  DEBUG   machine:simulation    TICK:  1736 PC:   208 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1737 PC:   209 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x01000001  [fetch raw=0x01000001 @000000D0]
+  DEBUG   machine:simulation    TICK:  1738 PC:   209 STATE: execute->irq_check    MODE: user SP:  2 DS: [1,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 1           [push 1]
+  DEBUG   machine:simulation    TICK:  1739 PC:   209 STATE: irq_check->fetch      MODE: user SP:  2 DS: [1,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 1           [no irq]
+  DEBUG   machine:simulation    TICK:  1740 PC:   210 STATE: fetch->execute        MODE: user SP:  2 DS: [1,1]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x11000000  [fetch raw=0x11000000 @000000D1]
+  DEBUG   machine:simulation    TICK:  1741 PC:   210 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    sub             [sub 1 1 -> 0]
+  DEBUG   machine:simulation    TICK:  1742 PC:   210 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    sub             [no irq]
+  DEBUG   machine:simulation    TICK:  1743 PC:   211 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000D2]
+  DEBUG   machine:simulation    TICK:  1744 PC:   211 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1745 PC:   211 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1746 PC:   212 STATE: fetch->execute        MODE: user SP:  2 DS: [0,85]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:118/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @000000D3]
+  DEBUG   machine:simulation    TICK:  1747 PC:   212 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@10  store           [cache_hit write 0 -> [0x0055]; wr_load]
+  DEBUG   machine:simulation    TICK:  1748 PC:   212 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@9   store           [no irq]
+  DEBUG   machine:simulation    TICK:  1749 PC:   213 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@8   raw 0x0100004A  [fetch raw=0x0100004A @000000D4]
+  DEBUG   machine:simulation    TICK:  1750 PC:   213 STATE: execute->irq_check    MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@7   lit 74          [push 74]
+  DEBUG   machine:simulation    TICK:  1751 PC:   213 STATE: irq_check->fetch      MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@6   lit 74          [no irq]
+  DEBUG   machine:simulation    TICK:  1752 PC:   214 STATE: fetch->execute        MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@5   raw 0x01000055  [fetch raw=0x01000055 @000000D5]
+  DEBUG   machine:simulation    TICK:  1753 PC:   214 STATE: execute->irq_check    MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@4   lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1754 PC:   214 STATE: irq_check->fetch      MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@3   lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1755 PC:   215 STATE: fetch->execute        MODE: user SP:  2 DS: [74,85]              RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:119/20      WR:busy@2   raw 0x30000000  [fetch raw=0x30000000 @000000D6]
+  DEBUG   machine:simulation    TICK:  1756 PC:   215 STATE: execute->irq_check    MODE: user SP:  2 DS: [74,0]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:busy@1   load            [cache_hit read [0x0055] -> 0]
+  DEBUG   machine:simulation    TICK:  1757 PC:   215 STATE: irq_check->fetch      MODE: user SP:  2 DS: [74,0]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    load            [no irq; wr_commit 0 -> [0x0055]]
+  DEBUG   machine:simulation    TICK:  1758 PC:   216 STATE: fetch->execute        MODE: user SP:  2 DS: [74,0]               RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    raw 0x10000000  [fetch raw=0x10000000 @000000D7]
+  DEBUG   machine:simulation    TICK:  1759 PC:   216 STATE: execute->irq_check    MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    add             [add 74 0 -> 74]
+  DEBUG   machine:simulation    TICK:  1760 PC:   216 STATE: irq_check->fetch      MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    add             [no irq]
+  DEBUG   machine:simulation    TICK:  1761 PC:   217 STATE: fetch->execute        MODE: user SP:  1 DS: [74]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:120/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000D8]
+  DEBUG   machine:simulation    TICK:  1762 PC:   217 STATE: execute->irq_check    MODE: user SP:  1 DS: [48]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    load            [cache_hit read [0x004A] -> 48]
+  DEBUG   machine:simulation    TICK:  1763 PC:   217 STATE: irq_check->fetch      MODE: user SP:  1 DS: [48]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1764 PC:   218 STATE: fetch->execute        MODE: user SP:  1 DS: [48]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x42000002  [fetch raw=0x42000002 @000000D9]
+  DEBUG   machine:simulation    TICK:  1765 PC:     2 STATE: execute->irq_check    MODE: user SP:  1 DS: [48]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    call 2          [call 0x00000002]
+  DEBUG   machine:simulation    TICK:  1766 PC:     2 STATE: irq_check->fetch      MODE: user SP:  1 DS: [48]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    call 2          [no irq]
+  DEBUG   machine:simulation    TICK:  1767 PC:     3 STATE: fetch->execute        MODE: user SP:  1 DS: [48]                 RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002]
+  DEBUG   machine:simulation    TICK:  1768 PC:     3 STATE: execute->irq_check    MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 65522       [push 65522]
+  DEBUG   machine:simulation    TICK:  1769 PC:     3 STATE: irq_check->fetch      MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 65522       [no irq]
+  DEBUG   machine:simulation    TICK:  1770 PC:     4 STATE: fetch->execute        MODE: user SP:  2 DS: [48,65522]           RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003]
+  DEBUG   machine:simulation    TICK:  1771 PC:     4 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    store           [mmio_write 48 -> [0xFFF2]]
+  DEBUG   machine:simulation    TICK:  1772 PC:     4 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:  1773 PC:     5 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [...,0x000000DA]     IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004]
+  DEBUG   machine:simulation    TICK:  1774 PC:   218 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    ret             [ret 0x000000DA]
+  DEBUG   machine:simulation    TICK:  1775 PC:   218 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    ret             [no irq]
+  DEBUG   machine:simulation    TICK:  1776 PC:   219 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x01000055  [fetch raw=0x01000055 @000000DA]
+  DEBUG   machine:simulation    TICK:  1777 PC:   219 STATE: execute->irq_check    MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 85          [push 85]
+  DEBUG   machine:simulation    TICK:  1778 PC:   219 STATE: irq_check->fetch      MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    lit 85          [no irq]
+  DEBUG   machine:simulation    TICK:  1779 PC:   220 STATE: fetch->execute        MODE: user SP:  1 DS: [85]                 RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:121/20      WR:empty    raw 0x30000000  [fetch raw=0x30000000 @000000DB]
+  DEBUG   machine:simulation    TICK:  1780 PC:   220 STATE: execute->irq_check    MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    load            [cache_hit read [0x0055] -> 0]
+  DEBUG   machine:simulation    TICK:  1781 PC:   220 STATE: irq_check->fetch      MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    load            [no irq]
+  DEBUG   machine:simulation    TICK:  1782 PC:   221 STATE: fetch->execute        MODE: user SP:  1 DS: [0]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x01000000  [fetch raw=0x01000000 @000000DC]
+  DEBUG   machine:simulation    TICK:  1783 PC:   221 STATE: execute->irq_check    MODE: user SP:  2 DS: [0,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 0           [push 0]
+  DEBUG   machine:simulation    TICK:  1784 PC:   221 STATE: irq_check->fetch      MODE: user SP:  2 DS: [0,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 0           [no irq]
+  DEBUG   machine:simulation    TICK:  1785 PC:   222 STATE: fetch->execute        MODE: user SP:  2 DS: [0,0]                RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x20000000  [fetch raw=0x20000000 @000000DD]
+  DEBUG   machine:simulation    TICK:  1786 PC:   222 STATE: execute->irq_check    MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    eq              [eq 0 0 -> 1]
+  DEBUG   machine:simulation    TICK:  1787 PC:   222 STATE: irq_check->fetch      MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    eq              [no irq]
+  DEBUG   machine:simulation    TICK:  1788 PC:   223 STATE: fetch->execute        MODE: user SP:  1 DS: [1]                  RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x410000CE  [fetch raw=0x410000CE @000000DE]
+  DEBUG   machine:simulation    TICK:  1789 PC:   223 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    jz 206          [jz not taken]
+  DEBUG   machine:simulation    TICK:  1790 PC:   223 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    jz 206          [no irq]
+  DEBUG   machine:simulation    TICK:  1791 PC:   224 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000121]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @000000DF]
+  DEBUG   machine:simulation    TICK:  1792 PC:   289 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x00000121]
+  DEBUG   machine:simulation    TICK:  1793 PC:   289 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq]
+  DEBUG   machine:simulation    TICK:  1794 PC:   290 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x42000005  [fetch raw=0x42000005 @00000121]
+  DEBUG   machine:simulation    TICK:  1795 PC:     5 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 5          [call 0x00000005]
+  DEBUG   machine:simulation    TICK:  1796 PC:     5 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 5          [no irq]
+  DEBUG   machine:simulation    TICK:  1797 PC:     6 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x0100000A  [fetch raw=0x0100000A @00000005]
+  DEBUG   machine:simulation    TICK:  1798 PC:     6 STATE: execute->irq_check    MODE: user SP:  1 DS: [10]                 RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 10          [push 10]
+  DEBUG   machine:simulation    TICK:  1799 PC:     6 STATE: irq_check->fetch      MODE: user SP:  1 DS: [10]                 RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 10          [no irq]
+  DEBUG   machine:simulation    TICK:  1800 PC:     7 STATE: fetch->execute        MODE: user SP:  1 DS: [10]                 RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x42000002  [fetch raw=0x42000002 @00000006]
+  DEBUG   machine:simulation    TICK:  1801 PC:     2 STATE: execute->irq_check    MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 2          [call 0x00000002]
+  DEBUG   machine:simulation    TICK:  1802 PC:     2 STATE: irq_check->fetch      MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    call 2          [no irq]
+  DEBUG   machine:simulation    TICK:  1803 PC:     3 STATE: fetch->execute        MODE: user SP:  1 DS: [10]                 RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x0100FFF2  [fetch raw=0x0100FFF2 @00000002]
+  DEBUG   machine:simulation    TICK:  1804 PC:     3 STATE: execute->irq_check    MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 65522       [push 65522]
+  DEBUG   machine:simulation    TICK:  1805 PC:     3 STATE: irq_check->fetch      MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    lit 65522       [no irq]
+  DEBUG   machine:simulation    TICK:  1806 PC:     4 STATE: fetch->execute        MODE: user SP:  2 DS: [10,65522]           RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x31000000  [fetch raw=0x31000000 @00000003]
+  DEBUG   machine:simulation    TICK:  1807 PC:     4 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    store           [mmio_write 10 -> [0xFFF2]]
+  DEBUG   machine:simulation    TICK:  1808 PC:     4 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    store           [no irq]
+  DEBUG   machine:simulation    TICK:  1809 PC:     5 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [...,0x00000007]     IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000004]
+  DEBUG   machine:simulation    TICK:  1810 PC:     7 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x00000007]
+  DEBUG   machine:simulation    TICK:  1811 PC:     7 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq]
+  DEBUG   machine:simulation    TICK:  1812 PC:     8 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: [0x00000122]         IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0x43000000  [fetch raw=0x43000000 @00000007]
+  DEBUG   machine:simulation    TICK:  1813 PC:   290 STATE: execute->irq_check    MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [ret 0x00000122]
+  DEBUG   machine:simulation    TICK:  1814 PC:   290 STATE: irq_check->fetch      MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    ret             [no irq]
+  DEBUG   machine:simulation    TICK:  1815 PC:   291 STATE: fetch->execute        MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    raw 0xFF000000  [fetch raw=0xFF000000 @00000122]
+  DEBUG   machine:simulation    TICK:  1816 PC:   291 STATE: execute->halted       MODE: user SP:  0 DS: []                   RS: []                   IRQ:E0/P0/S00 CACHE:122/20      WR:empty    halt            [halt]

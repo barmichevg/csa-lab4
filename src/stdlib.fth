@@ -118,6 +118,7 @@ variable __print-count
     dup 0 <
     if
         45 emit
+    else
         -1 *
     then
 
@@ -130,7 +131,7 @@ variable __print-count
         0 __print-count !
 
         begin
-            __print-value @ 10 mod 48 + __print-digits __print-count @ + !
+            __print-value @ 10 mod -1 * 48 + __print-digits __print-count @ + !
             __print-count @ 1 + __print-count !
             __print-value @ 10 / __print-value !
             __print-value @ 0 =

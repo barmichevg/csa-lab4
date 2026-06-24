@@ -2,19 +2,11 @@ from __future__ import annotations
 
 import contextlib
 import io
-import sys
 from pathlib import Path
 
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-SRC_DIR = ROOT_DIR / "src"
-sys.path.insert(0, str(SRC_DIR))
-
-TICK_LIMIT = 300_000
-MAX_LOG_LINES = 300
-
-from isa import (  # noqa: E402
+from isa import (
     make_data_listing,
     make_program_listing,
     read_data_binary,
@@ -22,8 +14,11 @@ from isa import (  # noqa: E402
     write_data_binary,
     write_program_binary,
 )
-from machine import Machine  # noqa: E402
-from translator import translate_source, write_source_map  # noqa: E402
+from machine import Machine
+from translator import translate_source
+
+TICK_LIMIT = 300_000
+MAX_LOG_LINES = 300
 
 
 @pytest.mark.golden_test("golden/*.yml")
@@ -35,10 +30,9 @@ def test_translator_and_machine(golden, tmp_path: Path) -> None:
     input_file.write_text(golden["in_stdin"], encoding="utf-8")
 
     with contextlib.redirect_stdout(io.StringIO()) as stdout:
-        instructions, data, source_map = translate_source(golden["in_source"], source_name="<golden>")
+        instructions, data = translate_source(golden["in_source"], source_name="<golden>")
         write_program_binary(code_bin, instructions)
         write_data_binary(data_bin, data)
-        write_source_map(code_bin.with_suffix(code_bin.suffix + ".map.json"), source_map)
 
         print(f"program: {code_bin.name} ({len(instructions)} instructions)")
         print(f"data:    {data_bin.name} ({len(data)} cells)")
