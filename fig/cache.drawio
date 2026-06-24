@@ -1,14 +1,14 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Страница-1" id="OcQCh_rEzcZmBVOnapQ0">
-    <mxGraphModel dx="1572" dy="2129" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1509" dy="2091" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="6JYiYlkL7eNx3lMjVCE_-170" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;From Address Decoder /&lt;br&gt;Access Router&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;2&quot;&gt;regular memory only&lt;/font&gt;" vertex="1">
+        <mxCell id="6JYiYlkL7eNx3lMjVCE_-170" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;From Address Decoder /&lt;br&gt;Access Router&lt;/b&gt;" vertex="1">
           <mxGeometry height="80" width="180" x="40" y="-1089.5" as="geometry" />
         </mxCell>
-        <mxCell id="6JYiYlkL7eNx3lMjVCE_-171" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;To Read Data MUX&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;2&quot;&gt;mem_rd_data[31:0]&lt;/font&gt;" vertex="1">
-          <mxGeometry height="80" width="180" x="1350" y="-1067.5" as="geometry" />
+        <mxCell id="6JYiYlkL7eNx3lMjVCE_-171" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;To Read Data MUX&lt;/b&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="1330" y="-1067.5" as="geometry" />
         </mxCell>
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-172" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;To Control Unit&lt;/b&gt;" vertex="1">
           <mxGeometry height="80" width="180" x="869.7500000000005" y="-487.5" as="geometry" />
@@ -25,14 +25,14 @@
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-179" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Write Register&lt;/b&gt;&lt;font size=&quot;2&quot;&gt;&lt;br&gt;valid | addr | value | ticks&lt;/font&gt;" vertex="1">
           <mxGeometry height="80" width="180" x="40" y="-477.5" as="geometry" />
         </mxCell>
-        <mxCell id="6JYiYlkL7eNx3lMjVCE_-180" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Pending Access&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;2&quot;&gt;completion | addr | value | ticks&lt;br&gt;READ_MISS / WRITE_MISS&lt;br&gt;STORE_HIT_WAIT_WR&lt;/font&gt;" vertex="1">
-          <mxGeometry height="120" width="240" x="420" y="-319.5" as="geometry" />
+        <mxCell id="6JYiYlkL7eNx3lMjVCE_-180" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Pending Access&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;2&quot;&gt;completion | addr | value | ticks&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="240" x="420" y="-299.5" as="geometry" />
         </mxCell>
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-181" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Port Arbiter&lt;/b&gt;&lt;br&gt;&lt;font size=&quot;2&quot;&gt;priority: WR &amp;gt; Pending&lt;/font&gt;" vertex="1">
           <mxGeometry height="80" width="180" x="40" y="-299.5" as="geometry" />
         </mxCell>
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-182" parent="1" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffffff;strokeColor=#000000;fontSize=14;align=center;verticalAlign=middle;" value="&lt;b&gt;Data Memory&lt;/b&gt;&lt;font size=&quot;2&quot;&gt;&lt;br&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="80" width="180" x="683.75" y="-160" as="geometry" />
+          <mxGeometry height="80" width="180" x="683.75" y="-170" as="geometry" />
         </mxCell>
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-183" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-170" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" target="6JYiYlkL7eNx3lMjVCE_-173" value="req_addr[15:0]">
           <mxGeometry relative="1" as="geometry">
@@ -158,12 +158,12 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="6JYiYlkL7eNx3lMjVCE_-204" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-180" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0;exitY=0.661;exitDx=0;exitDy=0;exitPerimeter=0;" target="6JYiYlkL7eNx3lMjVCE_-181" value="&lt;div&gt;addr[15:0], value[31:0],&lt;/div&gt;&lt;div&gt;is_read[0], is_write[0]&lt;/div&gt;">
+        <mxCell id="6JYiYlkL7eNx3lMjVCE_-204" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-180" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;" target="6JYiYlkL7eNx3lMjVCE_-181" value="&lt;div&gt;addr[15:0], value[31:0],&lt;/div&gt;&lt;div&gt;is_read[0], is_write[0]&lt;/div&gt;">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="6JYiYlkL7eNx3lMjVCE_-205" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-180" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;dashed=1;dashPattern=6 4;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=-0.001;exitY=0.331;exitDx=0;exitDy=0;exitPerimeter=0;" target="6JYiYlkL7eNx3lMjVCE_-181" value="cpu_lower_request[0]">
+        <mxCell id="6JYiYlkL7eNx3lMjVCE_-205" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-180" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;dashed=1;dashPattern=6 4;entryX=1;entryY=0.25;entryDx=0;entryDy=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" target="6JYiYlkL7eNx3lMjVCE_-181" value="cpu_lower_request[0]">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
@@ -171,15 +171,15 @@
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-206" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-181" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;dashed=1;dashPattern=6 4;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="6JYiYlkL7eNx3lMjVCE_-180" value="cpu_grant[0]">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="175" y="-160" />
-              <mxPoint x="480" y="-160" />
+              <mxPoint x="175" y="-180" />
+              <mxPoint x="480" y="-180" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="6JYiYlkL7eNx3lMjVCE_-207" edge="1" parent="1" source="6JYiYlkL7eNx3lMjVCE_-181" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.8;fontSize=11;strokeColor=#000000;fontColor=#000000;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" target="6JYiYlkL7eNx3lMjVCE_-182" value="addr[15:0], write_data[31:0]">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="85" y="-120" />
+              <mxPoint x="85" y="-130" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -206,7 +206,7 @@
           <mxGeometry relative="1" x="0.868" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="1130" y="-120" />
+              <mxPoint x="1130" y="-130" />
             </Array>
           </mxGeometry>
         </mxCell>
