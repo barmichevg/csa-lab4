@@ -131,6 +131,12 @@ class IsaError(ValueError):
     """Ошибка кодирования или декодирования инструкции."""
 
 
+def validate_word(word: int) -> None:
+    """Проверить, что значение помещается в одно машинное слово."""
+    if not 0 <= word <= WORD_MASK:
+        raise IsaError(f"machine word out of 32-bit range: {word}")
+
+
 def sign_extend_arg(raw_arg: int) -> int:
     """Преобразовать 24-битное знаковое значение в int."""
     if not 0 <= raw_arg <= ARG_MASK:
@@ -171,8 +177,7 @@ def encode_instruction(opcode: Opcode | int, arg: int = 0) -> int:
 
 def opcode_from_word(word: int) -> Opcode:
     """Выделить поле opcode[31:24] из сырого 32-битного слова IR."""
-    if not 0 <= word <= WORD_MASK:
-        raise IsaError(f"machine word out of 32-bit range: {word}")
+    validate_word(word)
 
     opcode_value = (word >> ARG_BITS) & OPCODE_MASK
     try:
@@ -183,8 +188,7 @@ def opcode_from_word(word: int) -> Opcode:
 
 def raw_arg_from_word(word: int) -> int:
     """Выделить беззнаковое поле arg[23:0] из сырого слова IR."""
-    if not 0 <= word <= WORD_MASK:
-        raise IsaError(f"machine word out of 32-bit range: {word}")
+    validate_word(word)
     return word & ARG_MASK
 
 
@@ -205,12 +209,17 @@ def decode_instruction(word: int) -> Instruction:
     return Instruction(opcode=opcode, arg=arg)
 
 
+def write_words(path: str | Path, words: Iterable[int]) -> None:
+    """Записать последовательность 32-битных слов в бинарный файл."""
+    with Path(path).open("wb") as file:
+        for word in words:
+            raw_word = word & WORD_MASK
+            file.write(raw_word.to_bytes(WORD_SIZE_BYTES, byteorder=WORD_BYTEORDER, signed=False))
+
+
 def write_program_binary(path: str | Path, instructions: Iterable[Instruction]) -> None:
     """Записать память команд в бинарный файл."""
-    with Path(path).open("wb") as file:
-        for instruction in instructions:
-            word = encode_instruction(instruction.opcode, instruction.arg)
-            file.write(word.to_bytes(WORD_SIZE_BYTES, byteorder=WORD_BYTEORDER, signed=False))
+    write_words(path, (encode_instruction(instruction.opcode, instruction.arg) for instruction in instructions))
 
 
 def read_words(path: str | Path, *, description: str) -> list[int]:
@@ -241,10 +250,7 @@ def read_program_binary(path: str | Path) -> list[Instruction]:
 
 def write_data_binary(path: str | Path, words: Iterable[int]) -> None:
     """Записать память данных как 32-битные слова."""
-    with Path(path).open("wb") as file:
-        for word in words:
-            raw_word = word & WORD_MASK
-            file.write(raw_word.to_bytes(WORD_SIZE_BYTES, byteorder=WORD_BYTEORDER, signed=False))
+    write_words(path, words)
 
 
 def read_data_binary(path: str | Path) -> list[int]:
@@ -252,13 +258,18 @@ def read_data_binary(path: str | Path) -> list[int]:
     return read_words(path, description="data")
 
 
+def format_instruction(instruction: Instruction) -> str:
+    """Сформировать текст инструкции и при необходимости добавить аргумент."""
+    mnemonic = instruction.opcode.mnemonic
+    if instruction.opcode in ARGUMENT_OPCODES:
+        return f"{mnemonic} {instruction.arg}"
+    return mnemonic
+
+
 def format_instruction_listing_line(address: int, instruction: Instruction) -> str:
     """Сформировать строку листинга команды."""
     word = encode_instruction(instruction.opcode, instruction.arg)
-    mnemonic = MNEMONICS[instruction.opcode]
-    if instruction.opcode in ARGUMENT_OPCODES:
-        mnemonic = f"{mnemonic} {instruction.arg}"
-    return f"{address:08X} - {word:08X} - {mnemonic}"
+    return f"{address:08X} - {word:08X} - {format_instruction(instruction)}"
 
 
 def format_data_listing_line(address: int, word: int) -> str:

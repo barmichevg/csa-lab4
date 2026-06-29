@@ -14,7 +14,6 @@ from isa import (
     MMIO_IN_STATUS,
     MMIO_IRQ_ACK,
     MMIO_OUT_DATA,
-    MNEMONICS,
     RESET_VECTOR,
     WORD_BITS,
     WORD_MASK,
@@ -22,6 +21,7 @@ from isa import (
     IsaError,
     Opcode,
     decode_instruction,
+    format_instruction,
     read_data_binary,
     read_program_words,
 )
@@ -32,6 +32,13 @@ DEFAULT_TICK_LIMIT = 300_000
 
 DEFAULT_CACHE_LINES = 8
 MEMORY_ACCESS_TICKS = 10
+BYTE_MASK = 0xFF
+CACHE_INDEX_BITS = DEFAULT_CACHE_LINES.bit_length() - 1
+CACHE_INDEX_MASK = DEFAULT_CACHE_LINES - 1
+
+INPUT_TOKEN_ESCAPES = {"\\n": "\n", "\\r": "\r", "\\t": "\t", "\\0": "\0", "space": " "}
+INPUT_CHAR_NAMES = {char: token for token, char in INPUT_TOKEN_ESCAPES.items()}
+INPUT_CHAR_NAMES.update({"'": "\\'", "\\": "\\\\"})
 
 
 class MachineError(RuntimeError):
@@ -69,6 +76,14 @@ class AddressRegion(Enum):
     INVALID = "invalid"
 
 
+MMIO_REGIONS = {
+    MMIO_IN_DATA: AddressRegion.MMIO_IN_DATA,
+    MMIO_IN_STATUS: AddressRegion.MMIO_IN_STATUS,
+    MMIO_OUT_DATA: AddressRegion.MMIO_OUT_DATA,
+    MMIO_IRQ_ACK: AddressRegion.MMIO_IRQ_ACK,
+}
+
+
 class OpcodeClass(Enum):
     """Класс уже выделенного из IR поля opcode[7:0]."""
 
@@ -96,6 +111,14 @@ class MemoryResponse:
     done: bool = False
     value: int | None = None
 
+    @classmethod
+    def completed(cls, event: str, value: int | None = None) -> MemoryResponse:
+        return cls(event=event, done=True, value=value)
+
+    @classmethod
+    def pending(cls, event: str) -> MemoryResponse:
+        return cls(event=event)
+
 
 @dataclass(slots=True)
 class PendingAccess:
@@ -108,7 +131,7 @@ class PendingAccess:
 
     @property
     def waits_for_write_register(self) -> bool:
-        return self.completion == MemoryCompletion.CACHE_HIT_WRITE_REGISTER
+        return self.completion is MemoryCompletion.CACHE_HIT_WRITE_REGISTER
 
 
 @dataclass(frozen=True, slots=True)
@@ -168,8 +191,8 @@ class DataCache:
     misses: int = 0
 
     def split_address(self, address: int) -> tuple[int, int]:
-        index = address & (DEFAULT_CACHE_LINES - 1)
-        tag = address >> (DEFAULT_CACHE_LINES.bit_length() - 1)
+        index = address & CACHE_INDEX_MASK
+        tag = address >> CACHE_INDEX_BITS
         return index, tag
 
     def lookup(self, address: int) -> CacheLine | None:
@@ -217,7 +240,7 @@ class InputIrqController:
         return bool(self.status & INPUT_STATUS_READY)
 
     def push_token(self, token_code: int) -> bool:
-        if not 0 <= token_code <= 0xFF:
+        if not 0 <= token_code <= BYTE_MASK:
             raise MachineError(f"input token out of range: {token_code}")
         if self.status & INPUT_STATUS_READY:
             self.status |= INPUT_STATUS_OVERRUN
@@ -239,15 +262,7 @@ def decode_address(address: int) -> AddressRegion:
     """Address Decoder / Access Router для 32-битного TOS."""
     if 0 <= address < MMIO_IN_DATA:
         return AddressRegion.REGULAR
-    if address == MMIO_IN_DATA:
-        return AddressRegion.MMIO_IN_DATA
-    if address == MMIO_IN_STATUS:
-        return AddressRegion.MMIO_IN_STATUS
-    if address == MMIO_OUT_DATA:
-        return AddressRegion.MMIO_OUT_DATA
-    if address == MMIO_IRQ_ACK:
-        return AddressRegion.MMIO_IRQ_ACK
-    return AddressRegion.INVALID
+    return MMIO_REGIONS.get(address, AddressRegion.INVALID)
 
 
 def classify_opcode(opcode: Opcode) -> OpcodeClass:
@@ -311,20 +326,11 @@ class MemorySubsystem:
         region = decode_address(address)
 
         match region:
-            case AddressRegion.MMIO_IN_DATA:
-                value = self.input_controller.data
-                return MemoryResponse(
-                    event=f"mmio_read [0x{address:04X}] -> {value}",
-                    value=value,
-                    done=True,
+            case AddressRegion.MMIO_IN_DATA | AddressRegion.MMIO_IN_STATUS:
+                value = (
+                    self.input_controller.data if region is AddressRegion.MMIO_IN_DATA else self.input_controller.status
                 )
-            case AddressRegion.MMIO_IN_STATUS:
-                value = self.input_controller.status
-                return MemoryResponse(
-                    event=f"mmio_read [0x{address:04X}] -> {value}",
-                    value=value,
-                    done=True,
-                )
+                return MemoryResponse.completed(f"mmio_read [0x{address:04X}] -> {value}", value)
             case AddressRegion.MMIO_OUT_DATA | AddressRegion.MMIO_IRQ_ACK:
                 raise MachineError(f"attempt to read write-only MMIO register 0x{address:04X}")
             case AddressRegion.INVALID:
@@ -337,18 +343,12 @@ class MemorySubsystem:
         region = decode_address(address)
 
         match region:
-            case AddressRegion.MMIO_OUT_DATA:
-                self.output_buffer.append(chr(value & 0xFF))
-                return MemoryResponse(
-                    event=f"mmio_write {value} -> [0x{address:04X}]",
-                    done=True,
-                )
-            case AddressRegion.MMIO_IRQ_ACK:
-                self.input_controller.acknowledge(value)
-                return MemoryResponse(
-                    event=f"mmio_write {value} -> [0x{address:04X}]",
-                    done=True,
-                )
+            case AddressRegion.MMIO_OUT_DATA | AddressRegion.MMIO_IRQ_ACK:
+                if region is AddressRegion.MMIO_OUT_DATA:
+                    self.output_buffer.append(chr(value & BYTE_MASK))
+                else:
+                    self.input_controller.acknowledge(value)
+                return MemoryResponse.completed(f"mmio_write {value} -> [0x{address:04X}]")
             case AddressRegion.MMIO_IN_DATA | AddressRegion.MMIO_IN_STATUS:
                 raise MachineError(f"attempt to write read-only MMIO register 0x{address:04X}")
             case AddressRegion.INVALID:
@@ -371,7 +371,7 @@ class MemorySubsystem:
             write_value=write_value,
             remaining_ticks=ticks,
         )
-        return MemoryResponse(event=event)
+        return MemoryResponse.pending(event)
 
     def _request_regular_read(self, address: int) -> MemoryResponse:
         if self.cache is None:
@@ -385,11 +385,7 @@ class MemorySubsystem:
 
         cache_value = self.cache.read(address)
         if cache_value is not None:
-            return MemoryResponse(
-                event=f"cache_hit read [0x{address:04X}] -> {cache_value}",
-                value=cache_value,
-                done=True,
-            )
+            return MemoryResponse.completed(f"cache_hit read [0x{address:04X}] -> {cache_value}", cache_value)
 
         return self._start_pending(
             MemoryCompletion.CACHE_READ_MISS,
@@ -418,10 +414,7 @@ class MemorySubsystem:
             if not write_register.busy:
                 self.cache.update_hit(address, value)
                 write_register.load(address, value)
-                return MemoryResponse(
-                    event=f"cache_hit write {value} -> [0x{address:04X}]; wr_load",
-                    done=True,
-                )
+                return MemoryResponse.completed(f"cache_hit write {value} -> [0x{address:04X}]; wr_load")
 
             return self._start_pending(
                 MemoryCompletion.CACHE_HIT_WRITE_REGISTER,
@@ -440,90 +433,112 @@ class MemorySubsystem:
 
     def tick(self) -> MemoryControllerTick:
         """Один автономный такт контроллера; Write Register имеет приоритет."""
+        wr_owns_port = self.write_register_busy
+        write_event = self._tick_write_register()
+        pending_tick = self._tick_pending_access(wr_owns_port)
+        events = [event for event in (write_event, pending_tick.event) if event]
+        return MemoryControllerTick(event="; ".join(events), response=pending_tick.response)
+
+    def _tick_write_register(self) -> str:
+        if not self.write_register_busy:
+            return ""
+        if self.write_register is None:
+            raise MachineError("write register state is inconsistent")
+
+        commit = self.write_register.tick()
+        if commit is None:
+            return ""
+
+        address, value = commit
+        self.words[address] = value
+        return f"wr_commit {to_signed32(value)} -> [0x{address:04X}]"
+
+    def _tick_pending_access(self, wr_owns_port: bool) -> MemoryControllerTick:
         pending = self.pending_access
-        write_register = self.write_register
-        wr_owns_port = write_register is not None and write_register.busy
+        if pending is None:
+            return MemoryControllerTick()
 
-        events: list[str] = []
-        if write_register is not None and write_register.busy:
-            commit = write_register.tick()
-            if commit is not None:
-                address, value = commit
-                self.words[address] = value
-                events.append(f"wr_commit {to_signed32(value)} -> [0x{address:04X}]")
+        if pending.waits_for_write_register:
+            if self.write_register_busy:
+                return MemoryControllerTick(event="mem_wait; wr_busy")
+            response = self._complete_pending_access()
+            return MemoryControllerTick(event=response.event, response=response)
 
-        response: MemoryResponse | None = None
-        if pending is not None:
-            if pending.waits_for_write_register:
-                if self.write_register_busy:
-                    events.append("mem_wait; wr_busy")
-                else:
-                    response = self._complete_pending_access()
-                    events.append(response.event)
-            else:
-                if pending.remaining_ticks <= 0:
-                    raise MachineError("invalid lower-memory wait counter")
-                if wr_owns_port:
-                    events.append(f"mem_wait; wr; wait={pending.remaining_ticks}")
-                else:
-                    pending.remaining_ticks -= 1
-                    if pending.remaining_ticks > 0:
-                        events.append(f"mem_wait; wait={pending.remaining_ticks}")
-                    else:
-                        response = self._complete_pending_access()
-                        events.append(response.event)
+        if pending.remaining_ticks <= 0:
+            raise MachineError("invalid lower-memory wait counter")
+        if wr_owns_port:
+            return MemoryControllerTick(event=f"mem_wait; wr; wait={pending.remaining_ticks}")
 
-        return MemoryControllerTick(event="; ".join(events), response=response)
+        pending.remaining_ticks -= 1
+        if pending.remaining_ticks > 0:
+            return MemoryControllerTick(event=f"mem_wait; wait={pending.remaining_ticks}")
+
+        response = self._complete_pending_access()
+        return MemoryControllerTick(event=response.event, response=response)
 
     def _complete_pending_access(self) -> MemoryResponse:
         pending = self.pending_access
         if pending is None:
             raise MachineError("no pending memory access")
 
-        address = pending.address
+        event: str
         value: int | None = None
 
         match pending.completion:
-            case MemoryCompletion.MEMORY_READ:
-                value = to_signed32(self.words[address])
-                event = f"memory_read_done [0x{address:04X}] -> {value}"
+            case MemoryCompletion.MEMORY_READ | MemoryCompletion.CACHE_READ_MISS:
+                event, read_value = self._complete_pending_read(pending)
+                value = read_value
 
-            case MemoryCompletion.MEMORY_WRITE:
-                if pending.write_value is None:
-                    raise MachineError("pending memory write has no value")
-                self.words[address] = to_word(pending.write_value)
-                event = f"memory_write_done {pending.write_value} -> [0x{address:04X}]"
-
-            case MemoryCompletion.CACHE_READ_MISS:
-                if self.cache is None:
-                    raise MachineError("cache read miss without cache")
-                raw_value = self.words[address]
-                self.cache.fill(address, raw_value)
-                value = to_signed32(raw_value)
-                event = f"cache_fill_done read [0x{address:04X}] -> {value}"
-
-            case MemoryCompletion.CACHE_WRITE_MISS:
-                if self.cache is None:
-                    raise MachineError("cache write miss without cache")
-                if pending.write_value is None:
-                    raise MachineError("pending cache write has no value")
-                self.words[address] = to_word(pending.write_value)
-                self.cache.fill(address, pending.write_value)
-                event = f"cache_fill_done write {pending.write_value} -> [0x{address:04X}]"
+            case MemoryCompletion.MEMORY_WRITE | MemoryCompletion.CACHE_WRITE_MISS:
+                event = self._complete_pending_write(pending)
 
             case MemoryCompletion.CACHE_HIT_WRITE_REGISTER:
-                if self.cache is None or self.write_register is None:
-                    raise MachineError("cache-hit store without cache/write register")
-                if pending.write_value is None:
-                    raise MachineError("pending buffered store has no value")
-                if self.write_register.busy:
-                    raise MachineError("write register reload attempted while busy")
-                self.cache.update_hit(address, pending.write_value)
-                self.write_register.load(address, pending.write_value)
-                event = f"cache_hit_commit {pending.write_value} -> [0x{address:04X}]; wr_load"
+                event = self._complete_pending_buffered_store(pending)
 
         self.pending_access = None
-        return MemoryResponse(event=event, value=value, done=True)
+        return MemoryResponse.completed(event, value)
+
+    def _complete_pending_read(self, pending: PendingAccess) -> tuple[str, int]:
+        raw_value = self.words[pending.address]
+        value = to_signed32(raw_value)
+
+        if pending.completion is MemoryCompletion.CACHE_READ_MISS:
+            if self.cache is None:
+                raise MachineError("cache read miss without cache")
+            self.cache.fill(pending.address, raw_value)
+            event = f"cache_fill_done read [0x{pending.address:04X}] -> {value}"
+        else:
+            event = f"memory_read_done [0x{pending.address:04X}] -> {value}"
+
+        return event, value
+
+    def _complete_pending_write(self, pending: PendingAccess) -> str:
+        if pending.write_value is None:
+            raise MachineError("pending memory write has no value")
+
+        write_value = pending.write_value
+        self.words[pending.address] = to_word(write_value)
+
+        if pending.completion is MemoryCompletion.CACHE_WRITE_MISS:
+            if self.cache is None:
+                raise MachineError("cache write miss without cache")
+            self.cache.fill(pending.address, write_value)
+            return f"cache_fill_done write {write_value} -> [0x{pending.address:04X}]"
+
+        return f"memory_write_done {write_value} -> [0x{pending.address:04X}]"
+
+    def _complete_pending_buffered_store(self, pending: PendingAccess) -> str:
+        if self.cache is None or self.write_register is None:
+            raise MachineError("cache-hit store without cache/write register")
+        if pending.write_value is None:
+            raise MachineError("pending buffered store has no value")
+        if self.write_register.busy:
+            raise MachineError("write register reload attempted while busy")
+
+        write_value = pending.write_value
+        self.cache.update_hit(pending.address, write_value)
+        self.write_register.load(pending.address, write_value)
+        return f"cache_hit_commit {write_value} -> [0x{pending.address:04X}]; wr_load"
 
     def _ensure_idle(self) -> None:
         if self.pending_access is not None:
@@ -532,6 +547,14 @@ class MemorySubsystem:
     @property
     def write_register_busy(self) -> bool:
         return self.write_register is not None and self.write_register.busy
+
+    @property
+    def write_register_state(self) -> str:
+        if self.write_register is None:
+            return "off"
+        if not self.write_register.busy:
+            return "empty"
+        return f"busy@{self.write_register.remaining_ticks}"
 
     @property
     def output(self) -> str:
@@ -591,10 +614,9 @@ class Machine:
         *,
         cache_enabled: bool = True,
     ) -> Machine:
-        program_file = Path(program_path)
-        program_words = read_program_words(program_file)
+        program_words = read_program_words(program_path)
         data_image = read_data_binary(data_path)
-        input_events = read_input_schedule(input_path) if input_path is not None else []
+        input_events = read_input_schedule(input_path)
 
         return cls(
             program_memory=program_words,
@@ -606,7 +628,7 @@ class Machine:
         if limit <= 0:
             raise MachineError("hard tick limit must be positive")
 
-        while self.control_state != ControlState.HALTED or self.data_memory.write_register_busy:
+        while self.control_state is not ControlState.HALTED or self.data_memory.write_register_busy:
             if self.tick_counter >= limit:
                 raise MachineError(f"hard tick limit exceeded: {limit}")
             self.step_tick()
@@ -617,31 +639,26 @@ class Machine:
         old_state = self.control_state
         controller_tick = self.data_memory.tick()
 
-        if old_state == ControlState.HALTED:
+        if old_state is ControlState.HALTED:
             event = "halted; drain_wr" if self.data_memory.write_register_busy else "halted"
-            if controller_tick.event:
-                event += f"; {controller_tick.event}"
-            self._append_log(event, old_state, self.control_state)
-            self.tick_counter += 1
-            return
+        else:
+            self._deliver_input_events_for_current_tick()
 
-        self._deliver_input_events_for_current_tick()
+            match old_state:
+                case ControlState.FETCH:
+                    event = self._tick_fetch()
+                case ControlState.EXECUTE:
+                    event = self._tick_execute()
+                case ControlState.MEM_WAIT:
+                    event = self._tick_mem_wait(controller_tick)
+                case ControlState.IRQ_CHECK:
+                    event = self._tick_irq_check()
+                case _:
+                    raise MachineError(f"unsupported control state: {old_state}")
 
-        match old_state:
-            case ControlState.FETCH:
-                event = self._tick_fetch()
-            case ControlState.EXECUTE:
-                event = self._tick_execute()
-            case ControlState.MEM_WAIT:
-                event = self._tick_mem_wait(controller_tick)
-            case ControlState.IRQ_CHECK:
-                event = self._tick_irq_check()
-            case _:
-                raise MachineError(f"unsupported control state: {old_state}")
-
-        if old_state != ControlState.MEM_WAIT and controller_tick.event:
+        if old_state is not ControlState.MEM_WAIT and controller_tick.event:
             event += f"; {controller_tick.event}"
-        self._append_log(event, old_state, self.control_state)
+        self._append_log(event, old_state)
         self.tick_counter += 1
 
     def _tick_fetch(self) -> str:
@@ -674,9 +691,7 @@ class Machine:
             case OpcodeClass.IRQ:
                 event = self._execute_irq(instruction.opcode)
             case OpcodeClass.HALT:
-                self.executed_instructions += 1
-                self.control_state = ControlState.HALTED
-                return "halt"
+                return self._finish_instruction("halt", next_state=ControlState.HALTED)
 
         return self._finish_instruction(event)
 
@@ -710,10 +725,10 @@ class Machine:
         result = alu(opcode, left, right)
 
         self.data_stack[-2:] = [result]
-        return f"{MNEMONICS[opcode]} {left} {right} -> {result}"
+        return f"{opcode.mnemonic} {left} {right} -> {result}"
 
     def _execute_memory(self, opcode: Opcode) -> str:
-        if opcode == Opcode.LOAD:
+        if opcode is Opcode.LOAD:
             address = self.peek()
             response = self.data_memory.request_read(address)
             if response.done:
@@ -744,10 +759,11 @@ class Machine:
                 return f"jmp 0x{arg:08X}"
             case Opcode.JZ:
                 condition = self.peek()
-                if condition == 0:
+                taken = condition == 0
+                if taken:
                     self._check_program_address(arg)
                 self.pop()
-                if condition == 0:
+                if taken:
                     self.pc = arg
                     return f"jz taken 0x{arg:08X}"
                 return "jz not taken"
@@ -787,9 +803,9 @@ class Machine:
             case _:
                 raise MachineError(f"not an interrupt-control opcode: {opcode}")
 
-    def _finish_instruction(self, event: str) -> str:
+    def _finish_instruction(self, event: str, *, next_state: ControlState = ControlState.IRQ_CHECK) -> str:
         self.executed_instructions += 1
-        self.control_state = ControlState.IRQ_CHECK
+        self.control_state = next_state
         return event
 
     def _tick_mem_wait(self, controller_tick: MemoryControllerTick) -> str:
@@ -843,12 +859,9 @@ class Machine:
             raise MachineError("data stack underflow")
         del self.data_stack[-2:]
 
-    def _ensure_return_stack_capacity(self) -> None:
+    def push_return_address(self, address: int) -> None:
         if len(self.return_stack) >= DEFAULT_STACK_LIMIT:
             raise MachineError("return stack overflow")
-
-    def push_return_address(self, address: int) -> None:
-        self._ensure_return_stack_capacity()
         self._check_program_address(address)
         self.return_stack.append(address)
 
@@ -886,30 +899,20 @@ class Machine:
     def _ir_text(self, state: ControlState) -> str:
         if self.ir_word is None:
             return "<none>"
-        if state == ControlState.FETCH:
+        if state is ControlState.FETCH:
             return f"raw 0x{self.ir_word:08X}"
         try:
             instruction = decode_instruction(self.ir_word)
         except IsaError:
             return f"invalid 0x{self.ir_word:08X}"
-        mnemonic = MNEMONICS[instruction.opcode]
-        if instruction.opcode in {Opcode.LIT, Opcode.JMP, Opcode.JZ, Opcode.CALL}:
-            return f"{mnemonic} {instruction.arg}"
-        return mnemonic
+        return format_instruction(instruction)
 
     def cache_summary(self) -> str:
         cache_mode = "on" if self.data_memory.cache is not None else "off"
-        write_register = self.data_memory.write_register
-        if write_register is None:
-            wr_summary = "wr=off"
-        elif write_register.busy:
-            wr_summary = f"wr=busy@{write_register.remaining_ticks}"
-        else:
-            wr_summary = "wr=empty"
         return (
             f"cache={cache_mode} hits={self.data_memory.cache_hits} misses={self.data_memory.cache_misses} "
             f"uncached_reads={self.data_memory.uncached_reads} uncached_writes={self.data_memory.uncached_writes} "
-            f"{wr_summary} input_overruns={self.data_memory.input_overrun_count}"
+            f"wr={self.data_memory.write_register_state} input_overruns={self.data_memory.input_overrun_count}"
         )
 
     @staticmethod
@@ -923,21 +926,14 @@ class Machine:
             text = text[: width - 4] + "...]"
         return text
 
-    def _append_log(self, event: str, old_state: ControlState, new_state: ControlState) -> None:
+    def _append_log(self, event: str, old_state: ControlState) -> None:
         mode = "irq" if self.in_irq else "user"
         instr = self._ir_text(old_state)
         stack = self._format_stack_column(self.data_stack, width=20)
         rstack = self._format_stack_column(self.return_stack, width=20, hexadecimal=True)
-        write_register = self.data_memory.write_register
-        if write_register is None:
-            wr_state = "off"
-        elif not write_register.busy:
-            wr_state = "empty"
-        else:
-            wr_state = f"busy@{write_register.remaining_ticks}"
         irq_state = f"E{int(self.irq_enable)}/P{int(self.data_memory.irq_pending)}/S{self.data_memory.input_status:02X}"
         cache_state = f"{self.data_memory.cache_hits}/{self.data_memory.cache_misses}"
-        transition = f"{old_state.value}->{new_state.value}"
+        transition = f"{old_state.value}->{self.control_state.value}"
         self.log_lines.append(
             f"DEBUG   machine:simulation    "
             f"TICK: {self.tick_counter:5} "
@@ -949,7 +945,7 @@ class Machine:
             f"RS: {rstack:<20} "
             f"IRQ:{irq_state:<9} "
             f"CACHE:{cache_state:<11} "
-            f"WR:{wr_state:<8} "
+            f"WR:{self.data_memory.write_register_state:<8} "
             f"{instr:<15} [{event}]"
         )
 
@@ -1009,23 +1005,17 @@ def alu(opcode: Opcode, left: int, right: int) -> int:
 def format_input_token(token_code: int) -> str:
     """Представить входной байт в журнале."""
     char = chr(token_code)
-    escapes = {"\n": "\\n", "\r": "\\r", "\t": "\\t", "\0": "\\0", " ": "space"}
-    text = escapes.get(char, char)
-    if char == "'":
-        text = "\\'"
-    elif char == "\\":
-        text = "\\\\"
+    text = INPUT_CHAR_NAMES.get(char, char)
     return f"'{text}'"
 
 
 def parse_input_token(token: str) -> int:
     """Разобрать один байт из расписания."""
-    escapes = {"\\n": "\n", "\\r": "\r", "\\t": "\t", "\\0": "\0", "space": " "}
-    value = escapes.get(token, token)
+    value = INPUT_TOKEN_ESCAPES.get(token, token)
     if len(value) != 1:
         raise MachineError(f"input event value must be one character: {token!r}")
     code = ord(value)
-    if code > 0xFF:
+    if code > BYTE_MASK:
         raise MachineError(f"input character does not fit into one byte: {token!r}")
     return code
 
@@ -1074,6 +1064,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def format_machine_summary(machine: Machine, *, status: str = "halted") -> str:
+    return (
+        f"summary: status={status} ticks={machine.tick_counter} "
+        f"instructions={machine.executed_instructions} {machine.cache_summary()}"
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_arg_parser().parse_args(argv)
 
@@ -1084,26 +1081,18 @@ def main(argv: list[str] | None = None) -> int:
         cache_enabled=args.cache,
     )
     output = machine.run(limit=args.limit)
-    status = "halted"
+    summary = format_machine_summary(machine)
 
     if args.log is not None:
         log_text = "\n".join(machine.log_lines)
-        summary = (
-            f"\nsummary: status={status} ticks={machine.tick_counter} "
-            f"instructions={machine.executed_instructions} "
-            f"{machine.cache_summary()}\n"
-        )
-        args.log.write_text(log_text + summary, encoding="utf-8")
+        args.log.write_text(f"{log_text}\n{summary}\n", encoding="utf-8")
 
     if args.output is not None:
         args.output.write_text(output, encoding="utf-8")
     else:
         print(output, end="")
 
-    print(
-        f"summary: status={status} ticks={machine.tick_counter} "
-        f"instructions={machine.executed_instructions} {machine.cache_summary()}"
-    )
+    print(summary)
     return 0
 
 

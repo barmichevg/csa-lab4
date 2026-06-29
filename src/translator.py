@@ -65,6 +65,13 @@ class ControlFrame:
     opening_token: Token
 
 
+@dataclass(frozen=True, slots=True)
+class Procedure:
+    name: str
+    body: list[Token]
+    is_irq: bool = False
+
+
 BUILTIN_WORDS: dict[str, Opcode] = {
     "dup": Opcode.DUP,
     "drop": Opcode.DROP,
@@ -118,6 +125,11 @@ RESERVED_WORDS = (
 USER_WORD_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_?!-]*$")
 INTERNAL_WORD_NAME_RE = re.compile(r"^__[A-Za-z0-9_?!-]+$")
 UNSAFE_EXECUTION_TOKEN_WORDS = {"iret", "halt"}
+STRING_TOKEN_PREFIXES = {
+    'p"': TokenKind.PSTRING,
+    '."': TokenKind.PRINT_STRING,
+}
+STRING_ESCAPE_MAP = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", '"': '"', "0": "\0"}
 
 
 class Compiler:
@@ -143,8 +155,8 @@ class Compiler:
         tokens = [*stdlib_tokens, *user_tokens]
         procedures, main_tokens = self.parse(tokens)
 
-        for name, body, is_irq in procedures:
-            self._compile_procedure(name, body, is_irq)
+        for procedure in procedures:
+            self._compile_procedure(procedure.name, procedure.body, procedure.is_irq)
 
         main_addr = self.current_address
         self.code_labels["main"] = main_addr
@@ -171,8 +183,8 @@ class Compiler:
     def current_address(self) -> int:
         return len(self.instructions)
 
-    def parse(self, tokens: list[Token]) -> tuple[list[tuple[str, list[Token], bool]], list[Token]]:
-        procedures: list[tuple[str, list[Token], bool]] = []
+    def parse(self, tokens: list[Token]) -> tuple[list[Procedure], list[Token]]:
+        procedures: list[Procedure] = []
         procedure_names: set[str] = set()
         main_tokens: list[Token] = []
 
@@ -180,25 +192,24 @@ class Compiler:
         while index < len(tokens):
             token = tokens[index]
 
-            if is_word(token, "variable"):
-                name_token = require_token(tokens, index + 1, "expected variable name after 'variable'")
+            if is_word(token, "variable") or is_word(token, "buffer"):
+                declaration = str(token.value)
+                name_token = require_token(tokens, index + 1, f"expected {declaration} name after '{declaration}'")
                 name = require_word_name(name_token)
                 if name in procedure_names:
                     raise error_at(name_token, f"name already used as procedure: {name}")
-                self._declare_data(name, 1, name_token)
-                index += 2
-                continue
 
-            if is_word(token, "buffer"):
-                name_token = require_token(tokens, index + 1, "expected buffer name after 'buffer'")
-                size_token = require_token(tokens, index + 2, "expected buffer size after buffer name")
-                name = require_word_name(name_token)
-                if name in procedure_names:
-                    raise error_at(name_token, f"name already used as procedure: {name}")
-                if size_token.kind != TokenKind.NUMBER:
-                    raise error_at(size_token, "buffer size must be an integer literal")
-                self._declare_data(name, int(size_token.value), name_token)
-                index += 3
+                size = 1
+                consumed = 2
+                if declaration == "buffer":
+                    size_token = require_token(tokens, index + 2, "expected buffer size after buffer name")
+                    if size_token.kind is not TokenKind.NUMBER:
+                        raise error_at(size_token, "buffer size must be an integer literal")
+                    size = int(size_token.value)
+                    consumed = 3
+
+                self._declare_data(name, size, name_token)
+                index += consumed
                 continue
 
             if is_word(token, ":"):
@@ -209,7 +220,7 @@ class Compiler:
                 if name in procedure_names:
                     raise error_at(name_token, f"procedure already declared: {name}")
                 procedure_names.add(name)
-                procedures.append((name, body, False))
+                procedures.append(Procedure(name, body))
                 index = next_index
                 continue
 
@@ -217,7 +228,7 @@ class Compiler:
                 body, next_index = collect_until_semicolon(tokens, index + 1)
                 if self.irq_handler_label is not None:
                     raise error_at(token, "only one :irq handler is allowed")
-                procedures.append(("__irq_handler", body, True))
+                procedures.append(Procedure("__irq_handler", body, is_irq=True))
                 self.irq_handler_label = "__irq_handler"
                 index = next_index
                 continue
@@ -234,23 +245,27 @@ class Compiler:
         *,
         token: Token | None = None,
     ) -> int:
+        instruction = self._make_instruction(opcode, arg, token=token)
+        index = len(self.instructions)
+        self.instructions.append(instruction)
+        return index
+
+    @staticmethod
+    def _make_instruction(opcode: Opcode, arg: int = 0, *, token: Token | None = None) -> Instruction:
         try:
             encode_instruction(opcode, arg)
         except IsaError as exc:
             if token is not None:
                 raise error_at(token, str(exc)) from exc
             raise TranslatorError(str(exc)) from exc
-
-        index = len(self.instructions)
-        self.instructions.append(Instruction(opcode, arg))
-        return index
+        return Instruction(opcode, arg)
 
     def emit_fixup(self, opcode: Opcode, label: str, token: Token) -> None:
         index = self.emit(opcode, 0, token=token)
         self.fixups.append(Fixup(index, label, token))
 
     def emit_halt_if_needed(self) -> None:
-        if not self.instructions or self.instructions[-1].opcode != Opcode.HALT:
+        if not self.instructions or self.instructions[-1].opcode is not Opcode.HALT:
             self.emit(Opcode.HALT)
 
     def builtin_xt_label(self, name: str) -> str:
@@ -271,19 +286,21 @@ class Compiler:
 
     def patch_instruction_arg(self, instruction_index: int, arg: int) -> None:
         old = self.instructions[instruction_index]
-        try:
-            encode_instruction(old.opcode, arg)
-        except IsaError as exc:
-            raise TranslatorError(str(exc)) from exc
-        self.instructions[instruction_index] = Instruction(old.opcode, arg)
+        self.instructions[instruction_index] = self._make_instruction(old.opcode, arg)
 
-    def allocate_zeroed(self, size: int) -> int:
+    def _ensure_data_capacity(self, cell_count: int, token: Token | None = None) -> None:
+        new_size = len(self.data) + cell_count
+        if new_size <= MMIO_IN_DATA:
+            return
+
+        message = f"data image occupies {new_size} words and overlaps MMIO starting at 0x{MMIO_IN_DATA:04X}"
+        if token is not None:
+            raise error_at(token, message)
+        raise TranslatorError(message)
+
+    def allocate_zeroed(self, size: int, token: Token | None = None) -> int:
         address = len(self.data)
-        available = MMIO_IN_DATA - address
-        if size > available:
-            raise TranslatorError(
-                f"data image occupies {address + size} words and overlaps MMIO starting at 0x{MMIO_IN_DATA:04X}"
-            )
+        self._ensure_data_capacity(size, token)
         self.data.extend([0] * size)
         return address
 
@@ -294,10 +311,7 @@ class Compiler:
             raise error_at(token, "Pascal string must contain only one-byte characters") from exc
 
         address = len(self.data)
-        cell_count = 1 + len(encoded)
-        if cell_count > MMIO_IN_DATA - address:
-            raise error_at(token, "Pascal string overlaps MMIO")
-
+        self._ensure_data_capacity(1 + len(encoded), token)
         self.data.append(len(encoded))
         self.data.extend(encoded)
         return address
@@ -306,7 +320,7 @@ class Compiler:
         self._check_user_word_name(name, token)
         if size <= 0:
             raise error_at(token, "data size must be positive")
-        self.data_labels[name] = self.allocate_zeroed(size)
+        self.data_labels[name] = self.allocate_zeroed(size, token)
 
     def _check_user_word_name(self, name: str, token: Token) -> None:
         is_internal_stdlib_name = token.source_name == "<stdlib>" and INTERNAL_WORD_NAME_RE.fullmatch(name) is not None
@@ -337,97 +351,111 @@ class Compiler:
     def _compile_tokens(self, tokens: list[Token], name: str) -> None:
         control_stack: list[ControlFrame] = []
         index = 0
+
         while index < len(tokens):
-            token = tokens[index]
-
-            if token.kind == TokenKind.NUMBER:
-                self.emit(Opcode.LIT, int(token.value), token=token)
-                index += 1
-                continue
-
-            if token.kind == TokenKind.PSTRING:
-                address = self.allocate_pstring(str(token.value), token)
-                self.emit(Opcode.LIT, address, token=token)
-                index += 1
-                continue
-
-            if token.kind == TokenKind.PRINT_STRING:
-                address = self.allocate_pstring(str(token.value), token)
-                self.emit(Opcode.LIT, address, token=token)
-                self.emit_fixup(Opcode.CALL, "type", token)
-                index += 1
-                continue
-
-            if token.kind != TokenKind.WORD:
-                raise error_at(token, f"unsupported token kind: {token.kind}")
-
-            word = str(token.value)
-
-            if word == "'":
-                name_token = require_token(tokens, index + 1, "expected word name after execution-token quote")
-                name = require_word_name(name_token)
-                if name in UNSAFE_EXECUTION_TOKEN_WORDS:
-                    raise error_at(name_token, f"word cannot be used as execution token: {name}")
-                label = self.builtin_xt_label(name) if name in BUILTIN_WORDS else name
-                self.emit_fixup(Opcode.LIT, label, name_token)
-                index += 2
-                continue
-
-            if word == "if":
-                placeholder_index = self.emit(Opcode.JZ, 0, token=token)
-                control_stack.append(ControlFrame(ControlKind.IF, placeholder_index, token))
-                index += 1
-                continue
-
-            if word == "else":
-                frame = require_control_frame(control_stack, token, ControlKind.IF)
-                control_stack.pop()
-                jmp_index = self.emit(Opcode.JMP, 0, token=token)
-                self.patch_instruction_arg(frame.address, self.current_address)
-                control_stack.append(ControlFrame(ControlKind.ELSE, jmp_index, token))
-                index += 1
-                continue
-
-            if word == "then":
-                frame = require_control_frame(control_stack, token, ControlKind.IF, ControlKind.ELSE)
-                control_stack.pop()
-                self.patch_instruction_arg(frame.address, self.current_address)
-                index += 1
-                continue
-
-            if word == "begin":
-                control_stack.append(ControlFrame(ControlKind.BEGIN, self.current_address, token))
-                index += 1
-                continue
-
-            if word == "until":
-                frame = require_control_frame(control_stack, token, ControlKind.BEGIN)
-                control_stack.pop()
-                self.emit(Opcode.JZ, frame.address, token=token)
-                index += 1
-                continue
-
-            if word in BUILTIN_WORDS:
-                self.emit(BUILTIN_WORDS[word], token=token)
-                index += 1
-                continue
-
-            if word in MMIO_WORDS:
-                self.emit(Opcode.LIT, MMIO_WORDS[word], token=token)
-                index += 1
-                continue
-
-            if word in self.data_labels:
-                self.emit(Opcode.LIT, self.data_labels[word], token=token)
-                index += 1
-                continue
-
-            self.emit_fixup(Opcode.CALL, word, token)
-            index += 1
+            index += self._compile_token(tokens, index, control_stack)
 
         if control_stack:
             frame = control_stack[-1]
             raise error_at(frame.opening_token, f"unclosed {frame.kind.value} in {name}")
+
+    def _compile_token(
+        self,
+        tokens: list[Token],
+        index: int,
+        control_stack: list[ControlFrame],
+    ) -> int:
+        token = tokens[index]
+
+        match token.kind:
+            case TokenKind.NUMBER:
+                self.emit(Opcode.LIT, int(token.value), token=token)
+
+            case TokenKind.PSTRING | TokenKind.PRINT_STRING:
+                address = self.allocate_pstring(str(token.value), token)
+                self.emit(Opcode.LIT, address, token=token)
+                if token.kind is TokenKind.PRINT_STRING:
+                    self.emit_fixup(Opcode.CALL, "type", token)
+
+            case TokenKind.WORD:
+                return self._compile_word(tokens, index, control_stack)
+
+            case _:
+                raise error_at(token, f"unsupported token kind: {token.kind}")
+
+        return 1
+
+    def _compile_word(
+        self,
+        tokens: list[Token],
+        index: int,
+        control_stack: list[ControlFrame],
+    ) -> int:
+        token = tokens[index]
+        word = str(token.value)
+
+        if word == "'":
+            name_token = require_token(tokens, index + 1, "expected word name after execution-token quote")
+            quoted_name = require_word_name(name_token)
+            if quoted_name in UNSAFE_EXECUTION_TOKEN_WORDS:
+                raise error_at(name_token, f"word cannot be used as execution token: {quoted_name}")
+            label = self.builtin_xt_label(quoted_name) if quoted_name in BUILTIN_WORDS else quoted_name
+            self.emit_fixup(Opcode.LIT, label, name_token)
+            return 2
+
+        if self._compile_control_word(word, token, control_stack):
+            return 1
+
+        opcode = BUILTIN_WORDS.get(word)
+        if opcode is not None:
+            self.emit(opcode, token=token)
+            return 1
+
+        literal_address = MMIO_WORDS.get(word)
+        if literal_address is None:
+            literal_address = self.data_labels.get(word)
+
+        if literal_address is not None:
+            self.emit(Opcode.LIT, literal_address, token=token)
+        else:
+            self.emit_fixup(Opcode.CALL, word, token)
+        return 1
+
+    def _compile_control_word(
+        self,
+        word: str,
+        token: Token,
+        control_stack: list[ControlFrame],
+    ) -> bool:
+        match word:
+            case "if":
+                placeholder = self.emit(Opcode.JZ, 0, token=token)
+                control_stack.append(ControlFrame(ControlKind.IF, placeholder, token))
+
+            case "else":
+                frame = require_control_frame(control_stack, token, ControlKind.IF)
+                control_stack.pop()
+                jump = self.emit(Opcode.JMP, 0, token=token)
+                self.patch_instruction_arg(frame.address, self.current_address)
+                control_stack.append(ControlFrame(ControlKind.ELSE, jump, token))
+
+            case "then":
+                frame = require_control_frame(control_stack, token, ControlKind.IF, ControlKind.ELSE)
+                control_stack.pop()
+                self.patch_instruction_arg(frame.address, self.current_address)
+
+            case "begin":
+                control_stack.append(ControlFrame(ControlKind.BEGIN, self.current_address, token))
+
+            case "until":
+                frame = require_control_frame(control_stack, token, ControlKind.BEGIN)
+                control_stack.pop()
+                self.emit(Opcode.JZ, frame.address, token=token)
+
+            case _:
+                return False
+
+        return True
 
     def _resolve_fixups(self) -> None:
         for fixup in self.fixups:
@@ -477,32 +505,11 @@ def tokenize(source: str, *, source_name: str = "<input>") -> list[Token]:
                 index, line, column = advance_position(source, index, line, column)
             continue
 
-        if source.startswith('p"', index):
+        string_kind = STRING_TOKEN_PREFIXES.get(source[index : index + 2])
+        if string_kind is not None:
             start_line, start_column = line, column
             text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
-            tokens.append(
-                Token(
-                    TokenKind.PSTRING,
-                    text,
-                    start_line,
-                    start_column,
-                    source_name,
-                )
-            )
-            continue
-
-        if source.startswith('."', index):
-            start_line, start_column = line, column
-            text, index, line, column = read_string_literal(source, index + 2, line, column + 2)
-            tokens.append(
-                Token(
-                    TokenKind.PRINT_STRING,
-                    text,
-                    start_line,
-                    start_column,
-                    source_name,
-                )
-            )
+            tokens.append(Token(string_kind, text, start_line, start_column, source_name))
             continue
 
         start_index = index
@@ -518,26 +525,9 @@ def tokenize(source: str, *, source_name: str = "<input>") -> list[Token]:
             continue
 
         number = parse_number(raw)
-        if number is not None:
-            tokens.append(
-                Token(
-                    TokenKind.NUMBER,
-                    number,
-                    start_line,
-                    start_column,
-                    source_name,
-                )
-            )
-        else:
-            tokens.append(
-                Token(
-                    TokenKind.WORD,
-                    raw,
-                    start_line,
-                    start_column,
-                    source_name,
-                )
-            )
+        kind = TokenKind.NUMBER if number is not None else TokenKind.WORD
+        value: str | int = number if number is not None else raw
+        tokens.append(Token(kind, value, start_line, start_column, source_name))
 
     return tokens
 
@@ -560,8 +550,7 @@ def read_string_literal(
             if index + 1 >= len(source):
                 raise TranslatorError(f"unfinished escape sequence at line {line}, column {column}")
             escaped = source[index + 1]
-            escape_map = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", '"': '"', "0": "\0"}
-            chars.append(escape_map.get(escaped, escaped))
+            chars.append(STRING_ESCAPE_MAP.get(escaped, escaped))
             index, line, column = advance_position(source, index, line, column)
             index, line, column = advance_position(source, index, line, column)
             continue
@@ -588,7 +577,7 @@ def parse_number(raw: str) -> int | None:
 
 
 def is_word(token: Token, word: str) -> bool:
-    return token.kind == TokenKind.WORD and token.value == word
+    return token.kind is TokenKind.WORD and token.value == word
 
 
 def require_token(tokens: list[Token], index: int, message: str) -> Token:
@@ -598,7 +587,7 @@ def require_token(tokens: list[Token], index: int, message: str) -> Token:
 
 
 def require_word_name(token: Token) -> str:
-    if token.kind != TokenKind.WORD:
+    if token.kind is not TokenKind.WORD:
         raise error_at(token, "expected word name")
     return str(token.value)
 
