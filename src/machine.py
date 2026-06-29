@@ -14,6 +14,7 @@ from isa import (
     MMIO_IN_STATUS,
     MMIO_IRQ_ACK,
     MMIO_OUT_DATA,
+    MNEMONICS,
     RESET_VECTOR,
     WORD_BITS,
     WORD_MASK,
@@ -725,7 +726,7 @@ class Machine:
         result = alu(opcode, left, right)
 
         self.data_stack[-2:] = [result]
-        return f"{opcode.mnemonic} {left} {right} -> {result}"
+        return f"{MNEMONICS[opcode]} {left} {right} -> {result}"
 
     def _execute_memory(self, opcode: Opcode) -> str:
         if opcode is Opcode.LOAD:

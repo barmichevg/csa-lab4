@@ -260,7 +260,7 @@ def read_data_binary(path: str | Path) -> list[int]:
 
 def format_instruction(instruction: Instruction) -> str:
     """Сформировать текст инструкции и при необходимости добавить аргумент."""
-    mnemonic = instruction.opcode.mnemonic
+    mnemonic = MNEMONICS[instruction.opcode]
     if instruction.opcode in ARGUMENT_OPCODES:
         return f"{mnemonic} {instruction.arg}"
     return mnemonic
